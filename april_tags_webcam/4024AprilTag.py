@@ -7,26 +7,9 @@ Line_length = 5
 Center_Color = (0, 255, 0)
 Corner_Color = (255, 0, 255)
 
-def plotPoint(image, center, color):
-    center =  (int(center[0]), int(center[1]))
-    image = cv2.line(image, 
-                     (center[0] - Line_length, center[1]),
-                     (center[0] + Line_length, center[1]),
-                     color,
-                     3)
-    image = cv2.line(image, 
-                     (center[0], center[1] - Line_length),
-                     (center[0], center[1] + Line_length),
-                     color,
-                     3)
-    return image
-
-def plotText(image, color, center, text):
-    center = (int(center[0]) + 4, int(center[1]) - 4)
-    return cv2.putText(image, str(text), center, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 3)
 
 detector = pupil_apriltags.Detector(families='tag36h11')
-cam = cv2.VideoCapture(0)
+cam = cv2.VideoCapture(2)
 
 looping = True
 
