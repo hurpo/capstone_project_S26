@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(2)
 
 if not cap.isOpened():
     print("Error: Could not open camera.")

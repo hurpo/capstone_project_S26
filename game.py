@@ -2,7 +2,13 @@
 import time
 
 #* Import Functions etc.
-from CameraControls.USBCam import start_cam, read_april_tag, end_cam
+from HardwareControls.CameraControls.USBCam import start_cam, read_april_tag, end_cam
+
+running = True
+state = "LED_START"
+
+rendezvous = None
+
 
 def ScanRendezvousPadLocation():
     rendezvous_pad_location = None
@@ -39,30 +45,74 @@ def ScanRendezvousPadLocation():
 #*               Game Plan               *#
 #*****************************************#
 
-#* LED Start
+while running:
+    match state:
 
-#* Scan Rendezvous Pad Location
-ScanRendezvousPadLocation()
+        #* LED Start
+        case "LED_START":
+            print("LED START!")
+            state = "RP_SCAN"
 
-#* Place Beacon
+        #* Scan Rendezvous Pad Location
+        case "RP_SCAN":
+            print("Scanning for Rendezvous Pad....")
+            rendezvous = ScanRendezvousPadLocation()
+            print(f"Rendezvous Pad Located at {rendezvous}.")
+            state = "END"
 
-#* Enter Cave
+        #* Place Beacon
+        case "PLACE_BEACON":
+            pass
 
-#* Collect Cave Game Pieces
+        #* Enter Cave
+        case "ENTER_CAVE":
+            pass
 
-#* Collect Outside Game Pieces
+        #* Collect Cave Game Pieces
+        case "CAVE_SWEEP":
+            pass
 
-#* Move to Geodinium CSC
+        #* Collect Outside Game Pieces
+        case "OUTSIDE_SWEEP":
+            pass
 
-#* Grab Geodinium CSC
+        #* Move to Geodinium CSC
+        case "MOVE_TO_GEO_CSC":
+            pass
 
-#* Move Geodinium CSC to Rendezvous Pad
+        #* Grab Geodinium CSC
+        case "GRAB_GEO_CSC":
+            pass
 
-#* Dispense Geodinium
+        #* Move Geodinium CSC to Rendezvous Pad
+        case "MOVE_GEO_TO_RP":
+            pass
 
-#* Move to Nebulite CSC
+        #* Dispense Geodinium
+        case "DISPENSE_GEO":
+            pass
 
-#* Dispense Nebulite
+        #* Move to Nebulite CSC
+        case "MOVE_TO_NEB_CSC":
+            pass
 
-#* Move Nebulite CSC to Rendezvous Pad
+        #* Move Nebulite CSC to Rendezvous Pad
+        case "MOVE_NEB_TO_RP":
+            print(f"Moving to RP at ")
+            pass
+
+        #* Dispense Nebulite
+        case "DISPENSE_NEB":
+            pass
+        
+        #* Graceful End
+        case "END":
+            print("Ending Run, Goodbye!")
+            running = False
+            break
+
+        case _:
+            state = "LED_START"
+
+        
 

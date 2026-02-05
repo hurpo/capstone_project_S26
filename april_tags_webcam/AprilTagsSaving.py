@@ -3,7 +3,7 @@ import cv2
 import argparse
 from pupil_apriltags import Detector
 import time
-import picamera2
+from picamera2 import Picamera2
 
 Line_length = 5
 Center_Color = (0, 255, 0)
