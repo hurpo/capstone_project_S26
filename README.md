@@ -8,4 +8,4 @@ To connect to the Raspberry Pi, connect it to the monitor and check which ip add
 To access the code we ran during our Expo navigate to the dc_motors and run the final.py. Final.py utilizes dual_g2_hpmd_rpi python file as a library for moving the motor driver. The program uses the dual_hdmi It is generally hardcoding the robot. Motorsandcv.py shows the backbone of how object following using computer vision would work. On the Raspberry Pi all the programs are already stored and all the libraries are already dowloaded. Good luck next semester!
 
 Skylar was here >:]
-danny was here
+danny was here^2
