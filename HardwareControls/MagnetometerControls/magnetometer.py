@@ -1,9 +1,47 @@
 print("Importing")
 import board
+import busio
 import adafruit_mlx90393
+import time
 
 print("i2c")
-i2c = board.I2C()
+i2c = busio.I2C(board.SCL, board.SDA, frequency=100000)
+
+if i2c.try_lock():
+    print("i2c.try_lock() is true")
+
+    try:
+        commands = [
+            0x80,
+            0xF0,
+            0x10
+        ]
+
+        for cmd in commands:
+            try:
+                print(f"Sending command: 0x{cmd:02X}")
+                i2c.writeto(0x0c, bytes([cmd]))
+                time.sleep(0.2)
+            except Exception as e:
+                print(f"Command failed:",e)
+    except Exception as e:
+        print("Failed with {e}")
+    finally:
+        i2c.unlock()
+
+else:
+    print("i2c.try_lock() is false")
+
+time.sleep(1)
+print("Now Scanning I2C bus")
+
+while not i2c.try_lock():
+    print("NOT WORKING!!!")
+    pass
+addresses = i2c.scan()
+i2c.unlock()
+
+print(f"Devices found: {[hex(addr) for addr in addresses]}")
 
 print("Trying....")
 try:
