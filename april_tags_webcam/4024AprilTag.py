@@ -27,7 +27,7 @@ def plotText(image, color, center, text):
     return cv2.putText(image, str(text), center, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 3)
 
 detector = pupil_apriltags.Detector(families='tag36h11')
-cam = cv2.VideoCapture(2)
+cam = cv2.VideoCapture(0)
 
 looping = True
 

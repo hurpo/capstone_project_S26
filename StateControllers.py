@@ -103,13 +103,13 @@ class ClientController(StateController):
                 self._started = True
 
             case Command.PAUSE:
-                pass
+                self._paused = True
             
             case Command.RESUME:
-                pass
+                self._paused = False
 
             case Command.STOP:
-                pass
+                self._stop_requested = True
 
             case Command.GOTO_STATE:
                 pass

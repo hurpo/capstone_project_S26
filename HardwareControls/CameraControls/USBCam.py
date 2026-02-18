@@ -12,7 +12,7 @@ def start_cam():
     global camera
     print("Starting camera...")
 
-    camera = cv2.VideoCapture(2)
+    camera = cv2.VideoCapture(0)
     camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
     camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
@@ -28,7 +28,7 @@ def end_cam():
     camera.release()
     cv2.destroyAllWindows()
 
-def read_april_tag(time_limit = 5):
+def read_april_tag(time_limit = 10):
     global camera
     print("Reading April Tags...")
 
@@ -39,11 +39,14 @@ def read_april_tag(time_limit = 5):
     while searching and time.time() - start_time < time_limit:
         # print(f"T: {time.time() - start_time}")
         result, image = camera.read()
+        # print(f"result: {result} | image: {image}")
         grayimg = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         detections = detector.detect(grayimg)
+        print(f"detections: {detections}")
 
         for detect in detections:
-            if detect.tag_id:
+            print(f"{detect}\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            if detect.tag_id is not None:
                 print("tag_id: %s, center: %s" % (detect.tag_id, detect.center))
                 #searching = False
                 return detect.tag_id
