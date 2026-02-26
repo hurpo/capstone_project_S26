@@ -28,13 +28,10 @@ if i2c.try_lock():
         print("Failed with {e}")
     finally:
         i2c.unlock()
-
 else:
     print("i2c.try_lock() is false")
-
 time.sleep(1)
 print("Now Scanning I2C bus")
-
 while not i2c.try_lock():
     print("NOT WORKING!!!")
     pass

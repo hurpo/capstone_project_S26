@@ -1,5 +1,6 @@
 import json
 import struct
+import datetime
 from HardwareControls.hardware_classes import Magnetometer, LightSensor
 
 TYPE_POSITION = b"P"
@@ -55,7 +56,7 @@ class Robot():
         self.send_position()
     
     def updateRobotData(self, datain=None):
-        print(f"datain: {datain}")
+        print(f"datain: {datain} {datetime.datetime.now()}")
         if datain is None:
             print(f"Couldn't Update Robot Data, no key or value.")
             return

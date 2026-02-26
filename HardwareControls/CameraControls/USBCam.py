@@ -28,18 +28,25 @@ def end_cam():
     camera.release()
     cv2.destroyAllWindows()
 
-def read_april_tag(time_limit = 10):
+def read_april_tag(cap=None, cap_lock=None, time_limit = 10):
     global camera
     print("Reading April Tags...")
 
-    detector = pupil_apriltags.Detector(families='tag36h11')
-    searching = True
+    active_cap = cap if cap is not None else camera
 
+    detector = pupil_apriltags.Detector(families='tag36h11')
     start_time = time.time()
-    while searching and time.time() - start_time < time_limit:
-        # print(f"T: {time.time() - start_time}")
-        result, image = camera.read()
-        # print(f"result: {result} | image: {image}")
+    
+    while time.time() - start_time < time_limit:
+        if cap_lock:
+            with cap_lock:
+                result, image = active_cap.read()
+        else:
+            result, image = active_cap.read()
+        
+        if not result or image is None:
+            continue
+        
         grayimg = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         detections = detector.detect(grayimg)
         print(f"detections: {detections}")
@@ -48,9 +55,8 @@ def read_april_tag(time_limit = 10):
             print(f"{detect}\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             if detect.tag_id is not None:
                 print("tag_id: %s, center: %s" % (detect.tag_id, detect.center))
-                #searching = False
                 return detect.tag_id
         key = cv2.waitKey(100)
         if key == 13:
-            searching = False
+            break
     return "April Tag Failed"

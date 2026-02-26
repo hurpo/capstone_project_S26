@@ -52,7 +52,8 @@ class StateController(ABC):
 class AutoController(StateController):
 
     def __init__(self):
-        self._started = True  # Auto-start in autonomous mode
+        # Auto-start in autonomous mode
+        self._started = True  
     
     def should_start(self):
         return self._started
