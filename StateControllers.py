@@ -26,6 +26,9 @@ class Command(Enum):
     STOP = "STOP"
     GOTO_STATE = "GOTO_STATE"
     MANUAL_MODE = "MANUAL_MODE"
+    START_CALIBRATION_IMAGER = "START_CALIBRATION_IMAGER"
+    CAPTURE_CALIBRATION_IMG = "CAPTURE_CALIBRATION_IMG"
+    END_CALIBRATION_CAPTURE = "END_CALIBRATION_CAPTURE"
 
 class StateController(ABC):
 
@@ -116,4 +119,13 @@ class ClientController(StateController):
                 pass
             
             case Command.MANUAL_MODE:
+                pass
+            
+            case Command.START_CALIBRATION_IMAGER:
+                pass
+            
+            case Command.CAPTURE_CALIBRATION_IMG:
+                pass
+            
+            case Command.END_CALIBRATION_CAPTURE:
                 pass

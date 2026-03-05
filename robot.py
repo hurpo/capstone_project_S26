@@ -1,7 +1,7 @@
 import json
 import struct
 import datetime
-from HardwareControls.hardware_classes import Magnetometer, LightSensor
+from HardwareControls.hardware_classes import Magnetometer, LightSensor, Camera
 
 TYPE_POSITION = b"P"
 TYPE_ROBOT_DATA = b"R"
@@ -28,11 +28,13 @@ class Robot():
 
         print(f"self.sensors_connected {self.sensors_connected}")
 
+        self.camera = None
         self.setupHardware()
 
     
     def setupHardware(self):
         print(f"Setting up Hardware...")
+        self.camera = Camera(robot=self)
         if self.sensors_connected:
             self.LightSensor = LightSensor()
             self.Mag1 = Magnetometer(0x18)

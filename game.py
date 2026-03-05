@@ -6,6 +6,7 @@ import datetime
 from HardwareControls.CameraControls.USBCam import start_cam, read_april_tag, end_cam
 from robot import Robot
 from StateControllers import State, StateController, ClientController, AutoController
+from HardwareControls.hardware_classes import Camera
 
 from enum import Enum
 
@@ -20,7 +21,6 @@ class StateMachine:
 
         print(f"passedCam: {passedCam}")
 
-        self.robot = None
         self.passedCamera = passedCam
         self.passedCameraLock = passedCamLock
 
@@ -28,8 +28,13 @@ class StateMachine:
 
         #* Testing Booleans
         self.testing = True
-
         self.sensors_connected = False
+
+        self.robot = Robot(testing=self.testing, sensors_connected = self.sensors_connected, socket=self.socket, send_lock=self.send_lock)
+        if self.passedCamera:
+            self.robot.camera.passed_cam(self.passedCamera, self.passedCameraLock)
+        else:
+            self.robot.camera.start_cam()
 
     
     def run(self):
@@ -68,12 +73,14 @@ class StateMachine:
             time.sleep(0.1)
         self.robot.updateRobotData({"State": "END"})
         print("State Machine COMPLETE")
+        self.robot.camera.stop_pnp_localization()
+        print("GOODBYE!")
 
     def execute_state(self):
         match self.current_state:
             case State.INIT:
                                   #* Testing booleans applied
-                self.robot = Robot(testing=self.testing, sensors_connected = self.sensors_connected, socket=self.socket, send_lock=self.send_lock)
+                
                 print(f"INIT RobotData")
                 self.robot.updateRobotData({
                     "State": "INIT",
@@ -91,12 +98,14 @@ class StateMachine:
 
                 if self.testing:
                     time.sleep(0.1)
+                
+                self.robot.camera.start_pnp_localization()
 
                 print(f"self.robot.testing: {self.robot.testing}")
                 self.robot.LEDStart()
                 self.robot.updateRobotData({"LED_Started?": True})
 
-                self.robot.updatePosition(dy=24, degrees=180)
+                # self.robot.updatePosition(dy=24, degrees=180)
 
                 if self.testing:
                     time.sleep(5)
@@ -106,18 +115,19 @@ class StateMachine:
             case State.RP_SCAN:
                 self.robot.updateRobotData({"State": "RP_SCAN"})
                 print("Scanning for Rendezvous Pad....")
-                rp = self.ScanRendezvousPadLocation()
+                
+                rp = self.robot.camera.read_april_tags()
                 self.rendezvous_pad_location = rp
                 self.robot.updateRobotData({"RP": rp})
                 print(f"Rendezvous Pad Located at {self.rendezvous_pad_location}.")
-                self.transition_to(State.PLACE_BEACON)
+                self.transition_to(State.END)
 
             case State.PLACE_BEACON:
                 self.robot.updateRobotData({"State": "PLACE_BEACON"})
                 if self.testing:
                     time.sleep(0.1)
 
-                self.robot.updatePosition(dx=6.0)
+                # self.robot.updatePosition(dx=6.0)
 
                 if self.testing:
                     time.sleep(5)
@@ -129,7 +139,7 @@ class StateMachine:
                 if self.testing:
                     time.sleep(0.1)
                 
-                self.robot.updatePosition(dx=90.0)
+                # self.robot.updatePosition(dx=90.0)
 
                 if self.testing:
                     time.sleep(5)
@@ -141,7 +151,7 @@ class StateMachine:
                 if self.testing:
                     time.sleep(0.1)
                 
-                self.robot.updatePosition(dx=60.0)
+                # self.robot.updatePosition(dx=60.0)
 
                 if self.testing:
                     time.sleep(5)
@@ -153,7 +163,7 @@ class StateMachine:
                 if self.testing:
                     time.sleep(0.1)
                 
-                self.robot.updatePosition(dx=40.0)
+                # self.robot.updatePosition(dx=40.0)
 
                 if self.testing:
                     time.sleep(5)
@@ -165,7 +175,7 @@ class StateMachine:
                 if self.testing:
                     time.sleep(0.1)
                 
-                self.robot.updatePosition(dx=55.0, dy=6.0)
+                # self.robot.updatePosition(dx=55.0, dy=6.0)
 
                 if self.testing:
                     time.sleep(5)
@@ -187,7 +197,7 @@ class StateMachine:
                 if self.testing:
                     time.sleep(0.1)
                 
-                self.robot.updatePosition(dx=6.0, dy=24.0)
+                # self.robot.updatePosition(dx=6.0, dy=24.0)
 
                 if self.testing:
                     time.sleep(5)
@@ -209,7 +219,7 @@ class StateMachine:
                 if self.testing:
                     time.sleep(0.1)
                 
-                self.robot.updatePosition(dx=40.0, dy= 42.0)
+                # self.robot.updatePosition(dx=40.0, dy= 42.0)
 
                 if self.testing:
                     time.sleep(5)
@@ -221,7 +231,7 @@ class StateMachine:
                 if self.testing:
                     time.sleep(0.1)
                 
-                self.robot.updatePosition(dx=6.0, dy=24.0)
+                # self.robot.updatePosition(dx=6.0, dy=24.0)
 
                 if self.testing:
                     time.sleep(5)
@@ -239,7 +249,7 @@ class StateMachine:
                 self.transition_to(State.END)
 
             case State.END:
-                print("GOODBYE!")
+                pass
 
     def transition_to(self, new_state):
         print(f"Transitioning: {self.current_state.name} -> {new_state.name}")
@@ -250,6 +260,7 @@ class StateMachine:
         print("Manual Mode")
         time.sleep(0.5)
     
+    #! Depricated
     def ScanRendezvousPadLocation(self):
 
         rendezvous_pad_location = None

@@ -22,6 +22,7 @@ cam = cv2.VideoCapture(0)
 
 while True:
     result, image = cam.read()
+    image = cv2.flip(image, -1)
     grayimg = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     detections = detector.detect(grayimg)
 

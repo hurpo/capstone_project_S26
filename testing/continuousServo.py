@@ -27,7 +27,7 @@ except ImportError:
 # Configuration
 # ---------------------------
 I2C_ADDRESS = 0x40       # default PCA9685 address; change if you changed A0-A5 jumpers
-SERVO_CHANNEL = 0        # "module 0" output
+SERVO_CHANNEL = 4        # "module 0" output
 PWM_FREQUENCY_HZ = 50    # standard servo frequency
 
 # Continuous servo calibration (in microseconds)

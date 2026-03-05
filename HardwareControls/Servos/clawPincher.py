@@ -1,4 +1,3 @@
-
 # 270° positional servo on PCA9685 (I2C) channel 0
 # Provides functions your other program can import and call.
 
@@ -23,9 +22,9 @@ class Servo270Config:
     max_us: float = 2500.0
 
     # Named positions (degrees) for a 270° servo
-    center_closed_deg: float = 125.0   # center (closed)
-    open_deg: float = 165.0            # open
-    latched_deg: float = 235.0         # latched
+    center_closed_deg: float = 140.0   # center (closed)
+    open_deg: float = 125.0            # open
+    latched_deg: float = 40.0         # latched
 
 
 def _clamp(x: float, lo: float, hi: float) -> float:
