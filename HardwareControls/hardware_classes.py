@@ -16,7 +16,7 @@ import os
 class Camera():
     _BASE_DIR = Path(__file__).parent
     APRIL_TAG_CORNERS_3DWRLDPOS = _BASE_DIR / 'april_tag_3dwrld_pos.json'
-    CALIBRATION_IMAGES_PATH = _BASE_DIR / 'CalibrationImages/'
+    CALIBRATION_IMAGES_PATH = _BASE_DIR / 'CalibrationImages/*.jpg'
     CAMERA_CALIBRATIONS_PATH = _BASE_DIR / 'camera_calibrations.json'
 
     def __init__(self, robot=None):
@@ -63,6 +63,9 @@ class Camera():
 
         except (FileNotFoundError, KeyError):
             print("No calibration file found, recalibrating...")
+        
+        self.kalman = None
+        self._init_kalman()
     
     def start_cam(self):
         print("Starting camera...")
@@ -135,7 +138,7 @@ class Camera():
         imgpoints = []
 
         images = glob.glob(str(self.CALIBRATION_IMAGES_PATH))
-
+        print(f"images: {images}")
         if not images:
             print(f"No calibration images found at {self.CALIBRATION_IMAGES_PATH}")
         
@@ -207,11 +210,15 @@ class Camera():
         print("Capturing calibration image...")
 
     def save_calibration_imgs(self):
-        if not os.path.exists(self.CALIBRATION_IMAGES_PATH):
-            os.mkdir(self.CALIBRATION_IMAGES_PATH)
+        if not os.path.exists(str(self.CALIBRATION_IMAGES_PATH).strip("*.jpg")):
+            os.mkdir(str(self.CALIBRATION_IMAGES_PATH).strip("*.jpg"))
+
+
+        images = images = glob.glob(str(self.CALIBRATION_IMAGES_PATH))
+        print("IMAGE LENGTH", len(images))
 
         detector = pupil_apriltags.Detector(families='tag36h11')
-        img_count = 0
+        img_count = len(images)
 
         try:
             while self.capturing_calibration_imgs:
@@ -230,7 +237,7 @@ class Camera():
                 
                 if self.capture_next_img:
                     self.capture_next_img = False
-                    img_name = os.path.join(self.CALIBRATION_IMAGES_PATH, f"test{img_count:02d}.jpg")
+                    img_name = os.path.join(str(self.CALIBRATION_IMAGES_PATH).strip("*.jpg"), f"calibration_{img_count:02d}.jpg")
                     cv2.imwrite(img_name, frame)
                     print(f"Captured {img_name}")
                     img_count += 1
@@ -253,6 +260,25 @@ class Camera():
         print("pnp localization resumed!")
         self.pnp_paused.set()
 
+    def _init_kalman(self):
+        self.kalman = cv2.KalmanFilter(6, 3)
+        self.kalman.measurementMatrix = np.array([
+            [1, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0]
+        ], np.float32)
+        self.kalman.transitionMatrix = np.array([
+            [1,0,0,1,0,0],
+            [0,1,0,0,1,0],
+            [0,0,1,0,0,1],
+            [0,0,0,1,0,0],
+            [0,0,0,0,1,0],
+            [0,0,0,0,0,1]
+        ], np.float32)
+        self.kalman.processNoiseCov = np.eye(6, dtype=np.float32) * 0.01
+        self.kalman.measurementNoiseCov = np.eye(3, dtype=np.float32) * 1.0 
+        self.kalman.errorCovPost = np.eye(6, dtype=np.float32)
+
     def pnp_localization(self):
 
         with open(self.APRIL_TAG_CORNERS_3DWRLDPOS, 'r') as f:
@@ -270,8 +296,14 @@ class Camera():
             self.pnp_paused.wait()
 
             result, image = self._read_frame()
+            if not result or image is None:
+                continue
+
             grayimg = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             detections = detector.detect(grayimg)
+
+            positions = []
+            yaws = []
 
             if detections:
                 for detect in detections:
@@ -302,7 +334,8 @@ class Camera():
                         R_inv = R.T
                         camera_position_world = -R_inv @ tvec
 
-                        self.robot.updatePosition(dx=camera_position_world[0][0], dy=-camera_position_world[1][0])
+                        positions.append((camera_position_world[0][0], camera_position_world[1][0]))
+                        
                         # print("\nCamera Position in World Coordinates:")
                         # print("X:", camera_position_world[0][0])
                         # print("Y:", camera_position_world[1][0])
@@ -311,6 +344,19 @@ class Camera():
                         yaw = math.atan2(R_inv[1,0], R_inv[0,0])
                         pitch = math.atan2(-R_inv[2,0], math.sqrt(R_inv[2,1]**2 + R_inv[2,2]**2))
                         roll = math.atan2(R_inv[2,1], R_inv[2,2])
+
+                        yaws.append(yaw)
+
+
+                        # measurement = np.array([[camera_position_world[0][0]],
+                        #                         [camera_position_world[1][0]],
+                        #                         [camera_position_world[2][0]]], np.float32)
+                        # self.kalman.correct(measurement)
+                        # predicted = self.kalman.predict()
+                        # x = round(float(predicted[0][0]) - 6, 2)
+                        # y = round(float(predicted[1][0]) - 6, 2)
+
+                        # self.robot.updatePosition(dx=x, dy=y, degrees=round(math.degrees(yaw)-90,2))
 
                         # print("\nCamera Yaw Pitch and Roll")
                         # print("Yaw (deg):", math.degrees(yaw))
@@ -329,7 +375,21 @@ class Camera():
 
                         for point in projected_points.astype(int):
                             cv2.circle(image, tuple(point[0]), 7, (0, 255, 0), -1)
-                        self.annotated_frame = image
+                if positions:
+                    avg_x = sum(p[0] for p in positions) / len(positions)
+                    avg_y = sum(p[1] for p in positions) / len(positions)
+                    avg_yaw = sum(yaws) / len(yaws)
+
+                    measurement = np.array([[avg_x], [avg_y], [0.0]], np.float32)
+                    self.kalman.correct(measurement)
+                    predicted = self.kalman.predict()
+
+                    x = round(float(predicted[0][0]) - 6, 2)
+                    y = round(float(predicted[1][0]) - 6, 2)
+                    degrees = round(math.degrees(avg_yaw) - 90, 2)
+
+                    self.robot.updatePosition(dx=x, dy=y, degrees=degrees)
+            self.annotated_frame = image
 
 class Magnetometer():
     def __init__(self, address):

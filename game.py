@@ -101,6 +101,9 @@ class StateMachine:
                 
                 self.robot.camera.start_pnp_localization()
 
+                # if self.testing:
+                time.sleep(1000)
+
                 print(f"self.robot.testing: {self.robot.testing}")
                 self.robot.LEDStart()
                 self.robot.updateRobotData({"LED_Started?": True})
