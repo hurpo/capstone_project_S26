@@ -2,6 +2,9 @@ import json
 import struct
 import datetime
 from HardwareControls.hardware_classes import Magnetometer, LightSensor, Camera
+from HardwareControls.Servos.combine import DualContinuousServos
+from HardwareControls.Servos.chute import SG90Servo
+from HardwareControls.Servos.clawPincher import Servo270Positions
 
 TYPE_POSITION = b"P"
 TYPE_ROBOT_DATA = b"R"
@@ -25,6 +28,7 @@ class Robot():
 
         self.sensors_connected = sensors_connected
         self.cameras_active = cameras_active
+        self.servos_connected = True
 
         print(f"self.sensors_connected {self.sensors_connected}")
 
@@ -35,6 +39,10 @@ class Robot():
     def setupHardware(self):
         print(f"Setting up Hardware...")
         self.camera = Camera(robot=self)
+        if self.servos_connected:
+            self.Combine = DualContinuousServos()
+            self.Claw = Servo270Positions()
+            self.Chute = SG90Servo()
         if self.sensors_connected:
             self.LightSensor = LightSensor()
             self.Mag1 = Magnetometer(0x18)
@@ -89,6 +97,55 @@ class Robot():
             print("Testing without sensors attached!")
         return True
     
+    #* Combine Controls
+    def StartIntakeCombine(self, reverse=False):
+        if self.servos_connected:
+            if reverse:
+                self.Combine.a_forward_b_backward = False
+            else:
+                self.Combine.a_forward_b_backward = True
+            self.Combine.run_opposite_full()
+        else:
+            print("Intaking with Combine - No servos attached")
+    
+    def StopIntakeCombine(self):
+        if self.servos_connected:
+            self.Combine.stop_all()
+        else:
+            print("Stopping Combine - No servos attached")
+
+    #* Chute Controls
+    def OpenChute(self):
+        if self.servos_connected:
+            self.Chute.open()
+        else:
+            print("Opening Chute - No Servos connected")
+
+    def CloseChute(self):
+        if self.servos_connected:
+            self.Chute.close()
+        else:
+            print("Close Chute - No Servos connected")
+
+    #* Claw Controls
+    def OpenClaw(self):
+        if self.servos_connected:
+            self.Claw.open()
+        else:
+            print("Opening Claw - No Servos connected")
+    
+    def CenterCloseClaw(self):
+        if self.servos_connected:
+            self.Claw.center_closed()
+        else:
+            print("Closing Claw - No Servos connected")
+    
+    def LatchedClaw(self):
+        if self.servos_connected:
+            self.Claw.latched()
+        else:
+            print("Latching Claw - No Servos connected")
+
     #* Send to Client Over Socket Methods
 
     def send_position(self):

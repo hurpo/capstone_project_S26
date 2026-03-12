@@ -22,6 +22,12 @@ class Camera():
     def __init__(self, robot=None):
         self.robot = robot
 
+        self.X_OFFSET = 12#-6
+        self.Y_OFFSET = 8#-6
+        self.DEGREE_OFFSET = -90
+
+        self.flipped = False
+
         self.cap = None
         self.cap_lock = None
 
@@ -100,7 +106,8 @@ class Camera():
                 return self.cap.read()
         else:
             result, image = self.cap.read()
-            image = cv2.flip(image, -1)
+            if self.flipped:    
+                image = cv2.flip(image, -1)
             return result, image
 
     def read_april_tags(self, time_limit=10):
@@ -132,44 +139,45 @@ class Camera():
             self.resume_pnp_localization()
 
     def calibrate(self):
-        detector = pupil_apriltags.Detector(families='tag36h11')
+        CHESSBOARD_SIZE = (9, 6)
+        SQUARE_SIZE = 1.0 # inches
+
+        objp = np.zeros((CHESSBOARD_SIZE[0] * CHESSBOARD_SIZE[1], 3), np.float32)
+        objp[:, :2] = np.mgrid[0:CHESSBOARD_SIZE[0], 0:CHESSBOARD_SIZE[1]].T.reshape(-1, 2)
+
+        objp = objp * SQUARE_SIZE
 
         objpoints = []
         imgpoints = []
-
         images = glob.glob(str(self.CALIBRATION_IMAGES_PATH))
-        print(f"images: {images}")
+
         if not images:
-            print(f"No calibration images found at {self.CALIBRATION_IMAGES_PATH}")
-        
-        half = 3.15 / 2.0
-        objp = np.array([
-            [-half, -half, 0],
-            [half, -half, 0],
-            [half, half, 0],
-            [-half, half, 0]
-        ], dtype=np.float32)
+            print("No calibration images!!!!")
 
         for idx, fname in enumerate(images):
             img = cv2.imread(fname)
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-            detections = detector.detect(gray)
+            ret, corners = cv2.findChessboardCorners(gray, CHESSBOARD_SIZE, None)
 
-            if detections:
-                for detect in detections:
-                    imgpoints.append(detect.corners.astype(np.float32))
-                    objpoints.append(objp)
-        
+            if ret:
+                objpoints.append(objp)
+
+                criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+                corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
+                imgpoints.append(corners2)
+
+                cv2.drawChessboardCorners(img, CHESSBOARD_SIZE, corners2, ret)
+
+                output_img_path = os.path.join(self.CALIBRATION_IMAGES_PATH, f'calibration_{os.path.basename(fname)}')
+                cv2.imwrite(output_img_path, img)
+            
         if not objpoints:
-            print("No tags detected in any images.")
-            return
-        
-        print("Calibrating camera...")
+            print("No chessboard!")
 
         self.ret, self.camera_matrix, self.dist_coef, self.rvecs, self.tvecs = cv2.calibrateCamera(
             objpoints, imgpoints, gray.shape[::-1], None, None
-        )
+        ) 
 
         camera_calibration_data = {
             "last_updated": time.time(),
@@ -182,6 +190,58 @@ class Camera():
 
         with open(self.CAMERA_CALIBRATIONS_PATH, 'w') as f:
             json.dump(camera_calibration_data, f, indent=4)
+
+    # def calibrate(self):
+    #     detector = pupil_apriltags.Detector(families='tag36h11')
+
+    #     objpoints = []
+    #     imgpoints = []
+
+    #     images = glob.glob(str(self.CALIBRATION_IMAGES_PATH))
+    #     print(f"images: {images}")
+    #     if not images:
+    #         print(f"No calibration images found at {self.CALIBRATION_IMAGES_PATH}")
+        
+    #     half = 3.15 / 2.0
+    #     objp = np.array([
+    #         [-half, -half, 0],
+    #         [half, -half, 0],
+    #         [half, half, 0],
+    #         [-half, half, 0]
+    #     ], dtype=np.float32)
+
+    #     for idx, fname in enumerate(images):
+    #         img = cv2.imread(fname)
+    #         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    #         detections = detector.detect(gray)
+
+    #         if detections:
+    #             for detect in detections:
+    #                 imgpoints.append(detect.corners.astype(np.float32))
+    #                 objpoints.append(objp)
+        
+    #     if not objpoints:
+    #         print("No tags detected in any images.")
+    #         return
+        
+    #     print("Calibrating camera...")
+
+    #     self.ret, self.camera_matrix, self.dist_coef, self.rvecs, self.tvecs = cv2.calibrateCamera(
+    #         objpoints, imgpoints, gray.shape[::-1], None, None
+    #     )
+
+    #     camera_calibration_data = {
+    #         "last_updated": time.time(),
+    #         "ret": self.ret,
+    #         "camera_matrix": self.camera_matrix.tolist(),
+    #         "dist_coef": self.dist_coef.tolist(),
+    #         "rvecs": [r.tolist() for r in self.rvecs],
+    #         "tvecs": [t.tolist() for t in self.tvecs]
+    #     }
+
+    #     with open(self.CAMERA_CALIBRATIONS_PATH, 'w') as f:
+    #         json.dump(camera_calibration_data, f, indent=4)
 
     def start_calibration(self):
         self.pause_pnp_localization()
@@ -279,6 +339,30 @@ class Camera():
         self.kalman.measurementNoiseCov = np.eye(3, dtype=np.float32) * 1.0 
         self.kalman.errorCovPost = np.eye(6, dtype=np.float32)
 
+    def expected_pos_to_tvec(self, world_x: float, world_y: float, world_z: float = 0.0, rvec: np.ndarray = None) -> np.ndarray:
+        """
+        Convert an expected world position (x, y, z) into a camera-space tvec
+        for use as an initial guess in solvePnP.
+
+        Args:
+            world_x: Expected robot X in world coordinates
+            world_y: Expected robot Y in world coordinates  
+            world_z: Expected robot Z (default 0.0)
+            rvec: Current rotation vector (from previous solvePnP or odometry)
+
+        Returns:
+            tvec: shape (3, 1) in camera space, ready for solvePnP useExtrinsicGuess
+        """
+        world_pos = np.array([[world_x], [world_y], [world_z]], dtype=np.float64)
+
+        if rvec is not None:
+            R, _ = cv2.Rodrigues(rvec)
+            tvec = -R @ world_pos
+        else:
+            tvec = world_pos
+
+        return tvec.astype(np.float32)
+
     def pnp_localization(self):
 
         with open(self.APRIL_TAG_CORNERS_3DWRLDPOS, 'r') as f:
@@ -334,36 +418,23 @@ class Camera():
                         R_inv = R.T
                         camera_position_world = -R_inv @ tvec
 
-                        positions.append((camera_position_world[0][0], camera_position_world[1][0]))
-                        
-                        # print("\nCamera Position in World Coordinates:")
-                        # print("X:", camera_position_world[0][0])
-                        # print("Y:", camera_position_world[1][0])
-                        # print("Z:", camera_position_world[2][0])
-
                         yaw = math.atan2(R_inv[1,0], R_inv[0,0])
-                        pitch = math.atan2(-R_inv[2,0], math.sqrt(R_inv[2,1]**2 + R_inv[2,2]**2))
-                        roll = math.atan2(R_inv[2,1], R_inv[2,2])
+                        cos_yaw = math.cos(yaw)
+                        sin_yaw = math.sin(yaw)
 
+                        offset_world_x = cos_yaw * self.X_OFFSET - sin_yaw * self.Y_OFFSET
+                        offset_world_y = sin_yaw * self.X_OFFSET + cos_yaw * self.Y_OFFSET
+                        
+                        robot_x = camera_position_world[0][0] - offset_world_x
+                        robot_y = camera_position_world[1][0] - offset_world_y
+
+                        positions.append((robot_x, robot_y))
                         yaws.append(yaw)
 
-
-                        # measurement = np.array([[camera_position_world[0][0]],
-                        #                         [camera_position_world[1][0]],
-                        #                         [camera_position_world[2][0]]], np.float32)
-                        # self.kalman.correct(measurement)
-                        # predicted = self.kalman.predict()
-                        # x = round(float(predicted[0][0]) - 6, 2)
-                        # y = round(float(predicted[1][0]) - 6, 2)
-
-                        # self.robot.updatePosition(dx=x, dy=y, degrees=round(math.degrees(yaw)-90,2))
-
-                        # print("\nCamera Yaw Pitch and Roll")
-                        # print("Yaw (deg):", math.degrees(yaw))
-                        # print("Pitch (deg):", math.degrees(pitch))
-                        # print("Roll (deg):", math.degrees(roll))
-
-                        # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                        print(f"ret: {self.ret}")
+                        print(f"rvec: {rvec}")
+                        print(f"tvec: {tvec}")
+                        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
                         projected_points, _ = cv2.projectPoints(
                             obj_points,
@@ -384,9 +455,10 @@ class Camera():
                     self.kalman.correct(measurement)
                     predicted = self.kalman.predict()
 
-                    x = round(float(predicted[0][0]) - 6, 2)
-                    y = round(float(predicted[1][0]) - 6, 2)
-                    degrees = round(math.degrees(avg_yaw) - 90, 2)
+                    x = round(float(predicted[0][0]), 2)
+                    y = round(float(predicted[1][0]), 2)
+                    degrees = round(math.degrees(avg_yaw) - self.DEGREE_OFFSET, 2)
+                    degrees = (degrees + 180) % 360 - 180
 
                     self.robot.updatePosition(dx=x, dy=y, degrees=degrees)
             self.annotated_frame = image

@@ -99,10 +99,23 @@ class StateMachine:
                 if self.testing:
                     time.sleep(0.1)
                 
+                self.robot.StartIntakeCombine()
+                self.robot.OpenChute()
+                self.robot.OpenClaw()
+                time.sleep(1)
+                self.robot.StopIntakeCombine()
+                time.sleep(1)
+                self.robot.LatchedClaw()
+                self.robot.StartIntakeCombine(reverse=True)
+                time.sleep(1)
+                self.robot.StopIntakeCombine()
+                self.robot.CloseChute()
+                self.robot.CenterCloseClaw()
+
                 self.robot.camera.start_pnp_localization()
 
                 # if self.testing:
-                time.sleep(1000)
+                time.sleep(1)
 
                 print(f"self.robot.testing: {self.robot.testing}")
                 self.robot.LEDStart()
