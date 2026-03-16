@@ -1,64 +1,29 @@
+#!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
+import json
 import math
 import struct
 import sys
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import serial
 
 # =========================
-# configuration
+# Defaults / shared config
 # =========================
-PORT = "/dev/ttyACM0"
-BAUD = 1_000_000
+DEFAULT_PORT = "/dev/ttyACM0"
+DEFAULT_BAUD = 1_000_000
 SER_TIMEOUT = 0.05
-
-# Motor ID mapping assumption. Change to match your robot.
-FL = 0  # front-left
-RL = 1  # rear-left
-FR = 2  # front-right
-RR = 3  # rear-right
-MOTOR_ORDER = [FL, RL, FR, RR]
-
-# Sign correction from chassis-positive wheel motion to motor-positive command.
-# Change signs if a wheel spins opposite of what the chassis model expects.
-# Start with all +1, then calibrate using the included direction test menu.
-MOTOR_DIRECTION_SIGNS: Dict[int, int] = {
-    FL: +1,
-    RL: +1,
-    FR: +1,
-    RR: +1,
-}
-
-# Wheel and robot geometry
-WHEEL_DIAMETER_IN = 2.25
-WHEEL_DIAMETER_M = WHEEL_DIAMETER_IN * 0.0254
-WHEEL_CIRCUMFERENCE_M = math.pi * WHEEL_DIAMETER_M
-
-# Distance from robot center to wheel contact geometry term for omega.
-# Use meters. You need to measure these on your chassis.
-# L = half of front-to-back wheel center spacing
-# W = half of left-to-right wheel center spacing
-HALF_LENGTH_M = 0.2921 # 12in
-HALF_WIDTH_M = 0.3048 # 11.5 in
-K_GEOM = HALF_LENGTH_M + HALF_WIDTH_M
-
-# Critical calibration value. This must be wheel-output encoder counts per full wheel revolution.
-# Your verification output implies this is NOT 3900; that value was for 2 s motion at 0.5 rps.
-# You need to measure this. A common starting placeholder is 1320 or whatever the exact motor gives.
-TICKS_PER_WHEEL_REV = 1320.0
-
-# Motion defaults
-DEFAULT_SPEED_RPS = 0.5
 DEFAULT_TIMEOUT_S = 1.0
 POLL_INTERVAL_S = 0.05
-POSITION_TOLERANCE_M = 0.005
+POSITION_TOLERANCE_IN = 0.2
 MAX_SAFE_RPS = 1.5
 
-# Protocol constants
 HEADER = bytes([0xAA, 0x55])
 FUNC_MOTOR = 0x03
 
@@ -70,6 +35,45 @@ CMD_ENCODER_READ_ONE = 0x10
 CMD_ENCODER_READ_ALL = 0x11
 CMD_ENCODER_RESET_ONE = 0x12
 CMD_ENCODER_RESET_ALL = 0x13
+
+FL = 0
+RL = 1
+FR = 2
+RR = 3
+MOTOR_ORDER = [FL, RL, FR, RR]
+
+DEFAULT_CALIBRATION = {
+    "wheel": {
+        "diameter_in": 2.25,
+    },
+    "robot_geometry": {
+        "half_length_in": 6.0,
+        "half_width_in": 6.0,
+    },
+    "motor_mapping": {
+        "0": "front_left",
+        "1": "rear_left",
+        "2": "front_right",
+        "3": "rear_right",
+    },
+    "motor_direction_signs": {
+        "0": -1,
+        "1": -1,
+        "2": +1,
+        "3": +1,
+    },
+    "counts_per_revolution": {
+        "0": 1289.0,
+        "1": 1317.0,
+        "2": 1287.4,
+        "3": 1270.5,
+    },
+    "straight_line": {
+        "counts_per_meter_avg": 6962.57,
+        "implied_counts_per_rev": 1250.074,
+        "preferred_distance_model": "per_wheel_counts",
+    },
+}
 
 
 @dataclass
@@ -87,13 +91,95 @@ class RobotPose:
     theta_rad: float = 0.0
 
 
+@dataclass
+class Calibration:
+    wheel_diameter_in: float
+    wheel_diameter_m: float
+    wheel_circumference_m: float
+    half_length_in: float
+    half_width_in: float
+    half_length_m: float
+    half_width_m: float
+    k_geom_m: float
+    motor_direction_signs: Dict[int, int]
+    counts_per_rev: Dict[int, float]
+    counts_per_meter_avg: Optional[float] = None
+    implied_counts_per_rev: Optional[float] = None
+    preferred_distance_model: str = "per_wheel_counts"
+
+    @classmethod
+    def load(cls, path: Optional[str]) -> "Calibration":
+        data = DEFAULT_CALIBRATION
+        if path:
+            p = Path(path)
+            data = json.loads(p.read_text(encoding="utf-8"))
+
+        wd_in = float(data["wheel"]["diameter_in"])
+        wd_m = wd_in * 0.0254
+        half_length_in = float(data["robot_geometry"]["half_length_in"])
+        half_width_in = float(data["robot_geometry"]["half_width_in"])
+        half_length_m = half_length_in * 0.0254
+        half_width_m = half_width_in * 0.0254
+
+        direction_signs = {int(k): int(v) for k, v in data["motor_direction_signs"].items()}
+        counts_per_rev = {int(k): float(v) for k, v in data["counts_per_revolution"].items()}
+
+        straight_line = data.get("straight_line", {})
+        return cls(
+            wheel_diameter_in=wd_in,
+            wheel_diameter_m=wd_m,
+            wheel_circumference_m=math.pi * wd_m,
+            half_length_in=half_length_in,
+            half_width_in=half_width_in,
+            half_length_m=half_length_m,
+            half_width_m=half_width_m,
+            k_geom_m=half_length_m + half_width_m,
+            motor_direction_signs=direction_signs,
+            counts_per_rev=counts_per_rev,
+            counts_per_meter_avg=(
+                float(straight_line["counts_per_meter_avg"])
+                if "counts_per_meter_avg" in straight_line and straight_line["counts_per_meter_avg"] is not None
+                else None
+            ),
+            implied_counts_per_rev=(
+                float(straight_line["implied_counts_per_rev"])
+                if "implied_counts_per_rev" in straight_line and straight_line["implied_counts_per_rev"] is not None
+                else None
+            ),
+            preferred_distance_model=straight_line.get("preferred_distance_model", "per_wheel_counts"),
+        )
+
+    def meters_to_counts(self, motor_id: int, meters: float) -> float:
+        if self.preferred_distance_model == "counts_per_meter_avg" and self.counts_per_meter_avg:
+            return meters * self.counts_per_meter_avg
+        wheel_revs = meters / self.wheel_circumference_m
+        return wheel_revs * self.counts_per_rev[motor_id]
+
+    def counts_to_meters(self, motor_id: int, counts: float) -> float:
+        if self.preferred_distance_model == "counts_per_meter_avg" and self.counts_per_meter_avg:
+            return counts / self.counts_per_meter_avg
+        wheel_revs = counts / self.counts_per_rev[motor_id]
+        return wheel_revs * self.wheel_circumference_m
+
+
 class HiwonderMecanumController:
-    def __init__(self, port: str = PORT, baud: int = BAUD, timeout: float = SER_TIMEOUT):
+    """
+    Can be imported and used by other scripts, or run directly via the CLI/menu.
+    """
+
+    def __init__(
+        self,
+        port: str = DEFAULT_PORT,
+        baud: int = DEFAULT_BAUD,
+        timeout: float = SER_TIMEOUT,
+        calibration_file: Optional[str] = None,
+    ):
         self.port = port
         self.baud = baud
         self.timeout = timeout
         self.ser: Optional[serial.Serial] = None
         self.pose = RobotPose()
+        self.cal = Calibration.load(calibration_file)
 
     # -------------------------
     # Serial / protocol helpers
@@ -111,10 +197,8 @@ class HiwonderMecanumController:
         return crc
 
     def build_packet(self, function_code: int, payload: bytes) -> bytes:
-        length = len(payload)
-        body = bytes([function_code, length]) + payload
-        checksum = self.crc8_maxim(body)
-        return HEADER + body + bytes([checksum])
+        body = bytes([function_code, len(payload)]) + payload
+        return HEADER + body + bytes([self.crc8_maxim(body)])
 
     @staticmethod
     def hexdump(data: bytes) -> str:
@@ -125,7 +209,7 @@ class HiwonderMecanumController:
         time.sleep(0.2)
 
     def close(self) -> None:
-        if self.ser is not None and self.ser.is_open:
+        if self.ser and self.ser.is_open:
             self.ser.close()
         self.ser = None
 
@@ -152,7 +236,6 @@ class HiwonderMecanumController:
             b = ser.read(1)
             if not b:
                 continue
-
             val = b[0]
             if state == 0:
                 if val == 0xAA:
@@ -160,7 +243,6 @@ class HiwonderMecanumController:
                     buf.append(val)
                     state = 1
                 continue
-
             if state == 1:
                 if val == 0x55:
                     buf.append(val)
@@ -169,22 +251,18 @@ class HiwonderMecanumController:
                     state = 0
                     buf.clear()
                 continue
-
             if state == 2:
                 buf.append(val)
                 state = 3
                 continue
-
             if state == 3:
                 buf.append(val)
                 payload_len = val
-                remaining = payload_len + 1
-                tail = ser.read(remaining)
-                if len(tail) != remaining:
+                tail = ser.read(payload_len + 1)
+                if len(tail) != payload_len + 1:
                     return None
                 buf.extend(tail)
                 return bytes(buf)
-
         return None
 
     def validate_packet(self, packet: bytes) -> Tuple[int, bytes]:
@@ -192,7 +270,6 @@ class HiwonderMecanumController:
             raise ValueError("Packet too short")
         if packet[0:2] != HEADER:
             raise ValueError("Bad header")
-
         function_code = packet[2]
         length = packet[3]
         payload = packet[4:4 + length]
@@ -202,7 +279,7 @@ class HiwonderMecanumController:
             raise ValueError(f"Bad CRC: rx=0x{rx_crc:02X}, calc=0x{calc_crc:02X}")
         return function_code, payload
 
-    def transact(self, packet: bytes, timeout_s: float = DEFAULT_TIMEOUT_S, label: str = "") -> Tuple[int, bytes, bytes]:
+    def transact(self, packet: bytes, timeout_s: float = DEFAULT_TIMEOUT_S, label: str = "") -> Tuple[int, bytes]:
         ser = self.ensure_open()
         ser.reset_input_buffer()
         self.send_packet(packet, label)
@@ -210,11 +287,10 @@ class HiwonderMecanumController:
         if rx is None:
             raise TimeoutError("Timed out waiting for response packet")
         print("RX:", self.hexdump(rx))
-        func, payload = self.validate_packet(rx)
-        return func, payload, rx
+        return self.validate_packet(rx)
 
     # -------------------------
-    # Low-level packet builders
+    # Packet builders
     # -------------------------
     def motor_run_single_packet(self, motor_id: int, speed_rps: float) -> bytes:
         payload = bytes([CMD_MOTOR_RUN_SINGLE, motor_id]) + struct.pack("<f", speed_rps)
@@ -227,433 +303,475 @@ class HiwonderMecanumController:
         return self.build_packet(FUNC_MOTOR, payload)
 
     def motor_stop_single_packet(self, motor_id: int) -> bytes:
-        payload = bytes([CMD_MOTOR_STOP_SINGLE, motor_id])
-        return self.build_packet(FUNC_MOTOR, payload)
+        return self.build_packet(FUNC_MOTOR, bytes([CMD_MOTOR_STOP_SINGLE, motor_id]))
 
     def motor_stop_mask_packet(self, mask: int) -> bytes:
-        payload = bytes([CMD_MOTOR_STOP_MASK, mask & 0xFF])
-        return self.build_packet(FUNC_MOTOR, payload)
+        return self.build_packet(FUNC_MOTOR, bytes([CMD_MOTOR_STOP_MASK, mask & 0xFF]))
 
     def encoder_read_one_packet(self, motor_id: int) -> bytes:
-        payload = bytes([CMD_ENCODER_READ_ONE, motor_id])
-        return self.build_packet(FUNC_MOTOR, payload)
+        return self.build_packet(FUNC_MOTOR, bytes([CMD_ENCODER_READ_ONE, motor_id]))
 
     def encoder_read_all_packet(self) -> bytes:
-        payload = bytes([CMD_ENCODER_READ_ALL])
-        return self.build_packet(FUNC_MOTOR, payload)
+        return self.build_packet(FUNC_MOTOR, bytes([CMD_ENCODER_READ_ALL]))
 
     def encoder_reset_one_packet(self, motor_id: int) -> bytes:
-        payload = bytes([CMD_ENCODER_RESET_ONE, motor_id])
-        return self.build_packet(FUNC_MOTOR, payload)
+        return self.build_packet(FUNC_MOTOR, bytes([CMD_ENCODER_RESET_ONE, motor_id]))
 
     def encoder_reset_all_packet(self) -> bytes:
-        payload = bytes([CMD_ENCODER_RESET_ALL])
-        return self.build_packet(FUNC_MOTOR, payload)
+        return self.build_packet(FUNC_MOTOR, bytes([CMD_ENCODER_RESET_ALL]))
 
     # -------------------------
     # Response parsing
     # -------------------------
-    def parse_single_motor_payload(self, payload: bytes) -> MotorState:
-        expected_len = 18
-        if len(payload) != expected_len:
-            raise ValueError(f"Single motor response len mismatch: got {len(payload)}, expected {expected_len}")
-        cmd = payload[0]
-        if cmd not in (CMD_ENCODER_READ_ONE, CMD_ENCODER_RESET_ONE):
-            raise ValueError(f"Unexpected single response cmd: 0x{cmd:02X}")
+    @staticmethod
+    def parse_single_motor_payload(payload: bytes) -> MotorState:
+        if len(payload) != 18:
+            raise ValueError(f"Single response payload length mismatch: {len(payload)}")
         motor_id = payload[1]
         count = struct.unpack_from("<q", payload, 2)[0]
         tps = struct.unpack_from("<f", payload, 10)[0]
         rps = struct.unpack_from("<f", payload, 14)[0]
-        return MotorState(motor_id=motor_id, count=count, tps=tps, rps=rps)
+        return MotorState(motor_id, count, tps, rps)
 
-    def parse_all_motor_payload(self, payload: bytes) -> List[MotorState]:
+    @staticmethod
+    def parse_all_motor_payload(payload: bytes) -> List[MotorState]:
         if len(payload) < 2:
-            raise ValueError("All motors response payload too short")
-        cmd = payload[0]
-        if cmd not in (CMD_ENCODER_READ_ALL, CMD_ENCODER_RESET_ALL):
-            raise ValueError(f"Unexpected all response cmd: 0x{cmd:02X}")
+            raise ValueError("All response payload too short")
         motor_num = payload[1]
+        offset = 2
+        states = []
         entry_size = 17
         expected_len = 2 + motor_num * entry_size
         if len(payload) != expected_len:
-            raise ValueError(f"All motors response len mismatch: got {len(payload)}, expected {expected_len}")
-
-        states: List[MotorState] = []
-        offset = 2
+            raise ValueError(f"All response payload mismatch: got {len(payload)}, expected {expected_len}")
         for _ in range(motor_num):
             motor_id = payload[offset]
             count = struct.unpack_from("<q", payload, offset + 1)[0]
             tps = struct.unpack_from("<f", payload, offset + 9)[0]
             rps = struct.unpack_from("<f", payload, offset + 13)[0]
-            states.append(MotorState(motor_id=motor_id, count=count, tps=tps, rps=rps))
+            states.append(MotorState(motor_id, count, tps, rps))
             offset += entry_size
         return states
 
     # -------------------------
-    # Encoder helpers
+    # Basic motor / encoder API
     # -------------------------
-    def read_encoder_one(self, motor_id: int) -> MotorState:
-        func, payload, _ = self.transact(self.encoder_read_one_packet(motor_id), label=f"Read motor {motor_id}")
+    def run_motor(self, motor_id: int, speed_rps: float) -> None:
+        speed_rps = max(-MAX_SAFE_RPS, min(MAX_SAFE_RPS, speed_rps))
+        self.send_packet(self.motor_run_single_packet(motor_id, speed_rps), f"Run motor {motor_id} @ {speed_rps:.3f} rev/s")
+
+    def run_motors(self, motor_speeds: Dict[int, float], label: str = "Run motors") -> None:
+        normalized = []
+        for motor_id, speed_rps in motor_speeds.items():
+            speed_rps = max(-MAX_SAFE_RPS, min(MAX_SAFE_RPS, speed_rps))
+            normalized.append((motor_id, speed_rps))
+        self.send_packet(self.motor_run_multi_packet(normalized), label)
+
+    def stop_motor(self, motor_id: int) -> None:
+        self.send_packet(self.motor_stop_single_packet(motor_id), f"Stop motor {motor_id}")
+
+    def stop_all(self) -> None:
+        self.send_packet(self.motor_stop_mask_packet(0x0F), "Stop all 4 motors")
+        time.sleep(0.15)
+
+    def read_motor(self, motor_id: int) -> MotorState:
+        func, payload = self.transact(self.encoder_read_one_packet(motor_id), label=f"Read motor {motor_id}")
         if func != FUNC_MOTOR:
             raise RuntimeError(f"Unexpected function code: 0x{func:02X}")
         return self.parse_single_motor_payload(payload)
 
-    def read_encoder_all(self) -> Dict[int, MotorState]:
-        func, payload, _ = self.transact(self.encoder_read_all_packet(), label="Read all encoders")
+    def read_all_motors(self) -> List[MotorState]:
+        func, payload = self.transact(self.encoder_read_all_packet(), label="Read all encoders")
         if func != FUNC_MOTOR:
             raise RuntimeError(f"Unexpected function code: 0x{func:02X}")
-        states = self.parse_all_motor_payload(payload)
-        return {s.motor_id: s for s in states}
+        return self.parse_all_motor_payload(payload)
 
-    def reset_all_encoders(self) -> Dict[int, MotorState]:
-        func, payload, _ = self.transact(self.encoder_reset_all_packet(), label="Reset all encoders")
+    def reset_motor(self, motor_id: int) -> MotorState:
+        func, payload = self.transact(self.encoder_reset_one_packet(motor_id), label=f"Reset motor {motor_id}")
         if func != FUNC_MOTOR:
             raise RuntimeError(f"Unexpected function code: 0x{func:02X}")
-        states = self.parse_all_motor_payload(payload)
-        self.pose = RobotPose()
-        return {s.motor_id: s for s in states}
+        return self.parse_single_motor_payload(payload)
+
+    def reset_all_encoders(self) -> List[MotorState]:
+        func, payload = self.transact(self.encoder_reset_all_packet(), label="Reset all encoders")
+        if func != FUNC_MOTOR:
+            raise RuntimeError(f"Unexpected function code: 0x{func:02X}")
+        return self.parse_all_motor_payload(payload)
 
     # -------------------------
-    # Motion primitives
+    # Chassis motion helpers
     # -------------------------
-    def stop_all(self) -> None:
-        self.send_packet(self.motor_stop_mask_packet(0x0F), label="Stop all 4 motors")
-        time.sleep(0.1)
-
-    def run_wheels_rps(self, wheel_rps: Dict[int, float], label: str = "Run wheels") -> None:
-        clamped: List[Tuple[int, float]] = []
-        for motor_id in MOTOR_ORDER:
-            speed = float(wheel_rps.get(motor_id, 0.0))
-            speed = max(-MAX_SAFE_RPS, min(MAX_SAFE_RPS, speed))
-            clamped.append((motor_id, speed))
-        self.send_packet(self.motor_run_multi_packet(clamped), label=label)
-
-    def chassis_to_wheel_rps(self, vx_mps: float, vy_mps: float, omega_radps: float) -> Dict[int, float]:
-        r = WHEEL_DIAMETER_M / 2.0
-        k = K_GEOM
-
-        # Ideal mecanum inverse kinematics using chassis-positive wheel directions.
-        w_fl = (vx_mps - vy_mps - k * omega_radps) / r
-        w_fr = (vx_mps + vy_mps + k * omega_radps) / r
-        w_rl = (vx_mps + vy_mps - k * omega_radps) / r
-        w_rr = (vx_mps - vy_mps + k * omega_radps) / r
-
-        wheel_rps_model = {
-            FL: w_fl / (2.0 * math.pi),
-            FR: w_fr / (2.0 * math.pi),
-            RL: w_rl / (2.0 * math.pi),
-            RR: w_rr / (2.0 * math.pi),
-        }
-
-        # Convert from model-positive to motor-positive using per-wheel sign correction.
+    def _apply_direction_signs(self, wheel_speeds_rev_s: Dict[int, float]) -> Dict[int, float]:
         return {
-            motor_id: MOTOR_DIRECTION_SIGNS[motor_id] * wheel_rps_model[motor_id]
-            for motor_id in MOTOR_ORDER
+            motor_id: wheel_speeds_rev_s[motor_id] * self.cal.motor_direction_signs[motor_id]
+            for motor_id in wheel_speeds_rev_s
         }
 
-    def command_chassis(self, vx_mps: float, vy_mps: float, omega_radps: float, label: str = "Chassis command") -> None:
-        wheel_rps = self.chassis_to_wheel_rps(vx_mps, vy_mps, omega_radps)
-        self.run_wheels_rps(wheel_rps, label=label)
+    def _command_chassis(self, v_forward_m_s: float, v_left_m_s: float, omega_rad_s: float, label: str) -> None:
+        """
+        Chassis convention:
+        - +v_forward_m_s means forward
+        - +v_left_m_s means left strafe
+        - +omega_rad_s means CCW
+        """
+        r = self.cal.wheel_diameter_m / 2.0
+        k = self.cal.k_geom_m
 
-    def move_forward(self, speed_mps: float) -> None:
-        self.command_chassis(vx_mps=+speed_mps, vy_mps=0.0, omega_radps=0.0, label=f"Move forward at {speed_mps:.3f} m/s")
+        fl_rad = (v_forward_m_s - v_left_m_s - k * omega_rad_s) / r
+        fr_rad = (v_forward_m_s + v_left_m_s + k * omega_rad_s) / r
+        rl_rad = (v_forward_m_s + v_left_m_s - k * omega_rad_s) / r
+        rr_rad = (v_forward_m_s - v_left_m_s + k * omega_rad_s) / r
 
-    def move_reverse(self, speed_mps: float) -> None:
-        self.command_chassis(vx_mps=-speed_mps, vy_mps=0.0, omega_radps=0.0, label=f"Move reverse at {speed_mps:.3f} m/s")
+        wheel_rev_s = {
+            FL: fl_rad / (2.0 * math.pi),
+            FR: fr_rad / (2.0 * math.pi),
+            RL: rl_rad / (2.0 * math.pi),
+            RR: rr_rad / (2.0 * math.pi),
+        }
 
-    def strafe_left(self, speed_mps: float) -> None:
-        self.command_chassis(vx_mps=0.0, vy_mps=+speed_mps, omega_radps=0.0, label=f"Strafe left at {speed_mps:.3f} m/s")
+        # Left side should drive in reverse when moving forward:
+        # this is handled by motor_direction_signs, which should be negative on left wheels.
+        motor_cmds = self._apply_direction_signs(wheel_rev_s)
+        self.run_motors(motor_cmds, label)
 
-    def strafe_right(self, speed_mps: float) -> None:
-        self.command_chassis(vx_mps=0.0, vy_mps=-speed_mps, omega_radps=0.0, label=f"Strafe right at {speed_mps:.3f} m/s")
+    def move_forward(self, speed_rev_s: float = 0.5) -> None:
+        v = speed_rev_s * self.cal.wheel_circumference_m
+        self._command_chassis(v_forward_m_s=+v, v_left_m_s=0.0, omega_rad_s=0.0, label=f"Move forward @ {speed_rev_s:.3f} rev/s")
 
-    def rotate_ccw(self, omega_radps: float) -> None:
-        self.command_chassis(vx_mps=0.0, vy_mps=0.0, omega_radps=+omega_radps, label=f"Rotate CCW at {omega_radps:.3f} rad/s")
+    def move_reverse(self, speed_rev_s: float = 0.5) -> None:
+        v = speed_rev_s * self.cal.wheel_circumference_m
+        self._command_chassis(v_forward_m_s=-v, v_left_m_s=0.0, omega_rad_s=0.0, label=f"Move reverse @ {speed_rev_s:.3f} rev/s")
 
-    def rotate_cw(self, omega_radps: float) -> None:
-        self.command_chassis(vx_mps=0.0, vy_mps=0.0, omega_radps=-omega_radps, label=f"Rotate CW at {omega_radps:.3f} rad/s")
+    def strafe_left(self, speed_rev_s: float = 0.5) -> None:
+        v = speed_rev_s * self.cal.wheel_circumference_m
+        self._command_chassis(v_forward_m_s=0.0, v_left_m_s=+v, omega_rad_s=0.0, label=f"Strafe left @ {speed_rev_s:.3f} rev/s")
 
-    def diagonal_front_left(self, speed_mps: float) -> None:
-        self.command_chassis(vx_mps=+speed_mps / math.sqrt(2), vy_mps=+speed_mps / math.sqrt(2), omega_radps=0.0,
-                             label=f"Diagonal front-left at {speed_mps:.3f} m/s")
+    def strafe_right(self, speed_rev_s: float = 0.5) -> None:
+        v = speed_rev_s * self.cal.wheel_circumference_m
+        self._command_chassis(v_forward_m_s=0.0, v_left_m_s=-v, omega_rad_s=0.0, label=f"Strafe right @ {speed_rev_s:.3f} rev/s")
 
-    def diagonal_front_right(self, speed_mps: float) -> None:
-        self.command_chassis(vx_mps=+speed_mps / math.sqrt(2), vy_mps=-speed_mps / math.sqrt(2), omega_radps=0.0,
-                             label=f"Diagonal front-right at {speed_mps:.3f} m/s")
+    def rotate_ccw(self, speed_rev_s: float = 0.4) -> None:
+        tangential = speed_rev_s * self.cal.wheel_circumference_m
+        omega = tangential / max(self.cal.k_geom_m, 1e-9)
+        self._command_chassis(v_forward_m_s=0.0, v_left_m_s=0.0, omega_rad_s=+omega, label=f"Rotate CCW @ {speed_rev_s:.3f} rev/s")
 
-    def diagonal_rear_left(self, speed_mps: float) -> None:
-        self.command_chassis(vx_mps=-speed_mps / math.sqrt(2), vy_mps=+speed_mps / math.sqrt(2), omega_radps=0.0,
-                             label=f"Diagonal rear-left at {speed_mps:.3f} m/s")
+    def rotate_cw(self, speed_rev_s: float = 0.4) -> None:
+        tangential = speed_rev_s * self.cal.wheel_circumference_m
+        omega = tangential / max(self.cal.k_geom_m, 1e-9)
+        self._command_chassis(v_forward_m_s=0.0, v_left_m_s=0.0, omega_rad_s=-omega, label=f"Rotate CW @ {speed_rev_s:.3f} rev/s")
 
-    def diagonal_rear_right(self, speed_mps: float) -> None:
-        self.command_chassis(vx_mps=-speed_mps / math.sqrt(2), vy_mps=-speed_mps / math.sqrt(2), omega_radps=0.0,
-                             label=f"Diagonal rear-right at {speed_mps:.3f} m/s")
+    def diagonal_forward_left(self, speed_rev_s: float = 0.5) -> None:
+        v = speed_rev_s * self.cal.wheel_circumference_m / math.sqrt(2.0)
+        self._command_chassis(v_forward_m_s=+v, v_left_m_s=+v, omega_rad_s=0.0, label=f"Diagonal forward-left @ {speed_rev_s:.3f} rev/s")
+
+    def diagonal_forward_right(self, speed_rev_s: float = 0.5) -> None:
+        v = speed_rev_s * self.cal.wheel_circumference_m / math.sqrt(2.0)
+        self._command_chassis(v_forward_m_s=+v, v_left_m_s=-v, omega_rad_s=0.0, label=f"Diagonal forward-right @ {speed_rev_s:.3f} rev/s")
+
+    def diagonal_reverse_left(self, speed_rev_s: float = 0.5) -> None:
+        v = speed_rev_s * self.cal.wheel_circumference_m / math.sqrt(2.0)
+        self._command_chassis(v_forward_m_s=-v, v_left_m_s=+v, omega_rad_s=0.0, label=f"Diagonal reverse-left @ {speed_rev_s:.3f} rev/s")
+
+    def diagonal_reverse_right(self, speed_rev_s: float = 0.5) -> None:
+        v = speed_rev_s * self.cal.wheel_circumference_m / math.sqrt(2.0)
+        self._command_chassis(v_forward_m_s=-v, v_left_m_s=-v, omega_rad_s=0.0, label=f"Diagonal reverse-right @ {speed_rev_s:.3f} rev/s")
 
     # -------------------------
-    # Odometry and distance control
+    # Odometry / distance
     # -------------------------
-    def counts_to_wheel_distance_m(self, delta_counts: int) -> float:
-        return (float(delta_counts) / TICKS_PER_WHEEL_REV) * WHEEL_CIRCUMFERENCE_M
+    def counts_to_distance_m(self, motor_id: int, delta_counts: float) -> float:
+        return self.cal.counts_to_meters(motor_id, abs(delta_counts))
 
-    def delta_counts_to_body_delta(self, prev_counts: Dict[int, int], new_counts: Dict[int, int]) -> Tuple[float, float, float]:
-        # Convert measured motor-positive deltas back into chassis-positive wheel deltas.
-        d_fl = self.counts_to_wheel_distance_m((new_counts[FL] - prev_counts[FL]) * MOTOR_DIRECTION_SIGNS[FL])
-        d_fr = self.counts_to_wheel_distance_m((new_counts[FR] - prev_counts[FR]) * MOTOR_DIRECTION_SIGNS[FR])
-        d_rl = self.counts_to_wheel_distance_m((new_counts[RL] - prev_counts[RL]) * MOTOR_DIRECTION_SIGNS[RL])
-        d_rr = self.counts_to_wheel_distance_m((new_counts[RR] - prev_counts[RR]) * MOTOR_DIRECTION_SIGNS[RR])
+    def estimate_robot_displacement(self, start_counts: Dict[int, int], end_counts: Dict[int, int]) -> Tuple[float, float, float]:
+        """
+        Returns dx_m, dy_m, dtheta_rad in robot body frame.
+        +dx = forward
+        +dy = left
+        """
+        wheel_m = {}
+        for motor_id in MOTOR_ORDER:
+            raw_delta = end_counts[motor_id] - start_counts[motor_id]
+            wheel_signed = raw_delta / self.cal.motor_direction_signs[motor_id]
+            wheel_m[motor_id] = self.cal.counts_to_meters(motor_id, wheel_signed)
 
-        dx_body = (d_fl + d_fr + d_rl + d_rr) / 4.0
-        dy_body = (-d_fl + d_fr + d_rl - d_rr) / 4.0
-        dtheta = (-d_fl + d_fr - d_rl + d_rr) / (4.0 * K_GEOM)
-        return dx_body, dy_body, dtheta
+        dfl = wheel_m[FL]
+        dfr = wheel_m[FR]
+        drl = wheel_m[RL]
+        drr = wheel_m[RR]
+        k = self.cal.k_geom_m
 
-    def update_pose_from_counts(self, prev_counts: Dict[int, int], new_counts: Dict[int, int]) -> Tuple[float, float, float]:
-        dx_body, dy_body, dtheta = self.delta_counts_to_body_delta(prev_counts, new_counts)
-        theta_mid = self.pose.theta_rad + dtheta / 2.0
+        dx = (dfl + dfr + drl + drr) / 4.0
+        dy = (-dfl + dfr + drl - drr) / 4.0
+        dtheta = (-dfl + dfr - drl + drr) / (4.0 * max(k, 1e-9))
+        return dx, dy, dtheta
 
-        dx_world = dx_body * math.cos(theta_mid) - dy_body * math.sin(theta_mid)
-        dy_world = dx_body * math.sin(theta_mid) + dy_body * math.cos(theta_mid)
+    def read_count_dict(self) -> Dict[int, int]:
+        states = self.read_all_motors()
+        return {s.motor_id: s.count for s in states}
 
-        self.pose.x_m += dx_world
-        self.pose.y_m += dy_world
-        self.pose.theta_rad += dtheta
-        return dx_world, dy_world, dtheta
-
-    def print_pose(self) -> None:
-        print(f"Pose: x={self.pose.x_m:.4f} m, y={self.pose.y_m:.4f} m, theta={math.degrees(self.pose.theta_rad):.2f} deg")
-
-    def move_by_displacement(self, dx_target_m: float, dy_target_m: float, speed_mps: float = 0.12) -> None:
-        if abs(dx_target_m) < 1e-9 and abs(dy_target_m) < 1e-9:
-            print("Requested displacement is zero; nothing to do.")
-            return
-
-        distance_target = math.hypot(dx_target_m, dy_target_m)
-        unit_x = dx_target_m / distance_target
-        unit_y = dy_target_m / distance_target
-
+    def drive_distance(self, inches: float, speed_rev_s: float = 0.4) -> Tuple[float, float, float]:
+        target_m = inches * 0.0254
         self.reset_all_encoders()
-        prev_states = self.read_encoder_all()
-        prev_counts = {mid: s.count for mid, s in prev_states.items()}
-        self.pose = RobotPose()
+        self.move_forward(speed_rev_s)
+        return self._wait_for_displacement(target_dx_m=target_m, target_dy_m=0.0)
 
-        vx = unit_x * speed_mps
-        vy = unit_y * speed_mps
-        self.command_chassis(vx_mps=vx, vy_mps=vy, omega_radps=0.0,
-                             label=f"Move by displacement dx={dx_target_m:.3f} m, dy={dy_target_m:.3f} m")
+    def drive_reverse_distance(self, inches: float, speed_rev_s: float = 0.4) -> Tuple[float, float, float]:
+        target_m = inches * 0.0254
+        self.reset_all_encoders()
+        self.move_reverse(speed_rev_s)
+        return self._wait_for_displacement(target_dx_m=-target_m, target_dy_m=0.0)
 
+    def strafe_distance_left(self, inches: float, speed_rev_s: float = 0.4) -> Tuple[float, float, float]:
+        target_m = inches * 0.0254
+        self.reset_all_encoders()
+        self.strafe_left(speed_rev_s)
+        return self._wait_for_displacement(target_dx_m=0.0, target_dy_m=+target_m)
+
+    def strafe_distance_right(self, inches: float, speed_rev_s: float = 0.4) -> Tuple[float, float, float]:
+        target_m = inches * 0.0254
+        self.reset_all_encoders()
+        self.strafe_right(speed_rev_s)
+        return self._wait_for_displacement(target_dx_m=0.0, target_dy_m=-target_m)
+
+    def drive_diagonal(self, forward_inches: float, left_inches: float, speed_rev_s: float = 0.4) -> Tuple[float, float, float]:
+        target_dx_m = forward_inches * 0.0254
+        target_dy_m = left_inches * 0.0254
+        self.reset_all_encoders()
+
+        mag = math.hypot(target_dx_m, target_dy_m)
+        if mag < 1e-9:
+            return 0.0, 0.0, 0.0
+
+        base_v = speed_rev_s * self.cal.wheel_circumference_m
+        scale = base_v / mag
+        self._command_chassis(
+            v_forward_m_s=target_dx_m * scale,
+            v_left_m_s=target_dy_m * scale,
+            omega_rad_s=0.0,
+            label=f"Drive diagonal toward dx={forward_inches:.3f} in, dy={left_inches:.3f} in @ {speed_rev_s:.3f} rev/s",
+        )
+        return self._wait_for_displacement(target_dx_m=target_dx_m, target_dy_m=target_dy_m)
+
+    def move_xy(self, forward_inches: float, left_inches: float, speed_rev_s: float = 0.4) -> Tuple[float, float, float]:
+        return self.drive_diagonal(forward_inches, left_inches, speed_rev_s)
+
+    def _wait_for_displacement(self, target_dx_m: float, target_dy_m: float) -> Tuple[float, float, float]:
+        tol_m = POSITION_TOLERANCE_IN * 0.0254
+        start = {0: 0, 1: 0, 2: 0, 3: 0}
+        last_dx = 0.0
+        last_dy = 0.0
+        last_dtheta = 0.0
         try:
             while True:
                 time.sleep(POLL_INTERVAL_S)
-                states = self.read_encoder_all()
-                new_counts = {mid: s.count for mid, s in states.items()}
-                self.update_pose_from_counts(prev_counts, new_counts)
-                prev_counts = new_counts
+                now = self.read_count_dict()
+                last_dx, last_dy, last_dtheta = self.estimate_robot_displacement(start, now)
+                err = math.hypot(target_dx_m - last_dx, target_dy_m - last_dy)
+                est_speed = 0.0
+                states = self.read_all_motors()
+                est_speed = sum(abs(self.cal.counts_to_meters(s.motor_id, s.tps)) for s in states) / max(len(states), 1)
 
-                traveled = math.hypot(self.pose.x_m, self.pose.y_m)
-                remaining = max(0.0, distance_target - traveled)
-                self.print_pose()
-                print(f"Target distance={distance_target:.4f} m, traveled={traveled:.4f} m, remaining={remaining:.4f} m")
+                print(
+                    f"Estimated displacement: dx={last_dx/0.0254:.2f} in, "
+                    f"dy={last_dy/0.0254:.2f} in, theta={math.degrees(last_dtheta):.2f} deg, "
+                    f"estimated movement speed={est_speed:.3f} m/s"
+                )
 
-                if remaining <= POSITION_TOLERANCE_M:
+                if err <= tol_m:
                     break
         finally:
             self.stop_all()
+        return last_dx, last_dy, last_dtheta
 
-    def move_distance_forward(self, distance_m: float, speed_mps: float = 0.12) -> None:
-        self.move_by_displacement(dx_target_m=distance_m, dy_target_m=0.0, speed_mps=speed_mps)
+    def test_motor_direction(self, motor_id: int, speed_rev_s: float = 0.2, run_time_s: float = 1.0) -> None:
+        self.reset_motor(motor_id)
+        self.run_motor(motor_id, speed_rev_s)
+        time.sleep(run_time_s)
+        self.stop_motor(motor_id)
+        state = self.read_motor(motor_id)
+        print(
+            f"motor {motor_id}: count={state.count}, tps={state.tps:.3f}, rps={state.rps:.3f}. "
+            "If this sign is opposite your intended chassis-positive direction, flip that motor's direction sign in calibration JSON."
+        )
 
-    def move_distance_reverse(self, distance_m: float, speed_mps: float = 0.12) -> None:
-        self.move_by_displacement(dx_target_m=-distance_m, dy_target_m=0.0, speed_mps=speed_mps)
-
-    def move_distance_left(self, distance_m: float, speed_mps: float = 0.12) -> None:
-        self.move_by_displacement(dx_target_m=0.0, dy_target_m=distance_m, speed_mps=speed_mps)
-
-    def move_distance_right(self, distance_m: float, speed_mps: float = 0.12) -> None:
-        self.move_by_displacement(dx_target_m=0.0, dy_target_m=-distance_m, speed_mps=speed_mps)
-
-    def move_distance_diagonal(self, dx_m: float, dy_m: float, speed_mps: float = 0.12) -> None:
-        self.move_by_displacement(dx_target_m=dx_m, dy_target_m=dy_m, speed_mps=speed_mps)
-
-    # -------------------------
-    # Calibration helpers
-    # -------------------------
-    def direction_test(self, motor_id: int, speed_rps: float = 0.3, seconds: float = 1.0) -> None:
-        self.send_packet(self.motor_run_single_packet(motor_id, speed_rps), label=f"Direction test motor {motor_id}")
-        time.sleep(seconds)
-        self.send_packet(self.motor_stop_single_packet(motor_id), label=f"Stop motor {motor_id}")
-        time.sleep(0.25)
-
-    def estimate_ticks_per_rev(self, motor_id: int, wheel_turns: float) -> None:
-        if wheel_turns <= 0:
-            print("wheel_turns must be > 0")
-            return
-        self.reset_all_encoders()
-        input(f"Manually rotate wheel for motor {motor_id} exactly {wheel_turns} wheel turns, then press Enter... ")
-        state = self.read_encoder_one(motor_id)
-        estimate = abs(state.count) / wheel_turns
-        print(f"Estimated ticks per wheel revolution for motor {motor_id}: {estimate:.3f}")
-        print("Repeat several times and average the result.")
+    def print_calibration(self) -> None:
+        print("\nLoaded calibration")
+        print("------------------")
+        print(f"Wheel diameter: {self.cal.wheel_diameter_in:.3f} in")
+        print(f"Wheel circumference: {self.cal.wheel_circumference_m:.6f} m")
+        print(f"Half length: {self.cal.half_length_in:.3f} in ({self.cal.half_length_m:.6f} m)")
+        print(f"Half width : {self.cal.half_width_in:.3f} in ({self.cal.half_width_m:.6f} m)")
+        print(f"Counts/rev : {self.cal.counts_per_rev}")
+        print(f"Direction signs: {self.cal.motor_direction_signs}")
+        if self.cal.counts_per_meter_avg is not None:
+            print(f"Counts/m avg: {self.cal.counts_per_meter_avg:.3f}")
+        print(f"Preferred distance model: {self.cal.preferred_distance_model}")
 
 
-def print_help() -> None:
-    print(
-        """
-Menu options
-------------
-1  - Read all encoders
-2  - Reset all encoders
-3  - Stop all motors
-4  - Move forward continuously
-5  - Move reverse continuously
-6  - Strafe left continuously
-7  - Strafe right continuously
-8  - Rotate CCW continuously
-9  - Rotate CW continuously
-10 - Diagonal front-left continuously
-11 - Diagonal front-right continuously
-12 - Diagonal rear-left continuously
-13 - Diagonal rear-right continuously
-14 - Move forward a specified distance
-15 - Move reverse a specified distance
-16 - Move left a specified distance
-17 - Move right a specified distance
-18 - Move by arbitrary dx, dy displacement
-19 - Single motor direction test
-20 - Estimate ticks per wheel revolution
-21 - Print current software pose
-q  - Quit
-"""
-    )
-
-
-def get_float(prompt: str, default: Optional[float] = None) -> float:
+def prompt_float(prompt: str, min_value: Optional[float] = None) -> float:
     while True:
         raw = input(prompt).strip()
-        if raw == "" and default is not None:
-            return default
         try:
-            return float(raw)
+            val = float(raw)
         except ValueError:
-            print("Please enter a valid number.")
+            print("Enter a valid number.")
+            continue
+        if min_value is not None and val < min_value:
+            print(f"Enter a value >= {min_value}.")
+            continue
+        return val
 
 
-def get_int(prompt: str, default: Optional[int] = None) -> int:
+def prompt_int(prompt: str, valid: Optional[set[int]] = None) -> int:
     while True:
         raw = input(prompt).strip()
-        if raw == "" and default is not None:
-            return default
         try:
-            return int(raw)
+            val = int(raw)
         except ValueError:
-            print("Please enter a valid integer.")
+            print("Enter a valid integer.")
+            continue
+        if valid is not None and val not in valid:
+            print(f"Enter one of: {sorted(valid)}")
+            continue
+        return val
 
 
-def print_encoder_states(states: Dict[int, MotorState]) -> None:
-    print("\nEncoder states")
-    print("--------------")
-    for motor_id in MOTOR_ORDER:
-        s = states[motor_id]
-        print(f"motor {motor_id}: count={s.count:>8d}   tps={s.tps:>10.3f}   rps={s.rps:>10.3f}")
+def run_interactive_menu(controller: HiwonderMecanumController) -> int:
+    controller.print_calibration()
+    while True:
+        print("\nMenu")
+        print("----")
+        print(" 1) Read all encoders")
+        print(" 2) Reset all encoders")
+        print(" 3) Move forward continuously")
+        print(" 4) Move reverse continuously")
+        print(" 5) Strafe left continuously")
+        print(" 6) Strafe right continuously")
+        print(" 7) Rotate CW continuously")
+        print(" 8) Rotate CCW continuously")
+        print(" 9) Diagonal forward-left continuously")
+        print("10) Diagonal forward-right continuously")
+        print("11) Diagonal reverse-left continuously")
+        print("12) Diagonal reverse-right continuously")
+        print("13) Drive forward a distance (inches)")
+        print("14) Drive reverse a distance (inches)")
+        print("15) Strafe left a distance (inches)")
+        print("16) Strafe right a distance (inches)")
+        print("17) Move by forward/left displacement (inches)")
+        print("18) Test one motor direction")
+        print("19) Stop all")
+        print("20) Show calibration")
+        print("21) Exit")
+
+        choice = prompt_int("Choose an option: ", valid=set(range(1, 22)))
+
+        if choice == 1:
+            states = controller.read_all_motors()
+            for s in states:
+                print(f"motor {s.motor_id}: count={s.count}, tps={s.tps:.3f}, rps={s.rps:.3f}")
+
+        elif choice == 2:
+            states = controller.reset_all_encoders()
+            for s in states:
+                print(f"motor {s.motor_id}: count={s.count}, tps={s.tps:.3f}, rps={s.rps:.3f}")
+
+        elif choice in {3,4,5,6,7,8,9,10,11,12}:
+            speed = prompt_float("Commanded motor speed in rev/s: ", min_value=0.0)
+            if choice == 3:
+                controller.move_forward(speed)
+            elif choice == 4:
+                controller.move_reverse(speed)
+            elif choice == 5:
+                controller.strafe_left(speed)
+            elif choice == 6:
+                controller.strafe_right(speed)
+            elif choice == 7:
+                controller.rotate_cw(speed)
+            elif choice == 8:
+                controller.rotate_ccw(speed)
+            elif choice == 9:
+                controller.diagonal_forward_left(speed)
+            elif choice == 10:
+                controller.diagonal_forward_right(speed)
+            elif choice == 11:
+                controller.diagonal_reverse_left(speed)
+            elif choice == 12:
+                controller.diagonal_reverse_right(speed)
+            print("Motion started. Choose option 19 to stop all.")
+
+        elif choice in {13,14,15,16,17}:
+            speed = prompt_float("Commanded motor speed in rev/s: ", min_value=0.01)
+            if choice == 13:
+                inches = prompt_float("Forward distance in inches: ", min_value=0.0)
+                dx, dy, dtheta = controller.drive_distance(inches, speed)
+            elif choice == 14:
+                inches = prompt_float("Reverse distance in inches: ", min_value=0.0)
+                dx, dy, dtheta = controller.drive_reverse_distance(inches, speed)
+            elif choice == 15:
+                inches = prompt_float("Left strafe distance in inches: ", min_value=0.0)
+                dx, dy, dtheta = controller.strafe_distance_left(inches, speed)
+            elif choice == 16:
+                inches = prompt_float("Right strafe distance in inches: ", min_value=0.0)
+                dx, dy, dtheta = controller.strafe_distance_right(inches, speed)
+            else:
+                fwd = prompt_float("Forward displacement in inches (+forward, -reverse): ")
+                left = prompt_float("Left displacement in inches (+left, -right): ")
+                dx, dy, dtheta = controller.move_xy(fwd, left, speed)
+
+            print(
+                f"Final estimate: dx={dx/0.0254:.3f} in, dy={dy/0.0254:.3f} in, "
+                f"dtheta={math.degrees(dtheta):.3f} deg"
+            )
+
+        elif choice == 18:
+            motor_id = prompt_int("Motor ID (0-3): ", valid={0,1,2,3})
+            speed = prompt_float("Commanded motor speed in rev/s: ", min_value=0.01)
+            run_time = prompt_float("Run time in seconds: ", min_value=0.01)
+            controller.test_motor_direction(motor_id, speed, run_time)
+
+        elif choice == 19:
+            controller.stop_all()
+
+        elif choice == 20:
+            controller.print_calibration()
+
+        elif choice == 21:
+            controller.stop_all()
+            return 0
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Hiwonder mecanum motor controller")
+    parser.add_argument("--port", default=DEFAULT_PORT, help="Serial port")
+    parser.add_argument("--baud", type=int, default=DEFAULT_BAUD, help="Serial baud rate")
+    parser.add_argument("--calibration", default="robot_calibration.json", help="Calibration JSON file")
+    parser.add_argument("--menu", action="store_true", help="Run interactive menu")
+    return parser.parse_args()
 
 
 def main() -> int:
-    ctrl = HiwonderMecanumController()
+    args = parse_args()
+    controller = HiwonderMecanumController(
+        port=args.port,
+        baud=args.baud,
+        calibration_file=args.calibration,
+    )
+
     try:
-        ctrl.open()
-        print(f"Opened {ctrl.port} at {ctrl.baud} bps")
-        print_help()
-
-        while True:
-            choice = input("\nSelect option: ").strip().lower()
-
-            if choice == "1":
-                states = ctrl.read_encoder_all()
-                print_encoder_states(states)
-            elif choice == "2":
-                states = ctrl.reset_all_encoders()
-                print_encoder_states(states)
-            elif choice == "3":
-                ctrl.stop_all()
-            elif choice == "4":
-                speed = get_float("Forward speed (m/s) [0.12]: ", 0.12)
-                ctrl.move_forward(speed)
-            elif choice == "5":
-                speed = get_float("Reverse speed (m/s) [0.12]: ", 0.12)
-                ctrl.move_reverse(speed)
-            elif choice == "6":
-                speed = get_float("Left strafe speed (m/s) [0.12]: ", 0.12)
-                ctrl.strafe_left(speed)
-            elif choice == "7":
-                speed = get_float("Right strafe speed (m/s) [0.12]: ", 0.12)
-                ctrl.strafe_right(speed)
-            elif choice == "8":
-                omega = get_float("CCW angular speed (rad/s) [0.8]: ", 0.8)
-                ctrl.rotate_ccw(omega)
-            elif choice == "9":
-                omega = get_float("CW angular speed (rad/s) [0.8]: ", 0.8)
-                ctrl.rotate_cw(omega)
-            elif choice == "10":
-                speed = get_float("Diagonal front-left speed (m/s) [0.12]: ", 0.12)
-                ctrl.diagonal_front_left(speed)
-            elif choice == "11":
-                speed = get_float("Diagonal front-right speed (m/s) [0.12]: ", 0.12)
-                ctrl.diagonal_front_right(speed)
-            elif choice == "12":
-                speed = get_float("Diagonal rear-left speed (m/s) [0.12]: ", 0.12)
-                ctrl.diagonal_rear_left(speed)
-            elif choice == "13":
-                speed = get_float("Diagonal rear-right speed (m/s) [0.12]: ", 0.12)
-                ctrl.diagonal_rear_right(speed)
-            elif choice == "14":
-                distance = get_float("Forward distance (m): ")
-                speed = get_float("Speed (m/s) [0.12]: ", 0.12)
-                ctrl.move_distance_forward(distance, speed)
-            elif choice == "15":
-                distance = get_float("Reverse distance (m): ")
-                speed = get_float("Speed (m/s) [0.12]: ", 0.12)
-                ctrl.move_distance_reverse(distance, speed)
-            elif choice == "16":
-                distance = get_float("Left distance (m): ")
-                speed = get_float("Speed (m/s) [0.12]: ", 0.12)
-                ctrl.move_distance_left(distance, speed)
-            elif choice == "17":
-                distance = get_float("Right distance (m): ")
-                speed = get_float("Speed (m/s) [0.12]: ", 0.12)
-                ctrl.move_distance_right(distance, speed)
-            elif choice == "18":
-                dx = get_float("Target dx forward (m): ")
-                dy = get_float("Target dy left (m): ")
-                speed = get_float("Translation speed magnitude (m/s) [0.12]: ", 0.12)
-                ctrl.move_distance_diagonal(dx, dy, speed)
-            elif choice == "19":
-                motor = get_int("Motor ID (0-3): ")
-                speed_rps = get_float("Test speed in rps [0.3]: ", 0.3)
-                seconds = get_float("Run time seconds [1.0]: ", 1.0)
-                ctrl.direction_test(motor, speed_rps, seconds)
-            elif choice == "20":
-                motor = get_int("Motor ID (0-3): ")
-                wheel_turns = get_float("Exact number of manual wheel turns: ")
-                ctrl.estimate_ticks_per_rev(motor, wheel_turns)
-            elif choice == "21":
-                ctrl.print_pose()
-            elif choice == "q":
-                break
-            else:
-                print_help()
-
+        controller.open()
+        if args.menu or len(sys.argv) == 1:
+            return run_interactive_menu(controller)
+        controller.print_calibration()
+        return 0
     except KeyboardInterrupt:
         print("\nInterrupted by user.")
-    except Exception as exc:
-        print(f"\nERROR: {exc}")
-        return 2
+        return 130
     finally:
         try:
-            ctrl.stop_all()
+            controller.stop_all()
         except Exception:
             pass
-        ctrl.close()
-
-    return 0
+        controller.close()
 
 
 if __name__ == "__main__":
