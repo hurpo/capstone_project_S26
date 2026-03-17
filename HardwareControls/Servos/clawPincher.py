@@ -53,8 +53,9 @@ class Servo270Positions:
             s.latched()
     """
 
-    def __init__(self, cfg: Servo270Config | None = None):
+    def __init__(self, channel: int = 0, cfg: Servo270Config | None = None):
         self.cfg = cfg or Servo270Config()
+        self.cfg.channel = channel
         self._i2c = busio.I2C(board.SCL, board.SDA)
         self._pca = PCA9685(self._i2c, address=self.cfg.i2c_address)
         self._pca.frequency = self.cfg.frequency_hz

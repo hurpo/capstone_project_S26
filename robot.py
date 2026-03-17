@@ -5,6 +5,7 @@ from HardwareControls.hardware_classes import Magnetometer, LightSensor, Camera
 from HardwareControls.Servos.combine import DualContinuousServos
 from HardwareControls.Servos.chute import SG90Servo
 from HardwareControls.Servos.clawPincher import Servo270Positions
+from HardwareControls.Servos.binFloor import Servo270
 
 TYPE_POSITION = b"P"
 TYPE_ROBOT_DATA = b"R"
@@ -41,8 +42,18 @@ class Robot():
         self.camera = Camera(robot=self)
         if self.servos_connected:
             self.Combine = DualContinuousServos()
+
             self.Claw = Servo270Positions()
+            self.ClawBase = Servo270Positions(channel=1)
+
             self.Chute = SG90Servo()
+
+            self.CameraServo = SG90Servo(channel=15)
+
+            self.BinLift = Servo270Positions(channel=5)
+            self.BinFloor = Servo270()
+            self.BinDump = Servo270Positions(channel=7)
+
         if self.sensors_connected:
             self.LightSensor = LightSensor()
             self.Mag1 = Magnetometer(0x18)
@@ -145,6 +156,39 @@ class Robot():
             self.Claw.latched()
         else:
             print("Latching Claw - No Servos connected")
+
+    def ExtendClawBase(self):
+        self.ClawBase.move_to(target_deg=90)
+    
+    def RetractClawBase(self):
+        self.ClawBase.move_to(target_deg=180)
+
+    #* Bin Controls
+    def LiftBin(self):
+        self.BinLift.move_to(target_deg=90)
+    
+    def LowerBin(self):
+        self.BinLift.move_to(target_deg=180)
+
+    def OpenFloor(self):
+        self.BinFloor.open()
+    
+    def CloseFloor(self):
+        self.BinFloor.close()
+    
+    def DumpBin(self):
+        self.BinDump.set_angle(90)
+    
+    def UndumpBin(self):
+        self.BinDump.set_angle(180)
+
+    #* Camera Servo Controls
+    def defaultCameraAngle(self):
+        self.CameraServo.set_angle(90)
+
+    # Good angles: 90 (default, straight on), 120 (Slightly angled down)
+    def setCameraAngle(self, angle=0):
+        self.CameraServo.set_angle(angle_deg=angle)
 
     #* Send to Client Over Socket Methods
 

@@ -7,7 +7,7 @@ from HardwareControls.CameraControls.USBCam import start_cam, read_april_tag, en
 from robot import Robot
 from StateControllers import State, StateController, ClientController, AutoController
 from HardwareControls.hardware_classes import Camera
-
+time.sleep(2)
 from enum import Enum
 
 
@@ -28,7 +28,7 @@ class StateMachine:
 
         #* Testing Booleans
         self.testing = True
-        self.sensors_connected = False
+        self.sensors_connected = True
 
         self.robot = Robot(testing=self.testing, sensors_connected = self.sensors_connected, socket=self.socket, send_lock=self.send_lock)
         if self.passedCamera:
@@ -88,6 +88,8 @@ class StateMachine:
                 })
                 self.robot.send_position()
 
+                self.robot.defaultCameraAngle()
+
                 if self.testing:
                     time.sleep(5)
 
@@ -99,18 +101,62 @@ class StateMachine:
                 if self.testing:
                     time.sleep(0.1)
                 
+                print("Open floor")
+                self.robot.OpenFloor()
+                time.sleep(2)
+                print("Close floor")
+                self.robot.CloseFloor()
+                time.sleep(2)
+
+                print("Dump Bin")
+                self.robot.DumpBin()
+                time.sleep(2)
+                print("Undump Bin")
+                self.robot.UndumpBin()
+                time.sleep(2)
+                
+                print("Extending Claw")
+                self.robot.ExtendClawBase()
+                time.sleep(2)
+                print("Retracting Claw")
+                self.robot.RetractClawBase()
+                time.sleep(2)
+
+                print("Lifting Bin")
+                self.robot.LiftBin()
+                time.sleep(1)
+                print("Lowering Bin")
+                self.robot.LowerBin()
+                time.sleep(1)
+
+                print("Combine Intake")
                 self.robot.StartIntakeCombine()
-                self.robot.OpenChute()
-                self.robot.OpenClaw()
-                time.sleep(1)
+                time.sleep(2)
+                print("Combine Stopped")
                 self.robot.StopIntakeCombine()
-                time.sleep(1)
-                self.robot.LatchedClaw()
+                time.sleep(2)
+                print("Combine Intake Reversed")
                 self.robot.StartIntakeCombine(reverse=True)
-                time.sleep(1)
+                time.sleep(2)
+                print("Combine Stopped")
                 self.robot.StopIntakeCombine()
-                self.robot.CloseChute()
+                time.sleep(2)
+
+                print("Open claw")
+                self.robot.OpenClaw()
+                time.sleep(2)
+                print("Latch Claw")
+                self.robot.LatchedClaw()
+                time.sleep(2)
+                print("Close Claw")
                 self.robot.CenterCloseClaw()
+                time.sleep(2)
+
+                print("Open Chute")
+                self.robot.OpenChute()
+                time.sleep(2)
+                print("Close Chute")
+                self.robot.CloseChute()
 
                 self.robot.camera.start_pnp_localization()
 
