@@ -119,7 +119,12 @@ class ClientController(StateController):
                 pass
             
             case Command.MANUAL_MODE:
-                pass
+                if self._manual_mode:
+                    self._manual_mode = False
+                    print("Manual mode has been deactivated.")
+                else:
+                    self._manual_mode = True
+                    print("Manual mode has been activated.")
             
             case Command.START_CALIBRATION_IMAGER:
                 pass

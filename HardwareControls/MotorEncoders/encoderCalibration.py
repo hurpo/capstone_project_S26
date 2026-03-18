@@ -1,6 +1,4 @@
 """
-Interactive encoder calibration tool.
-
 This script now writes a shared robot_calibration.json file that MotorControl.py
 can load directly, so the calibration and control workflows stay in sync.
 

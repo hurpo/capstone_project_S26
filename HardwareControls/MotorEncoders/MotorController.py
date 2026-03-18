@@ -12,10 +12,7 @@ from typing import Dict, List, Optional, Tuple
 
 import serial
 
-# =========================
-# Defaults / shared config
-# =========================
-DEFAULT_PORT = "/dev/ttyACM0"
+DEFAULT_PORT = "/dev/ttyACM2"
 DEFAULT_BAUD = 1_000_000
 SER_TIMEOUT = 0.05
 DEFAULT_TIMEOUT_S = 1.0

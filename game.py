@@ -3,6 +3,7 @@ import time
 import datetime
 
 #* Import Functions etc.
+from HardwareControls import xbox
 from HardwareControls.CameraControls.USBCam import start_cam, read_april_tag, end_cam
 from robot import Robot
 from StateControllers import State, StateController, ClientController, AutoController
@@ -40,41 +41,48 @@ class StateMachine:
     def run(self):
         print(f"State Machine starting in {'AUTONOMOUS' if isinstance(self.controller, AutoController) else 'CLIENT-CONTROLLED'} {'[TESTING]' if self.testing else ''} mode")
 
-        while not self.controller.should_start():
-            time.sleep(0.1)
-    
-        print("State Machine Started!")
-        self.current_state = State.INIT
+        print("Controller in use: ", isinstance(self.controller, ClientController))
 
-        while self.current_state != State.END:
-            print(f'self.controller.should_stop(): {self.controller.should_stop()}')
-            if self.controller.should_stop():
-                print("STOP command received - ending state machine")
-                break
+        while(isinstance(self.controller, ClientController)):
 
-            while self.controller.should_pause():
-                print("State machine PAUSED")
+            while not self.controller.should_start():
                 time.sleep(0.1)
-                if self.controller.should_stop():
-                    print("STOP command received while paused")
-                    return
-            
-            should_override, new_state = self.controller.get_state_override()
-            if should_override:
-                print(f"Overriding state: {self.current_state.name} -> {new_state.name}")
-                self.current_state = new_state
-            
-            if self.controller.is_manual_mode():
-                self.handle_manual_mode()
-                continue
-            
-            self.execute_state()
+            self.controller._started = False
+        
+            print("State Machine Started!")
+            self.current_state = State.INIT
 
-            time.sleep(0.1)
-        self.robot.updateRobotData({"State": "END"})
-        print("State Machine COMPLETE")
-        self.robot.camera.stop_pnp_localization()
-        print("GOODBYE!")
+            while self.current_state != State.END:
+                print(f'self.controller.should_stop(): {self.controller.should_stop()}')
+                if self.controller.should_stop():
+                    print("STOP command received - ending state machine")
+                    break
+
+                while self.controller.should_pause():
+                    print("State machine PAUSED")
+                    time.sleep(0.1)
+                    if self.controller.should_stop():
+                        print("STOP command received while paused")
+                        return
+                
+                should_override, new_state = self.controller.get_state_override()
+                if should_override:
+                    print(f"Overriding state: {self.current_state.name} -> {new_state.name}")
+                    self.current_state = new_state
+                
+                if self.controller.is_manual_mode():
+                    self.handle_manual_mode()
+                    continue
+                
+                self.execute_state()
+
+                time.sleep(0.1)
+            self.robot.updateRobotData({"State": "END"})
+            print("State Machine COMPLETE")
+            self.robot.camera.stop_pnp_localization()
+            self.robot.stop_all_motors()
+            self.robot.close_motors()
+            print("GOODBYE!")
 
     def execute_state(self):
         match self.current_state:
@@ -93,85 +101,82 @@ class StateMachine:
                 if self.testing:
                     time.sleep(5)
 
+                self.robot.open_motors()
+                self.robot.stop_all_motors()
                 self.transition_to(State.LED_START) #LED_START
 
             case State.LED_START:
                 self.robot.updateRobotData({"State": "LED_START"})
 
-                if self.testing:
-                    time.sleep(0.1)
+                # if self.testing:
                 
-                print("Open floor")
-                self.robot.OpenFloor()
-                time.sleep(2)
-                print("Close floor")
-                self.robot.CloseFloor()
-                time.sleep(2)
+                    # print("Open floor")
+                    # self.robot.OpenFloor()
+                    # time.sleep(2)
+                    # print("Close floor")
+                    # self.robot.CloseFloor()
+                    # time.sleep(2)
 
-                print("Dump Bin")
-                self.robot.DumpBin()
-                time.sleep(2)
-                print("Undump Bin")
-                self.robot.UndumpBin()
-                time.sleep(2)
-                
-                print("Extending Claw")
-                self.robot.ExtendClawBase()
-                time.sleep(2)
-                print("Retracting Claw")
-                self.robot.RetractClawBase()
-                time.sleep(2)
+                    # print("Dump Bin")
+                    # self.robot.DumpBin()
+                    # time.sleep(2)
+                    # print("Undump Bin")
+                    # self.robot.UndumpBin()
+                    # time.sleep(2)
+                    
+                    # print("Extending Claw")
+                    # self.robot.ExtendClawBase()
+                    # time.sleep(2)
+                    # print("Retracting Claw")
+                    # self.robot.RetractClawBase()
+                    # time.sleep(2)
 
-                print("Lifting Bin")
-                self.robot.LiftBin()
-                time.sleep(1)
-                print("Lowering Bin")
-                self.robot.LowerBin()
-                time.sleep(1)
+                    # print("Lifting Bin")
+                    # self.robot.LiftBin()
+                    # time.sleep(1)
+                    # print("Lowering Bin")
+                    # self.robot.LowerBin()
+                    # time.sleep(1)
 
-                print("Combine Intake")
-                self.robot.StartIntakeCombine()
-                time.sleep(2)
-                print("Combine Stopped")
-                self.robot.StopIntakeCombine()
-                time.sleep(2)
-                print("Combine Intake Reversed")
-                self.robot.StartIntakeCombine(reverse=True)
-                time.sleep(2)
-                print("Combine Stopped")
-                self.robot.StopIntakeCombine()
-                time.sleep(2)
+                    # print("Combine Intake")
+                    # self.robot.StartIntakeCombine()
+                    # time.sleep(2)
+                    # print("Combine Stopped")
+                    # self.robot.StopIntakeCombine()
+                    # time.sleep(2)
+                    # print("Combine Intake Reversed")
+                    # self.robot.StartIntakeCombine(reverse=True)
+                    # time.sleep(2)
+                    # print("Combine Stopped")
+                    # self.robot.StopIntakeCombine()
+                    # time.sleep(2)
 
-                print("Open claw")
-                self.robot.OpenClaw()
-                time.sleep(2)
-                print("Latch Claw")
-                self.robot.LatchedClaw()
-                time.sleep(2)
-                print("Close Claw")
-                self.robot.CenterCloseClaw()
-                time.sleep(2)
+                    # print("Open claw")
+                    # self.robot.OpenClaw()
+                    # time.sleep(2)
+                    # print("Latch Claw")
+                    # self.robot.LatchedClaw()
+                    # time.sleep(2)
+                    # print("Close Claw")
+                    # self.robot.CenterCloseClaw()
+                    # time.sleep(2)
 
-                print("Open Chute")
-                self.robot.OpenChute()
-                time.sleep(2)
-                print("Close Chute")
-                self.robot.CloseChute()
+                    # print("Open Chute")
+                    # self.robot.OpenChute()
+                    # time.sleep(2)
+                    # print("Close Chute")
+                    # self.robot.CloseChute()
 
-                self.robot.camera.start_pnp_localization()
+                    # self.robot.camera.start_pnp_localization()
 
                 # if self.testing:
-                time.sleep(1)
+                # time.sleep(1)
 
                 print(f"self.robot.testing: {self.robot.testing}")
-                self.robot.LEDStart()
+                # self.robot.LEDStart()
                 self.robot.updateRobotData({"LED_Started?": True})
 
-                # self.robot.updatePosition(dy=24, degrees=180)
-
-                if self.testing:
-                    time.sleep(5)
-                # self.transition_to(State.END)
+                self.robot.strafe_distance_right(inches=4.0, speed_rev_s=0.5) #strafe_distance_right
                 self.transition_to(State.RP_SCAN)
 
             case State.RP_SCAN:
@@ -319,8 +324,30 @@ class StateMachine:
         self.current_state = new_state
 
     def handle_manual_mode(self):
-        print("Manual Mode")
-        time.sleep(0.5)
+
+        def show(*args):
+            for arg in args:
+                print(arg, end="")
+
+        def fmtFloat(n):
+            return '{:6.3f}'.format(n)
+
+
+        joy = xbox.Joystick()
+        while self.controller.is_manual_mode() and not joy.Back():
+            print("lol")
+            show("  Left X/Y:", fmtFloat(joy.leftX()), "/", fmtFloat(joy.leftY()))
+            show("  Right X/Y:", fmtFloat(joy.rightX()), "/", fmtFloat(joy.rightY()))
+
+            if float(fmtFloat(joy.leftY())) > 0.25:
+                self.robot.move_forward(float(fmtFloat(joy.leftY())))
+            elif float(fmtFloat(joy.leftY())) < -0.25:
+                self.robot.move_reverse(float(fmtFloat(joy.leftY())))
+            else:
+                self.robot.stop_all_motors()
+
+
+        print("Manual mode ended...")
     
     #! Depricated
     def ScanRendezvousPadLocation(self):

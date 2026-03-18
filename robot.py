@@ -1,16 +1,21 @@
 import json
 import struct
+from pathlib import Path
 import datetime
 from HardwareControls.hardware_classes import Magnetometer, LightSensor, Camera
 from HardwareControls.Servos.combine import DualContinuousServos
 from HardwareControls.Servos.chute import SG90Servo
 from HardwareControls.Servos.clawPincher import Servo270Positions
 from HardwareControls.Servos.binFloor import Servo270
+from HardwareControls.MotorEncoders.MotorController import HiwonderMecanumController
 
 TYPE_POSITION = b"P"
 TYPE_ROBOT_DATA = b"R"
 
 class Robot():
+    _BASE_DIR = Path(__file__).parent
+    print(f"_BASE_DIR: {_BASE_DIR}")
+
     def __init__(self, testing=False, sensors_connected=True, cameras_active=True, socket=None, send_lock=None):
 
         self.socket = socket
@@ -27,6 +32,7 @@ class Robot():
         #* Testing Booleans
         self.testing = testing
 
+        self.drive_train_connected = False
         self.sensors_connected = sensors_connected
         self.cameras_active = cameras_active
         self.servos_connected = True
@@ -40,24 +46,31 @@ class Robot():
     def setupHardware(self):
         print(f"Setting up Hardware...")
         self.camera = Camera(robot=self)
+        if self.drive_train_connected:
+            self.drive_train = HiwonderMecanumController(
+                port="/dev/ttyACM2",
+                baud=1000000,
+                calibration_file=f"{self._BASE_DIR}/HardwareControls/MotorEncoders/robot_calibration.json",
+            )
         if self.servos_connected:
-            self.Combine = DualContinuousServos()
+            # self.Combine = DualContinuousServos()
 
-            self.Claw = Servo270Positions()
-            self.ClawBase = Servo270Positions(channel=1)
+            # self.Claw = Servo270Positions()
+            # self.ClawBase = Servo270Positions(channel=1)
 
-            self.Chute = SG90Servo()
+            # self.Chute = SG90Servo()
 
             self.CameraServo = SG90Servo(channel=15)
 
-            self.BinLift = Servo270Positions(channel=5)
-            self.BinFloor = Servo270()
-            self.BinDump = Servo270Positions(channel=7)
+            # self.BinLift = Servo270Positions(channel=5)
+            # self.BinFloor = Servo270()
+            # self.BinDump = Servo270Positions(channel=7)
 
         if self.sensors_connected:
-            self.LightSensor = LightSensor()
-            self.Mag1 = Magnetometer(0x18)
-            self.Mag2 = Magnetometer(0x19)
+            pass
+            # self.LightSensor = LightSensor()
+            # self.Mag1 = Magnetometer(0x18)
+            # self.Mag2 = Magnetometer(0x19)
         else:
             print("Skipped for testing!")
 
@@ -91,6 +104,116 @@ class Robot():
                 self.robot_data[key] = value
         
         self.send_robot_data(datain)
+
+    #* Movement Controls
+    def open_motors(self):
+        if self.drive_train_connected:
+            self.drive_train.open()
+        else:
+            print("open_motors - Drive Train Disconnected")
+    
+    def close_motors(self):
+        if self.drive_train_connected:
+            self.drive_train.close()
+        else:
+            print("close_motors - Drive Train Disconnected")
+    
+    def stop_all_motors(self):
+        if self.drive_train_connected:
+            self.drive_train.stop_all()
+        else:
+            print("stop_all_motors - Drive Train Disconnected")
+
+    def drive_distance(self, inches: float, speed_rev_s: float = 0.4):
+        if self.drive_train_connected:
+            self.drive_train.drive_distance(inches, speed_rev_s)
+        else:
+            print("drive_distance - Drive Train Disconnected")
+    
+    def drive_reverse_distance(self, inches: float, speed_rev_s: float = 0.4):
+        if self.drive_train_connected:
+            self.drive_train.drive_reverse_distance(inches, speed_rev_s)
+        else:
+            print("drive_reverse_distance - Drive Train Disconnected")
+    
+    def strafe_distance_left(self, inches: float, speed_rev_s: float = 0.4):
+        if self.drive_train_connected:
+            self.drive_train.strafe_distance_left(inches, speed_rev_s)
+        else:
+            print("strafe_distance_left - Drive Train Disconnected")
+    
+    def strafe_distance_right(self, inches: float, speed_rev_s: float = 0.4):
+        if self.drive_train_connected:
+            self.drive_train.strafe_distance_right(inches, speed_rev_s)
+        else:
+            print("strafe_distance_right - Drive Train Disconnected")
+    
+    def drive_diagonal(self, inches: float, speed_rev_s: float = 0.4):
+        if self.drive_train_connected:
+            self.drive_train.drive_diagonal(inches, speed_rev_s)
+        else:
+            print("drive_diagonal - Drive Train Disconnected")
+    
+    # continuous motor driving
+    def move_forward(self, speed_rev_s: float = 0.5):
+        if self.drive_train_connected:
+            self.drive_train.move_forward(speed_rev_s)
+        else:
+            print("move_forward - Drive Train Disconnected")
+
+    def move_reverse(self, speed_rev_s: float = 0.5):
+        if self.drive_train_connected:
+            self.drive_train.move_reverse(speed_rev_s)
+        else:
+            print("move_reverse - Drive Train Disconnected")
+
+    def strafe_left(self, speed_rev_s: float = 0.5):
+        if self.drive_train_connected:
+            self.drive_train.strafe_left(speed_rev_s)
+        else:
+            print("strafe_left - Drive Train Disconnected")
+
+    def strafe_right(self, speed_rev_s: float = 0.5):
+        if self.drive_train_connected:
+            self.drive_train.strafe_right(speed_rev_s)
+        else:
+            print("strafe_right - Drive Train Disconnected")
+
+    def rotate_ccw(self, speed_rev_s: float = 0.4):
+        if self.drive_train_connected:
+            self.drive_train.rotate_ccw(speed_rev_s)
+        else:
+            print("rotate_ccw - Drive Train Disconnected")
+
+    def rotate_cw(self, speed_rev_s: float = 0.4):
+        if self.drive_train_connected:
+            self.drive_train.rotate_cw(speed_rev_s)
+        else:
+            print("rotate_cw - Drive Train Disconnected")
+
+    def diagonal_forward_left(self, speed_rev_s: float = 0.5):
+        if self.drive_train_connected:
+            self.drive_train.diagonal_forward_left(speed_rev_s)
+        else:
+            print("diagonal_forward_left - Drive Train Disconnected")
+
+    def diagonal_forward_right(self, speed_rev_s: float = 0.5):
+        if self.drive_train_connected:
+            self.drive_train.diagonal_forward_right(speed_rev_s)
+        else:
+            print("diagonal_forward_right - Drive Train Disconnected")
+
+    def diagonal_reverse_left(self, speed_rev_s: float = 0.5):
+        if self.drive_train_connected:
+            self.drive_train.diagonal_reverse_left(speed_rev_s)
+        else:
+            print("diagonal_reverse_left - Drive Train Disconnected")
+
+    def diagonal_reverse_right(self, speed_rev_s: float = 0.5):
+        if self.drive_train_connected:
+            self.drive_train.diagonal_reverse_right(speed_rev_s)
+        else:
+            print("diagonal_reverse_right - Drive Train Disconnected")
 
     #* Game State Mathods
 
