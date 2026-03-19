@@ -53,10 +53,10 @@ class Robot():
                 calibration_file=f"{self._BASE_DIR}/HardwareControls/MotorEncoders/robot_calibration.json",
             )
         if self.servos_connected:
-            # self.Combine = DualContinuousServos()
+            self.Combine = DualContinuousServos()
 
-            # self.Claw = Servo270Positions()
-            # self.ClawBase = Servo270Positions(channel=1)
+            self.Claw = Servo270Positions()
+            self.ClawBase = Servo270Positions(channel=1)
 
             # self.Chute = SG90Servo()
 

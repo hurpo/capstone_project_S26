@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Tuple
 
 import serial
 
-DEFAULT_PORT = "/dev/ttyACM2"
+DEFAULT_PORT = "/dev/ttyACM0"
 DEFAULT_BAUD = 1_000_000
 SER_TIMEOUT = 0.05
 DEFAULT_TIMEOUT_S = 1.0
@@ -53,10 +53,10 @@ DEFAULT_CALIBRATION = {
         "3": "rear_right",
     },
     "motor_direction_signs": {
-        "0": -1,
-        "1": -1,
-        "2": +1,
-        "3": +1,
+        "0": +1,
+        "1": +1,
+        "2": -1,
+        "3": -1,
     },
     "counts_per_revolution": {
         "0": 1289.0,
