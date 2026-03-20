@@ -217,8 +217,9 @@ class HiwonderMecanumController:
     def send_packet(self, packet: bytes, label: str = "") -> None:
         ser = self.ensure_open()
         if label:
-            print(f"\n{label}")
-        print("TX:", self.hexdump(packet))
+            pass
+            # print(f"\n{label}")
+        # print("TX:", self.hexdump(packet))
         ser.write(packet)
         ser.flush()
 
@@ -282,7 +283,7 @@ class HiwonderMecanumController:
         rx = self.read_exact_packet(timeout_s=timeout_s)
         if rx is None:
             raise TimeoutError("Timed out waiting for response packet")
-        print("RX:", self.hexdump(rx))
+        # print("RX:", self.hexdump(rx))
         return self.validate_packet(rx)
 
     # -------------------------

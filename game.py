@@ -29,7 +29,7 @@ class StateMachine:
 
         #* Testing Booleans
         self.testing = True
-        self.sensors_connected = True
+        self.sensors_connected = False
 
         self.robot = Robot(testing=self.testing, sensors_connected = self.sensors_connected, socket=self.socket, send_lock=self.send_lock)
         if self.passedCamera:

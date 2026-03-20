@@ -35,7 +35,7 @@ class Robot():
         self.drive_train_connected = False
         self.sensors_connected = sensors_connected
         self.cameras_active = cameras_active
-        self.servos_connected = True
+        self.servos_connected = False
 
         print(f"self.sensors_connected {self.sensors_connected}")
 
