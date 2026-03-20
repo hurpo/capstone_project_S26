@@ -137,7 +137,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Teleop recorder")
     parser.add_argument("--port", default="/dev/ttyACM0")
     parser.add_argument("--baud", type=int, default=1000000)
-    parser.add_argument("--calibration", default="robot_calibration.json")
+    parser.add_argument("--calibration", default="../robot_calibration.json")
     parser.add_argument("--rate", type=float, default=20.0)
     parser.add_argument("--max-rev-s", type=float, default=0.6)
     parser.add_argument("--deadband", type=float, default=0.08)

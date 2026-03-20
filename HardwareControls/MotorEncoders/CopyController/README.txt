@@ -14,9 +14,6 @@ Files:
     2) encoder-tracking mode
   and compares actual encoder counts against the recorded reference counts.
 
-- run_steps.py
-  Executes exported step files later.
-
 Important replay note:
 If the robot was oscillating back and forth during replay, the correction loop was likely too aggressive.
 This updated version lowers the default encoder feedback gain and caps the correction speed.

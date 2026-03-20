@@ -20,11 +20,25 @@ from motion_bridge import (
     tps_dict_from_states,
 )
 
+DEFAULT_CALIBRATION = PARENT_DIR / "robot_calibration.json"
+
+
+def load_serial_settings(calibration_path: str) -> tuple[str, int]:
+    path = Path(calibration_path)
+    data = json.loads(path.read_text(encoding="utf-8"))
+    serial_cfg = data.get("serial", {})
+    port = serial_cfg.get("port", "/dev/ttyACM0")
+    baud = int(serial_cfg.get("baud", 1000000))
+    return port, baud
+
+
 def parse_args():
-    parser = argparse.ArgumentParser(description="Xbox 360 teleop recorder using MotorController.py")
-    parser.add_argument("--port", default="/dev/ttyACM0")
-    parser.add_argument("--baud", type=int, default=1000000)
-    parser.add_argument("--calibration", default="robot_calibration.json")
+    parser = argparse.ArgumentParser(
+        description="Xbox 360 teleop recorder using MotorController.py"
+    )
+    parser.add_argument("--port", default=None, help="Override serial port from calibration JSON")
+    parser.add_argument("--baud", type=int, default=None, help="Override baud rate from calibration JSON")
+    parser.add_argument("--calibration", default=str(DEFAULT_CALIBRATION))
     parser.add_argument("--out", default="teleop_trace.jsonl")
     parser.add_argument("--rate", type=float, default=20.0)
     parser.add_argument("--max-rev-s", type=float, default=0.6)
@@ -32,11 +46,17 @@ def parse_args():
     parser.add_argument("--joystick-index", type=int, default=0)
     return parser.parse_args()
 
+
 def apply_deadband(x: float, d: float) -> float:
     return 0.0 if abs(x) < d else x
 
+
 def main():
     args = parse_args()
+    json_port, json_baud = load_serial_settings(args.calibration)
+    port = args.port if args.port is not None else json_port
+    baud = args.baud if args.baud is not None else json_baud
+
     period = 1.0 / args.rate
     out_path = Path(args.out)
 
@@ -49,8 +69,8 @@ def main():
     js.init()
 
     controller = HiwonderMecanumController(
-        port=args.port,
-        baud=args.baud,
+        port=port,
+        baud=baud,
         calibration_file=args.calibration,
     )
     controller.open()
@@ -64,6 +84,9 @@ def main():
     print("  A button     : mark routine step")
     print("  B button     : save and exit")
     print("  X button     : reset encoder origin")
+    print(f"Using calibration: {args.calibration}")
+    print(f"Using serial port: {port}")
+    print(f"Using baud rate : {baud}")
 
     markers = []
     trace_start = time.monotonic()
@@ -101,7 +124,23 @@ def main():
                 )
 
                 run_wheel_speeds(controller, wheel_cmds, label="Teleop wheel command")
-                states = controller.read_all_motors()
+
+                states = None
+                for _ in range(3):
+                    try:
+                        states = controller.read_all_motors()
+                        break
+                    except Exception as exc:
+                        print(f"Encoder read retry due to: {exc}")
+                        time.sleep(0.01)
+
+                if states is None:
+                    print("Skipping this sample because encoder read failed")
+                    sleep_time = period - (time.monotonic() - loop_t0)
+                    if sleep_time > 0:
+                        time.sleep(sleep_time)
+                    continue
+
                 counts = counts_dict_from_states(states)
                 tps = tps_dict_from_states(states)
                 rps = rps_dict_from_states(states)
@@ -151,9 +190,13 @@ def main():
             pygame.quit()
 
     summary_path = out_path.with_suffix(".summary.json")
-    summary_path.write_text(json.dumps({"markers": markers, "source_trace": str(out_path)}, indent=2), encoding="utf-8")
+    summary_path.write_text(
+        json.dumps({"markers": markers, "source_trace": str(out_path)}, indent=2),
+        encoding="utf-8",
+    )
     print(f"Saved trace to {out_path}")
     print(f"Saved marker summary to {summary_path}")
+
 
 if __name__ == "__main__":
     main()

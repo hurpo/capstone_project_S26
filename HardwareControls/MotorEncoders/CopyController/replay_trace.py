@@ -19,12 +19,26 @@ from motion_bridge import (
     wheel_speed_from_count_error,
 )
 
+DEFAULT_CALIBRATION = PARENT_DIR / "robot_calibration.json"
+
+
+def load_serial_settings(calibration_path: str) -> tuple[str, int]:
+    path = Path(calibration_path)
+    data = json.loads(path.read_text(encoding="utf-8"))
+    serial_cfg = data.get("serial", {})
+    port = serial_cfg.get("port", "/dev/ttyACM0")
+    baud = int(serial_cfg.get("baud", 1000000))
+    return port, baud
+
+
 def load_trace(path: str) -> List[dict]:
     with open(path, "r", encoding="utf-8") as f:
         return [json.loads(line) for line in f if line.strip()]
 
+
 def normalize_motor_dict(d: dict, cast=float) -> Dict[int, float]:
     return {int(k): cast(v) for k, v in d.items()}
+
 
 def interpolate_trace(records: List[dict], t: float) -> dict:
     if t <= records[0]["t"]:
@@ -80,6 +94,7 @@ def interpolate_trace(records: List[dict], t: float) -> dict:
         out["estimated_pose"][key] = lerp(float(a["estimated_pose"][key]), float(b["estimated_pose"][key]))
     return out
 
+
 def export_steps(records: List[dict], out_path: str, pos_thresh_m: float, theta_thresh_rad: float) -> None:
     steps = []
     first = records[0]
@@ -105,7 +120,11 @@ def export_steps(records: List[dict], out_path: str, pos_thresh_m: float, theta_
             })
             last_pose = pose
 
-    Path(out_path).write_text(json.dumps({"steps": steps, "source": "teleop trace export"}, indent=2), encoding="utf-8")
+    Path(out_path).write_text(
+        json.dumps({"steps": steps, "source": "teleop trace export"}, indent=2),
+        encoding="utf-8",
+    )
+
 
 def replay_speed(controller: HiwonderMecanumController, records: List[dict], rate_hz: float, log_path: str) -> None:
     period = 1.0 / rate_hz
@@ -117,7 +136,24 @@ def replay_speed(controller: HiwonderMecanumController, records: List[dict], rat
             now = time.monotonic() - t0
             ref = interpolate_trace(records, now)
             run_wheel_speeds(controller, ref["wheel_cmd_rev_s"], label="Replay speed mode")
-            actual_counts = counts_dict_from_states(controller.read_all_motors())
+
+            actual_states = None
+            for _ in range(3):
+                try:
+                    actual_states = controller.read_all_motors()
+                    break
+                except Exception as exc:
+                    print(f"Replay read retry due to: {exc}")
+                    time.sleep(0.01)
+
+            if actual_states is None:
+                print("Skipping this replay sample because encoder read failed")
+                if now >= records[-1]["t"]:
+                    break
+                time.sleep(max(0.0, period))
+                continue
+
+            actual_counts = counts_dict_from_states(actual_states)
             err = wheel_counts_error(actual_counts, ref["encoder_counts"])
             dx, dy, dtheta = controller.estimate_robot_displacement(origin_counts, actual_counts)
 
@@ -136,6 +172,7 @@ def replay_speed(controller: HiwonderMecanumController, records: List[dict], rat
             time.sleep(max(0.0, period))
 
     controller.stop_all()
+
 
 def replay_encoder_tracking(
     controller: HiwonderMecanumController,
@@ -158,7 +195,23 @@ def replay_encoder_tracking(
             prev_t = now
 
             ref = interpolate_trace(records, now)
-            actual_states = controller.read_all_motors()
+
+            actual_states = None
+            for _ in range(3):
+                try:
+                    actual_states = controller.read_all_motors()
+                    break
+                except Exception as exc:
+                    print(f"Replay read retry due to: {exc}")
+                    time.sleep(0.01)
+
+            if actual_states is None:
+                print("Skipping this replay sample because encoder read failed")
+                if now >= records[-1]["t"]:
+                    break
+                time.sleep(max(0.0, period))
+                continue
+
             actual_counts = counts_dict_from_states(actual_states)
             ref_counts = ref["encoder_counts"]
             err = wheel_counts_error(actual_counts, ref_counts)
@@ -204,13 +257,14 @@ def replay_encoder_tracking(
 
     controller.stop_all()
 
-def main():
+
+def parse_args():
     parser = argparse.ArgumentParser(description="Replay trace using MotorController.py")
     parser.add_argument("--trace", required=True)
     parser.add_argument("--mode", choices=["speed", "encoder"], default="encoder")
-    parser.add_argument("--port", default="/dev/ttyACM0")
-    parser.add_argument("--baud", type=int, default=1000000)
-    parser.add_argument("--calibration", default="robot_calibration.json")
+    parser.add_argument("--port", default=None, help="Override serial port from calibration JSON")
+    parser.add_argument("--baud", type=int, default=None, help="Override baud rate from calibration JSON")
+    parser.add_argument("--calibration", default=str(DEFAULT_CALIBRATION))
     parser.add_argument("--rate", type=float, default=20.0)
     parser.add_argument("--kp-counts", type=float, default=0.15)
     parser.add_argument("--max-correction-rev-s", type=float, default=0.20)
@@ -219,7 +273,14 @@ def main():
     parser.add_argument("--export-steps", default="")
     parser.add_argument("--step-pos-thresh-in", type=float, default=1.0)
     parser.add_argument("--step-theta-thresh-deg", type=float, default=10.0)
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    json_port, json_baud = load_serial_settings(args.calibration)
+    port = args.port if args.port is not None else json_port
+    baud = args.baud if args.baud is not None else json_baud
 
     records = load_trace(args.trace)
 
@@ -233,13 +294,16 @@ def main():
         print(f"Exported routine steps to {args.export_steps}")
 
     controller = HiwonderMecanumController(
-        port=args.port,
-        baud=args.baud,
+        port=port,
+        baud=baud,
         calibration_file=args.calibration,
     )
     controller.open()
     controller.stop_all()
     controller.reset_all_encoders()
+    print(f"Using calibration: {args.calibration}")
+    print(f"Using serial port: {port}")
+    print(f"Using baud rate : {baud}")
 
     try:
         if args.mode == "speed":
@@ -259,6 +323,7 @@ def main():
         controller.close()
 
     print(f"Saved replay log to {args.log}")
+
 
 if __name__ == "__main__":
     main()

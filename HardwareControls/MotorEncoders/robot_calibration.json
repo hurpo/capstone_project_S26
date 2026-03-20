@@ -1,4 +1,8 @@
 {
+  "serial": {
+    "port": "/dev/ttyACM0",
+    "baud": 1000000
+  },
   "wheel": {
     "diameter_in": 2.25
   },

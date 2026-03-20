@@ -102,6 +102,8 @@ class Calibration:
     counts_per_meter_avg: Optional[float] = None
     implied_counts_per_rev: Optional[float] = None
     preferred_distance_model: str = "per_wheel_counts"
+    port: Optional[str] = None
+    baud: Optional[int] = None
 
     @classmethod
     def load(cls, path: Optional[str]) -> "Calibration":
@@ -121,6 +123,8 @@ class Calibration:
         counts_per_rev = {int(k): float(v) for k, v in data["counts_per_revolution"].items()}
 
         straight_line = data.get("straight_line", {})
+        serial_cfg = data.get("serial", {})
+
         return cls(
             wheel_diameter_in=wd_in,
             wheel_diameter_m=wd_m,
@@ -143,6 +147,12 @@ class Calibration:
                 else None
             ),
             preferred_distance_model=straight_line.get("preferred_distance_model", "per_wheel_counts"),
+            port=serial_cfg.get("port"),
+            baud=(
+                int(serial_cfg["baud"])
+                if "baud" in serial_cfg and serial_cfg["baud"] is not None
+                else None
+            ),
         )
 
     def meters_to_counts(self, motor_id: int, meters: float) -> float:
@@ -165,17 +175,17 @@ class HiwonderMecanumController:
 
     def __init__(
         self,
-        port: str = DEFAULT_PORT,
-        baud: int = DEFAULT_BAUD,
+        port: Optional[str] = None,
+        baud: Optional[int] = None,
         timeout: float = SER_TIMEOUT,
         calibration_file: Optional[str] = None,
     ):
-        self.port = port
-        self.baud = baud
+        self.cal = Calibration.load(calibration_file)
+        self.port = port if port is not None else (self.cal.port if self.cal.port is not None else DEFAULT_PORT)
+        self.baud = baud if baud is not None else (self.cal.baud if self.cal.baud is not None else DEFAULT_BAUD)
         self.timeout = timeout
         self.ser: Optional[serial.Serial] = None
         self.pose = RobotPose()
-        self.cal = Calibration.load(calibration_file)
 
     # -------------------------
     # Serial / protocol helpers
@@ -224,42 +234,72 @@ class HiwonderMecanumController:
         ser.flush()
 
     def read_exact_packet(self, timeout_s: float = DEFAULT_TIMEOUT_S) -> Optional[bytes]:
+        """
+        Scan the serial stream until a plausible full packet is found.
+        More robust against stale bytes / stream misalignment.
+        """
         ser = self.ensure_open()
         deadline = time.time() + timeout_s
-        state = 0
         buf = bytearray()
 
         while time.time() < deadline:
-            b = ser.read(1)
-            if not b:
+            chunk = ser.read(1)
+            if not chunk:
                 continue
-            val = b[0]
-            if state == 0:
-                if val == 0xAA:
-                    buf.clear()
-                    buf.append(val)
-                    state = 1
-                continue
-            if state == 1:
-                if val == 0x55:
-                    buf.append(val)
-                    state = 2
-                else:
-                    state = 0
-                    buf.clear()
-                continue
-            if state == 2:
-                buf.append(val)
-                state = 3
-                continue
-            if state == 3:
-                buf.append(val)
-                payload_len = val
-                tail = ser.read(payload_len + 1)
-                if len(tail) != payload_len + 1:
-                    return None
-                buf.extend(tail)
-                return bytes(buf)
+
+            buf += chunk
+
+            # Keep buffer from growing forever
+            if len(buf) > 512:
+                buf = buf[-128:]
+
+            # Look for header anywhere in buffer
+            while len(buf) >= 4:
+                hdr_idx = buf.find(HEADER)
+                if hdr_idx < 0:
+                    # keep only possible partial header tail
+                    buf = buf[-1:]
+                    break
+
+                # discard bytes before header
+                if hdr_idx > 0:
+                    del buf[:hdr_idx]
+
+                # need at least header + func + len
+                if len(buf) < 4:
+                    break
+
+                function_code = buf[2]
+                length = buf[3]
+
+                # Basic sanity checks:
+                # known function codes are small values, and payload length
+                # should not be absurdly large for this protocol.
+                if function_code > 0x20 or length > 128:
+                    del buf[0]
+                    continue
+
+                total_len = 2 + 1 + 1 + length + 1
+                if len(buf) < total_len:
+                    # wait for rest of packet
+                    more = ser.read(total_len - len(buf))
+                    if more:
+                        buf += more
+                    if len(buf) < total_len:
+                        break
+
+                packet = bytes(buf[:total_len])
+                del buf[:total_len]
+
+                try:
+                    self.validate_packet(packet)
+                    return packet
+                except Exception:
+                    # Bad packet; continue scanning the stream
+                    if len(buf) > 0:
+                        continue
+                    break
+
         return None
 
     def validate_packet(self, packet: bytes) -> Tuple[int, bytes]:
@@ -276,15 +316,40 @@ class HiwonderMecanumController:
             raise ValueError(f"Bad CRC: rx=0x{rx_crc:02X}, calc=0x{calc_crc:02X}")
         return function_code, payload
 
-    def transact(self, packet: bytes, timeout_s: float = DEFAULT_TIMEOUT_S, label: str = "") -> Tuple[int, bytes]:
+    def transact(
+        self,
+        packet: bytes,
+        timeout_s: float = DEFAULT_TIMEOUT_S,
+        label: str = "",
+        expected_func: Optional[int] = None,
+    ) -> Tuple[int, bytes]:
+        """
+        Send one packet and wait for a valid response.
+        If expected_func is provided, ignore other valid packets until timeout.
+        """
         ser = self.ensure_open()
         ser.reset_input_buffer()
         self.send_packet(packet, label)
-        rx = self.read_exact_packet(timeout_s=timeout_s)
-        if rx is None:
-            raise TimeoutError("Timed out waiting for response packet")
-        # print("RX:", self.hexdump(rx))
-        return self.validate_packet(rx)
+
+        deadline = time.time() + timeout_s
+        while time.time() < deadline:
+            rx = self.read_exact_packet(timeout_s=max(0.01, deadline - time.time()))
+            if rx is None:
+                break
+
+            try:
+                func, payload = self.validate_packet(rx)
+            except Exception:
+                continue
+
+            # If caller wants a specific function, ignore other packets
+            if expected_func is not None and func != expected_func:
+                print(f"Ignoring unexpected packet function 0x{func:02X}")
+                continue
+
+            return func, payload
+
+        raise TimeoutError("Timed out waiting for expected response packet")
 
     # -------------------------
     # Packet builders
@@ -372,27 +437,36 @@ class HiwonderMecanumController:
         time.sleep(0.15)
 
     def read_motor(self, motor_id: int) -> MotorState:
-        func, payload = self.transact(self.encoder_read_one_packet(motor_id), label=f"Read motor {motor_id}")
-        if func != FUNC_MOTOR:
-            raise RuntimeError(f"Unexpected function code: 0x{func:02X}")
+        func, payload = self.transact(
+            self.encoder_read_one_packet(motor_id),
+            label=f"Read motor {motor_id}",
+            expected_func=FUNC_MOTOR,
+        )
         return self.parse_single_motor_payload(payload)
 
     def read_all_motors(self) -> List[MotorState]:
-        func, payload = self.transact(self.encoder_read_all_packet(), label="Read all encoders")
-        if func != FUNC_MOTOR:
-            raise RuntimeError(f"Unexpected function code: 0x{func:02X}")
+        func, payload = self.transact(
+            self.encoder_read_all_packet(),
+            label="Read all encoders",
+            expected_func=FUNC_MOTOR,
+        )
         return self.parse_all_motor_payload(payload)
 
     def reset_motor(self, motor_id: int) -> MotorState:
-        func, payload = self.transact(self.encoder_reset_one_packet(motor_id), label=f"Reset motor {motor_id}")
-        if func != FUNC_MOTOR:
-            raise RuntimeError(f"Unexpected function code: 0x{func:02X}")
+        func, payload = self.transact(
+            self.encoder_reset_one_packet(motor_id),
+            label=f"Reset motor {motor_id}",
+            expected_func=FUNC_MOTOR,
+        )
         return self.parse_single_motor_payload(payload)
 
+
     def reset_all_encoders(self) -> List[MotorState]:
-        func, payload = self.transact(self.encoder_reset_all_packet(), label="Reset all encoders")
-        if func != FUNC_MOTOR:
-            raise RuntimeError(f"Unexpected function code: 0x{func:02X}")
+        func, payload = self.transact(
+            self.encoder_reset_all_packet(),
+            label="Reset all encoders",
+            expected_func=FUNC_MOTOR,
+        )
         return self.parse_all_motor_payload(payload)
 
     # -------------------------
