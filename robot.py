@@ -58,6 +58,8 @@ class Robot():
             self.Claw = Servo270Positions()              # In Pinout
             self.ClawBase = Servo270Positions(channel=1) # In Pinout
 
+            self.RackPinion = Servo270Positions(channel=8) # In Pinout
+
             # self.Chute = SG90Servo()                     # In Pinout
 
             self.CameraServo = SG90Servo(channel=15)     # In Pinout
@@ -275,22 +277,27 @@ class Robot():
             print("Closing Claw - No Servos connected")
     
     def LatchedClaw(self):
+        #TODO Change Angle ????? Unsure
         if self.servos_connected:
             self.Claw.latched()
         else:
             print("Latching Claw - No Servos connected")
 
     def ExtendClawBase(self):
+        #TODO Change Angle
         self.ClawBase.move_to(target_deg=90)
     
     def RetractClawBase(self):
+        #TODO Change Angle
         self.ClawBase.move_to(target_deg=180)
 
     #* Bin Controls
     def LiftBin(self):
+        #TODO Change Angle
         self.BinLift.move_to(target_deg=90)
     
     def LowerBin(self):
+        #TODO Change Angle
         self.BinLift.move_to(target_deg=180)
 
     def OpenFloor(self):
@@ -300,10 +307,21 @@ class Robot():
         self.BinFloor.close()
     
     def DumpBin(self):
+        #TODO Change Angle
         self.BinDump.set_angle(90)
     
     def UndumpBin(self):
+        #TODO Change Angle
         self.BinDump.set_angle(180)
+
+    #* Rack and Pinion Controls
+    def bottomRackPinion(self):
+        #TODO Change Angle
+        self.RackPinion.set_angle(90)
+    
+    def topRackPinion(self):
+        #TODO Change Angle
+        self.RackPinion.set_angle(180)
 
     #* Camera Servo Controls
     def defaultCameraAngle(self):
