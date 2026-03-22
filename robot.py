@@ -53,18 +53,18 @@ class Robot():
                 calibration_file=f"{self._BASE_DIR}/HardwareControls/MotorEncoders/robot_calibration.json",
             )
         if self.servos_connected:
-            self.Combine = DualContinuousServos()
+            self.Combine = DualContinuousServos()        # In Pinout
 
-            self.Claw = Servo270Positions()
-            self.ClawBase = Servo270Positions(channel=1)
+            self.Claw = Servo270Positions()              # In Pinout
+            self.ClawBase = Servo270Positions(channel=1) # In Pinout
 
-            # self.Chute = SG90Servo()
+            # self.Chute = SG90Servo()                     # In Pinout
 
-            self.CameraServo = SG90Servo(channel=15)
+            self.CameraServo = SG90Servo(channel=15)     # In Pinout
 
-            # self.BinLift = Servo270Positions(channel=5)
-            # self.BinFloor = Servo270()
-            # self.BinDump = Servo270Positions(channel=7)
+            # self.BinLift = Servo270Positions(channel=5)  # In Pinout
+            # self.BinFloor = Servo270()                   # In Pinout
+            # self.BinDump = Servo270Positions(channel=7)  # In Pinout
 
         if self.sensors_connected:
             pass

@@ -10,12 +10,15 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PARENT_DIR = SCRIPT_DIR.parent
 PROJECT_DIR = PARENT_DIR.parent.parent
 
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
 if str(PARENT_DIR) not in sys.path:
     sys.path.insert(0, str(PARENT_DIR))
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
 from MotorController import HiwonderMecanumController, MOTOR_ORDER
+
 from motion_bridge import (
     counts_dict_from_states,
     run_wheel_speeds,
@@ -31,7 +34,6 @@ from StateControllers import State
 
 def normalize_motor_dict(d: dict, cast=float) -> Dict[int, float]:
     return {int(k): cast(v) for k, v in d.items()}
-
 
 def interpolate_records(records: List[dict], t: float) -> dict:
     if t <= records[0]["t"]:
@@ -173,7 +175,7 @@ def run_routine(
     controller: HiwonderMecanumController = None,
     port: str = "/dev/ttyACM0",
     baud: int = 1000000,
-    calibration: str = "robot_calibration.json",
+    calibration: str =SCRIPT_DIR.parent / "robot_calibration.json",
     kp_counts: float = 0.15,
     max_correction_rev_s: float = 0.20,
     blend: float = 1.0,
@@ -220,6 +222,50 @@ def run_routine(
             controller.stop_all()
             controller.close()
 
+def main_from_name(
+    routine_name: str = "main_routine",
+    port: str = "/dev/ttyACM0",
+    baud: int = 1000000,
+    calibration: str = SCRIPT_DIR.parent / "robot_calibration.json",
+    kp_counts: float = 0.05,
+    max_correction_rev_s: float = 0.08,
+    blend: float = 1.0,
+    rate: float = 12.0,
+):
+    routine         = load_routine(routine_name)
+    recorded_states = list(routine.get("states", {}).keys())
+
+    if not recorded_states:
+        print(f"[run_states] No states found in routine '{routine_name}'.")
+        return
+
+    controller = HiwonderMecanumController(
+        port=port,
+        baud=baud,
+        calibration_file=calibration,
+    )
+    controller.open()
+    controller.stop_all()
+
+    try:
+        for state_name in recorded_states:
+            records = routine["states"][state_name]
+            if not records:
+                print(f"\n=== State: {state_name} — no data, skipping. ===")
+                continue
+            print(f"\n=== State: {state_name} ({len(records)} records, "
+                  f"duration={records[-1]['t']:.2f}s) ===")
+            _execute_state_records(
+                controller=controller,
+                records=records,
+                kp_counts=kp_counts,
+                max_correction_rev_s=max_correction_rev_s,
+                blend=blend,
+                rate_hz=rate,
+            )
+    finally:
+        controller.stop_all()
+        controller.close()
 
 # ---------------------------------------------------------------------------
 # Direct execution — run all states in order
@@ -229,7 +275,7 @@ def main():
     parser = argparse.ArgumentParser(description="Run a saved routine")
     parser.add_argument("--port",                  default="/dev/ttyACM0")
     parser.add_argument("--baud",                  type=int,   default=1000000)
-    parser.add_argument("--calibration",           default="robot_calibration.json")
+    parser.add_argument("--calibration",           default=SCRIPT_DIR.parent / "robot_calibration.json")
     parser.add_argument("--kp-counts",             type=float, default=0.15)
     parser.add_argument("--max-correction-rev-s",  type=float, default=0.20)
     parser.add_argument("--blend",                 type=float, default=1.0)

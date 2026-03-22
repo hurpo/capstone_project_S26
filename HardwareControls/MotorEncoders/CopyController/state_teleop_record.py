@@ -17,7 +17,7 @@ from motion_bridge import (
     joystick_to_chassis_and_wheels,
     rps_dict_from_states,
     run_wheel_speeds,
-    tps_dict_from_states,
+    tps_dict_from_states,gi
 )
 
 SCRIPT_DIR = Path(__file__).resolve().parent          # CopyController/
@@ -44,6 +44,12 @@ _remote_input: dict = {
     "trigger_l": 0.0, "trigger_r": 0.0, "d_x": 0.0, "d_y": 0.0,
 }
 _remote_input_lock = threading.Lock()
+
+_send_popup_fn = None
+
+def set_popup_callback(fn):
+    global _send_popup_fn
+    _send_popup_fn = fn
 
 # Signals sent from client
 _signals: set = set()
@@ -212,6 +218,9 @@ def _wait_for_signal(direct: bool, *sigs: str, prompt: str = "") -> str:
         time.sleep(0.05)
 
 def _prompt_overwrite_or_append(direct: bool, state: State) -> str:
+    if _send_popup_fn:
+        _send_popup_fn("OVERWRITE_OR_APPEND")
+    
     return _wait_for_signal(
         direct, "overwrite", "append",
         prompt=f"State {state.name} already has data. "
@@ -219,7 +228,8 @@ def _prompt_overwrite_or_append(direct: bool, state: State) -> str:
     )
 
 def _prompt_position_warning(direct: bool, state: State) -> bool:
-    """Returns True if warning disabled for rest of session."""
+    if _send_popup_fn:
+        _send_popup_fn("POSITION_WARNING")
     print(f"\n⚠ WARNING: Moving to state {state.name}. Robot position may not match "
           f"the end position of the previous state.")
     print("Press [y/ok] to continue, [d/disable_warn] to continue and disable warning.")
@@ -227,6 +237,8 @@ def _prompt_position_warning(direct: bool, state: State) -> bool:
     return sig == "disable_warn"
 
 def _prompt_title(direct: bool) -> str:
+    if _send_popup_fn:
+        _send_popup_fn("PROMPT_TITLE")
     if direct:
         default = _next_routine_name()
         print(f"\nEnter routine name (leave blank for '{default}'): ", end="", flush=True)
@@ -244,16 +256,9 @@ def _prompt_title(direct: bool) -> str:
                         return name if name else _next_routine_name()
             time.sleep(0.05)
 
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
-def main():
-    args = parse_args()
+def _run(args):
     direct = not args.client
     period = 1.0 / args.rate
-
-    # Start client listener thread if needed
     if not direct:
         t = threading.Thread(target=_client_listener, args=(args.client_port,), daemon=True)
         t.start()
@@ -315,6 +320,8 @@ def main():
             return lx, ly, rx
 
     print(f"\n[State 1/{len(RECORDABLE_STATES)}] {current_state().name} — press [r] to start recording")
+    if _send_popup_fn:
+        _send_popup_fn(f"STATE:{current_state().name}")
 
     try:
         while True:
@@ -328,6 +335,8 @@ def main():
                     state_index += 1
                     first_move_in_state = True
                     print(f"\n[State {state_index+1}/{len(RECORDABLE_STATES)}] {current_state().name} — press [r] to start recording")
+                    if _send_popup_fn:
+                        _send_popup_fn(f"STATE:{current_state().name}")
                 else:
                     print(f"\nYou are at the end of the routine ({current_state().name} is the last state).")
                     print("  [x] finish and save")
@@ -341,6 +350,8 @@ def main():
                     state_index -= 1
                     first_move_in_state = True
                     print(f"\n[State {state_index+1}/{len(RECORDABLE_STATES)}] {current_state().name} — press [r] to start recording")
+                    if _send_popup_fn:
+                        _send_popup_fn(f"STATE:{current_state().name}")
                 else:
                     print("Already at first state.")
 
@@ -446,6 +457,29 @@ def main():
     title = _prompt_title(direct)
     _save_routine(title, routine_data)
     print(f"\nDone. Routine saved as '{title}'.")
+
+def start(port: str = "/dev/ttyACM0", baud: int = 1000000, rate: float = 20.0):
+    import argparse
+    args = argparse.Namespace(
+        port=port,
+        baud=baud,
+        calibration=str(SCRIPT_DIR.parent / "robot_calibration.json"),
+        rate=rate,
+        max_rev_s=0.6,
+        deadband=0.08,
+        client=True,
+        client_port=12346,
+    )
+    print("Running Auto-Builder from Client")
+    _run(args)
+    
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+def main():
+    args = parse_args()
+    _run(args)
 
 
 if __name__ == "__main__":
