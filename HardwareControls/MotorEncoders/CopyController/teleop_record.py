@@ -51,6 +51,28 @@ def apply_deadband(x: float, d: float) -> float:
     return 0.0 if abs(x) < d else x
 
 
+def quantize_left_stick_4dir(left_x: float, left_y: float) -> tuple[float, float]:
+    """
+    Only allow one of four directions from the left stick:
+      - forward/reverse from Y
+      - strafe left/right from X
+    No diagonal left-stick movement is allowed.
+
+    Strategy:
+      - whichever axis has larger magnitude wins
+      - the other axis is forced to zero
+    """
+    if abs(left_x) > abs(left_y):
+        return left_x, 0.0
+    elif abs(left_y) > abs(left_x):
+        return 0.0, left_y
+    else:
+        # tie case: if both are zero, stay zero; otherwise prefer Y
+        if left_x == 0.0 and left_y == 0.0:
+            return 0.0, 0.0
+        return 0.0, left_y
+
+
 def main():
     args = parse_args()
     json_port, json_baud = load_serial_settings(args.calibration)
@@ -79,7 +101,8 @@ def main():
 
     print("Teleop controls")
     print("  Left stick Y : forward/reverse")
-    print("  Left stick X : strafe")
+    print("  Left stick X : strafe left/right")
+    print("  Left stick   : 4-direction only, no diagonals")
     print("  Right stick X: rotate")
     print("  A button     : mark routine step")
     print("  B button     : save and exit")
@@ -98,9 +121,11 @@ def main():
                 loop_t0 = time.monotonic()
                 pygame.event.pump()
 
-                left_x = apply_deadband(js.get_axis(0), args.deadband)
-                left_y = apply_deadband(js.get_axis(1), args.deadband)
+                raw_left_x = apply_deadband(js.get_axis(0), args.deadband)
+                raw_left_y = apply_deadband(js.get_axis(1), args.deadband)
                 right_x = apply_deadband(js.get_axis(3), args.deadband)
+
+                left_x, left_y = quantize_left_stick_4dir(raw_left_x, raw_left_y)
 
                 a_pressed = js.get_button(0)
                 b_pressed = js.get_button(1)
@@ -149,7 +174,13 @@ def main():
 
                 record = {
                     "t": elapsed,
-                    "joystick": {"left_x": left_x, "left_y": left_y, "right_x": right_x},
+                    "joystick": {
+                        "raw_left_x": raw_left_x,
+                        "raw_left_y": raw_left_y,
+                        "left_x": left_x,
+                        "left_y": left_y,
+                        "right_x": right_x,
+                    },
                     "chassis_cmd": {
                         "v_forward_m_s": v_forward,
                         "v_left_m_s": v_left,
@@ -174,6 +205,8 @@ def main():
 
                 print(
                     f"t={elapsed:6.2f}s  "
+                    f"raw=({raw_left_x: .3f}, {raw_left_y: .3f})  "
+                    f"quantized=({left_x: .3f}, {left_y: .3f})  "
                     f"cmd fwd={v_forward: .3f} m/s left={v_left: .3f} m/s rot={omega: .3f} rad/s  "
                     f"pose x={dx: .3f} y={dy: .3f} th={dtheta: .3f}"
                 )
