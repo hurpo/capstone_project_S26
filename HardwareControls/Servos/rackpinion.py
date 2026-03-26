@@ -37,7 +37,7 @@ except ImportError:
 # Config
 # ---------------------------
 I2C_ADDRESS = 0x40
-CHANNEL = 0
+CHANNEL = 5
 PWM_FREQUENCY_HZ = 50
 
 # Starting calibration values for many 270° servos

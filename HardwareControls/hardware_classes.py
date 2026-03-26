@@ -13,6 +13,8 @@ import math
 import threading
 import os
 
+from .MotorEncoders.testing.linkVerify import play_hw_error
+
 class Camera():
     _BASE_DIR = Path(__file__).parent
     APRIL_TAG_CORNERS_3DWRLDPOS = _BASE_DIR / 'april_tag_3dwrld_pos.json'
@@ -86,7 +88,8 @@ class Camera():
             except Exception as e:
                 print(f"Error: {e}")
                 continue
-        print("Failed to open camera at any saved path!")
+        print("🤬😿Failed to open camera at any saved path!")
+        play_hw_error()
     
     def end_cam(self):
         print("Ending Camera...")

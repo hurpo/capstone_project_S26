@@ -6,6 +6,8 @@ import math
 import time
 from typing import Dict, List
 
+
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 PARENT_DIR = SCRIPT_DIR.parent
 PROJECT_DIR = PARENT_DIR.parent.parent
@@ -26,11 +28,103 @@ from motion_bridge import (
     wheel_speed_from_count_error,
 )
 from StateControllers import State
-
+from HardwareControls.Servos.clawBase import ClawBaseServo
+from HardwareControls.Servos.clawPincher import Servo270Positions
+from HardwareControls.Servos.rackpinion import Servo270 as RackPinionServo
+from HardwareControls.Servos.binDump import BinDumpServo
+from HardwareControls.Servos.falseFloor import Servo270 as FalseFloorServo
 
 # ---------------------------------------------------------------------------
 # Helpers — identical to replay_trace.py
 # ---------------------------------------------------------------------------
+
+class ReplayServoController:
+    def __init__(self):
+        self.claw_base = ClawBaseServo()
+        self.claw_pincher = Servo270Positions(channel=0)
+        self.rack_pinion = RackPinionServo(channel=5)
+        self.bin_dump = BinDumpServo()
+        self.false_floor = FalseFloorServo(channel=6)
+
+        self.claw_base.retract()
+        self.claw_pincher.center_closed()
+        self.rack_pinion.lower()
+        self.bin_dump.close()
+        self.false_floor.close()
+
+        self.claw_pincher_state = "closed"
+        self.rack_pinion_up = False
+        self.bin_dump_open = False
+        self.false_floor_open = False
+        self.claw_base_extended = False
+
+    def apply_action(self, action: str):
+        if action == "claw_base_extend":
+            self.claw_base.extend()
+            self.claw_base_extended = True
+        elif action == "claw_base_retract":
+            self.claw_base.retract()
+            self.claw_base_extended = False
+        elif action == "claw_pincher_cycle":
+            if self.claw_pincher_state == "closed":
+                self.claw_pincher.open()
+                self.claw_pincher_state = "open"
+            elif self.claw_pincher_state == "open":
+                self.claw_pincher.latched()
+                self.claw_pincher_state = "latched"
+            else:
+                self.claw_pincher.center_closed()
+                self.claw_pincher_state = "closed"
+        elif action == "rack_pinion_toggle":
+            if self.rack_pinion_up:
+                self.rack_pinion.lower()
+                self.rack_pinion_up = False
+            else:
+                self.rack_pinion.raise_up()
+                self.rack_pinion_up = True
+        elif action == "bin_dump_toggle":
+            if self.bin_dump_open:
+                self.bin_dump.close()
+                self.bin_dump_open = False
+            else:
+                self.bin_dump.open()
+                self.bin_dump_open = True
+        elif action == "false_floor_open":
+            self.false_floor.open()
+            self.false_floor_open = True
+        elif action == "false_floor_close":
+            self.false_floor.close()
+            self.false_floor_open = False
+
+    def apply_events(self, events: List[dict]):
+        for e in events:
+            if "action" in e:
+                self.apply_action(e["action"])
+        
+    def snapshot(self) -> dict:
+        return {
+            "claw_base": "extended" if self.claw_base_extended else "retracted",
+            "claw_pincher": self.claw_pincher_state,
+            "rack_pinion": "raised" if self.rack_pinion_up else "lowered",
+            "bin_dump": "open" if self.bin_dump_open else "closed",
+            "false_floor": "open" if self.false_floor_open else "closed",
+        }
+
+    def deinit(self) -> None:
+        for servo in (self.claw_base, self.claw_pincher, self.rack_pinion, self.bin_dump, self.false_floor):
+            try:
+                servo.deinit()
+            except Exception:
+                pass
+
+def apply_pending_servo_events(servos, records, next_event_index, now):
+    while next_event_index < len(records) and records[next_event_index]["t"] <= now:
+        events = records[next_event_index].get("servo_events", [])
+        if events:
+            servos.apply_events(events)
+            print(f"Servo actions @ {records[next_event_index]['t']:.2f}s")
+        next_event_index += 1
+    return next_event_index
 
 def normalize_motor_dict(d: dict, cast=float) -> Dict[int, float]:
     return {int(k): cast(v) for k, v in d.items()}
@@ -85,41 +179,90 @@ def interpolate_records(records: List[dict], t: float) -> dict:
 
     return out
 
+def find_closest_record_by_encoder(actual_counts, records):
+    best_idx = 0
+    best_err = float("inf")
+
+    for i, r in enumerate(records):
+        ref_counts = normalize_motor_dict(r["encoder_counts"], int)
+
+        err = sum(
+            abs(actual_counts[m] - ref_counts.get(m, 0))
+            for m in MOTOR_ORDER
+        )
+
+        if err < best_err:
+            best_err = err
+            best_idx = i
+
+    return records[best_idx]
 
 # ---------------------------------------------------------------------------
 # Core execution — mirrors replay_encoder_tracking from replay_trace.py
 # ---------------------------------------------------------------------------
 
 def _execute_state_records(
-    controller: HiwonderMecanumController,
-    records: List[dict],
-    kp_counts: float,
-    max_correction_rev_s: float,
-    blend: float,
-    rate_hz: float,
+    controller,
+    servos_in,
+    records,
+    kp_counts,
+    max_correction_rev_s,
+    blend,
+    rate_hz,
+    mode="encoder"
 ):
-    period  = 1.0 / rate_hz
-    t0      = time.monotonic()
-    prev_t  = 0.0
+    period = 1.0 / rate_hz
+    t0 = time.monotonic()
+    prev_t = 0.0
+    next_event_index = 0
+
+    servos = servos_in
+
+    final_counts = normalize_motor_dict(records[-1]["encoder_counts"], int)
 
     while True:
         now = time.monotonic() - t0
-        dt  = max(now - prev_t, 1e-3)
+        dt = max(now - prev_t, 1e-3)
         prev_t = now
 
-        ref          = interpolate_records(records, now)
-        actual_states = controller.read_all_motors()
+
+        # ref = interpolate_records(records, now)
+
+        # --- Robust encoder read ---
+        actual_states = None
+        for _ in range(3):
+            try:
+                actual_states = controller.read_all_motors()
+                break
+            except Exception as exc:
+                print(f"Retry encoder read: {exc}")
+                time.sleep(0.01)
+
+        if actual_states is None:
+            print("Skipping sample (encoder read failed)")
+            if now >= records[-1]["t"]:
+                break
+            time.sleep(period)
+            continue
+
         actual_counts = counts_dict_from_states(actual_states)
 
-        # Offset ref counts to be relative to robot's current position.
-        # Because encoder_counts in the JSON are saved relative to recording
-        # origin (0-based), and actual_counts reflect whatever the hardware
-        # currently reads, we anchor using the first record as the bridge.
+        if mode == "time":
+            ref = interpolate_records(records, now)
+        else:
+            ref = find_closest_record_by_encoder(actual_counts, records)
+
+        # --- Servo replay ---
+        next_event_index = apply_pending_servo_events(
+            servos, records, next_event_index, now
+        )
+
         ref_counts = ref["encoder_counts"]
-        err        = wheel_counts_error(actual_counts, ref_counts)
+        err = wheel_counts_error(actual_counts, ref_counts)
 
         base_cmds = ref["wheel_cmd_rev_s"]
-        corrected  = {}
+        corrected = {}
+
         for motor_id in MOTOR_ORDER:
             correction = wheel_speed_from_count_error(
                 controller=controller,
@@ -129,29 +272,41 @@ def _execute_state_records(
                 kp=kp_counts,
                 max_correction_rev_s=max_correction_rev_s,
             )
+
+            if abs(err[motor_id]) < 3:
+                correction = 0.0
+
             corrected[motor_id] = (
                 (1.0 - blend) * base_cmds[motor_id]
                 + blend * (base_cmds[motor_id] + correction)
             )
 
-        run_wheel_speeds(controller, corrected, label="Run state")
+        run_wheel_speeds(controller, corrected, label=f"Run state ({mode})")
 
         print(
-            f"  t={now:6.2f}s  "
-            f"err={[err[m] for m in MOTOR_ORDER]}  "
+            f"mode={mode} "
+            f"t={now:6.2f}s "
+            f"err={[err[m] for m in MOTOR_ORDER]} "
             f"pose=({ref['estimated_pose']['x_m']: .3f}, "
             f"{ref['estimated_pose']['y_m']: .3f}, "
             f"{ref['estimated_pose']['theta_rad']: .3f})",
             end="\r",
         )
 
-        if now >= records[-1]["t"]:
+        if mode == "time":
+            done = now >= records[-1]["t"]
+        else:
+            done = all(
+                abs(actual_counts[m] - final_counts[m]) < 5
+                for m in MOTOR_ORDER
+            )
+
+        if done:
             controller.stop_all()
-            print()  # newline after \r
+            print()
             break
 
         time.sleep(max(0.0, period))
-
 
 # ---------------------------------------------------------------------------
 # Routine loading
@@ -180,6 +335,7 @@ def run_routine(
     max_correction_rev_s: float = 0.20,
     blend: float = 1.0,
     rate: float = 20.0,
+    mode: str = "encoder"
 ):
     """
     Run the recorded data for a single state from a routine JSON.
@@ -208,10 +364,13 @@ def run_routine(
         controller.open()
         controller.stop_all()
 
+    servos = ReplayServoController()
     try:
+        controller.reset_all_encoders()
         _execute_state_records(
             controller=controller,
             records=records,
+            servos_in=servos,
             kp_counts=kp_counts,
             max_correction_rev_s=max_correction_rev_s,
             blend=blend,
@@ -221,6 +380,8 @@ def run_routine(
         if owns_controller:
             controller.stop_all()
             controller.close()
+        servos.deinit()
+        
 
 def main_from_name(
     routine_name: str = "main_routine",
@@ -247,6 +408,7 @@ def main_from_name(
     controller.open()
     controller.stop_all()
 
+    servos = ReplayServoController()
     try:
         for state_name in recorded_states:
             records = routine["states"][state_name]
@@ -255,8 +417,10 @@ def main_from_name(
                 continue
             print(f"\n=== State: {state_name} ({len(records)} records, "
                   f"duration={records[-1]['t']:.2f}s) ===")
+            controller.reset_all_encoders()
             _execute_state_records(
                 controller=controller,
+                servos_in=servos,
                 records=records,
                 kp_counts=kp_counts,
                 max_correction_rev_s=max_correction_rev_s,
@@ -273,6 +437,7 @@ def main_from_name(
 
 def main():
     parser = argparse.ArgumentParser(description="Run a saved routine")
+    parser.add_argument("--mode", choices=["time", "encoder"])
     parser.add_argument("--port",                  default="/dev/ttyACM0")
     parser.add_argument("--baud",                  type=int,   default=1000000)
     parser.add_argument("--calibration",           default=SCRIPT_DIR.parent / "robot_calibration.json")

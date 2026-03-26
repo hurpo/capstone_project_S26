@@ -1,19 +1,25 @@
 #* Import Required Libraries
 import time
 import datetime
+from gpiozero import Button
 
 #* Import Functions etc.
 from HardwareControls import xbox
 from HardwareControls.CameraControls.USBCam import start_cam, read_april_tag, end_cam
+from HardwareControls.MotorEncoders.CopyController.state_replay import run_routine
 from robot import Robot
 from StateControllers import State, StateController, ClientController, AutoController
 from HardwareControls.hardware_classes import Camera
+from HardwareControls.MotorEncoders.testing.linkVerify import play_beep
 time.sleep(2)
 from enum import Enum
 
+ROUTINE_NAME = "routine_000"
 
 class StateMachine:
     def __init__(self, controller: StateController, socket=None, send_lock = None, passedCam=None, passedCamLock=None):
+        self.side_button = Button(17, pull_up=True, bounce_time=0.1)
+
         self.controller = controller
         self.socket = socket
         self.send_lock = send_lock
@@ -28,10 +34,10 @@ class StateMachine:
         self.rendezvous_pad_location = None
 
         #* Testing Booleans
-        self.testing = True
-        self.sensors_connected = False
+        self.testing = False
+        self.sensors_connected = True
 
-        self.robot = Robot(testing=self.testing, sensors_connected = self.sensors_connected, socket=self.socket, send_lock=self.send_lock)
+        self.robot = Robot(testing=self.testing, controller=self.controller, sensors_connected = self.sensors_connected, socket=self.socket, send_lock=self.send_lock)
         if self.passedCamera:
             self.robot.camera.passed_cam(self.passedCamera, self.passedCameraLock)
         else:
@@ -43,7 +49,12 @@ class StateMachine:
 
         print("Controller in use: ", isinstance(self.controller, ClientController))
 
-        while(isinstance(self.controller, ClientController)):
+        if isinstance(self.controller, ClientController):
+            controller_in_use = ClientController
+        else:
+            controller_in_use = AutoController
+
+        while(isinstance(self.controller, controller_in_use)):
 
             while not self.controller.should_start():
                 time.sleep(0.1)
@@ -85,10 +96,22 @@ class StateMachine:
             print("GOODBYE!")
 
     def execute_state(self):
+
+        def play(state, imported_route=ROUTINE_NAME):
+            if self.robot.drive_train_connected:
+                run_routine(
+                    routine_name=imported_route,
+                    state=state,
+                    controller=self.robot.drive_train,
+                )
+            else:
+                print(f"[run_routine] Drive train disconnected, skipping {state.name}")
+
         match self.current_state:
             case State.INIT:
+                play_beep()
+                self.robot.OpenClaw()
                                   #* Testing booleans applied
-                
                 print(f"INIT RobotData")
                 self.robot.updateRobotData({
                     "State": "INIT",
@@ -98,85 +121,28 @@ class StateMachine:
 
                 self.robot.defaultCameraAngle()
 
-                if self.testing:
-                    time.sleep(5)
+
+                time.sleep(3)
+                self.robot.CenterCloseClaw()
 
                 self.robot.open_motors()
                 self.robot.stop_all_motors()
+
+                self.transition_to(State.END)
+                self.side_button.when_pressed = self.ButtonStartAlt
+                self.ButtonStartTrigger = True
+
+                while self.robot.LightSensor.returnVisible() <= 6000 and self.ButtonStartTrigger:
+                    pass# print("Side Button: ", self.side_button)
+                print("Yurp")
+
                 self.transition_to(State.LED_START) #LED_START
 
             case State.LED_START:
                 self.robot.updateRobotData({"State": "LED_START"})
-
-                # if self.testing:
-                
-                    # print("Open floor")
-                    # self.robot.OpenFloor()
-                    # time.sleep(2)
-                    # print("Close floor")
-                    # self.robot.CloseFloor()
-                    # time.sleep(2)
-
-                    # print("Dump Bin")
-                    # self.robot.DumpBin()
-                    # time.sleep(2)
-                    # print("Undump Bin")
-                    # self.robot.UndumpBin()
-                    # time.sleep(2)
-                    
-                    # print("Extending Claw")
-                    # self.robot.ExtendClawBase()
-                    # time.sleep(2)
-                    # print("Retracting Claw")
-                    # self.robot.RetractClawBase()
-                    # time.sleep(2)
-
-                    # print("Lifting Bin")
-                    # self.robot.LiftBin()
-                    # time.sleep(1)
-                    # print("Lowering Bin")
-                    # self.robot.LowerBin()
-                    # time.sleep(1)
-
-                    # print("Combine Intake")
-                    # self.robot.StartIntakeCombine()
-                    # time.sleep(2)
-                    # print("Combine Stopped")
-                    # self.robot.StopIntakeCombine()
-                    # time.sleep(2)
-                    # print("Combine Intake Reversed")
-                    # self.robot.StartIntakeCombine(reverse=True)
-                    # time.sleep(2)
-                    # print("Combine Stopped")
-                    # self.robot.StopIntakeCombine()
-                    # time.sleep(2)
-
-                    # print("Open claw")
-                    # self.robot.OpenClaw()
-                    # time.sleep(2)
-                    # print("Latch Claw")
-                    # self.robot.LatchedClaw()
-                    # time.sleep(2)
-                    # print("Close Claw")
-                    # self.robot.CenterCloseClaw()
-                    # time.sleep(2)
-
-                    # print("Open Chute")
-                    # self.robot.OpenChute()
-                    # time.sleep(2)
-                    # print("Close Chute")
-                    # self.robot.CloseChute()
-
-                    # self.robot.camera.start_pnp_localization()
-
-                # if self.testing:
-                # time.sleep(1)
-
-                print(f"self.robot.testing: {self.robot.testing}")
-                # self.robot.LEDStart()
                 self.robot.updateRobotData({"LED_Started?": True})
-
-                self.robot.strafe_distance_right(inches=4.0, speed_rev_s=0.5) #strafe_distance_right
+                play(State.LED_START)
+                
                 self.transition_to(State.RP_SCAN)
 
             case State.RP_SCAN:
@@ -187,31 +153,17 @@ class StateMachine:
                 self.rendezvous_pad_location = rp
                 self.robot.updateRobotData({"RP": rp})
                 print(f"Rendezvous Pad Located at {self.rendezvous_pad_location}.")
-                self.transition_to(State.END)
+                self.transition_to(State.PLACE_BEACON)
 
             case State.PLACE_BEACON:
                 self.robot.updateRobotData({"State": "PLACE_BEACON"})
-                if self.testing:
-                    time.sleep(0.1)
-
-                # self.robot.updatePosition(dx=6.0)
-
-                if self.testing:
-                    time.sleep(5)
-
+                play(State.PLACE_BEACON)
                 self.transition_to(State.ENTER_CAVE)
 
             case State.ENTER_CAVE:
                 self.robot.updateRobotData({"State": "ENTER_CAVE"})
-                if self.testing:
-                    time.sleep(0.1)
-                
-                # self.robot.updatePosition(dx=90.0)
-
-                if self.testing:
-                    time.sleep(5)
-
-                self.transition_to(State.CAVE_SWEEP)
+                play(State.ENTER_CAVE)
+                self.transition_to(State.END)
 
             case State.CAVE_SWEEP:
                 self.robot.updateRobotData({"State": "CAVE_SWEEP"})
@@ -318,6 +270,12 @@ class StateMachine:
             case State.END:
                 pass
 
+    def ButtonStartAlt(self):
+        print("Button pressed!!!!")
+        time.sleep(5)
+        self.ButtonStartTrigger = False
+        return False
+
     def transition_to(self, new_state):
         print(f"Transitioning: {self.current_state.name} -> {new_state.name}")
         self.prev_state = self.current_state
@@ -380,6 +338,7 @@ class StateMachine:
     
 if __name__ == "__main__":
     # main()
+    print("Fart")
     controller = AutoController()
     sm = StateMachine(controller)
     sm.run()

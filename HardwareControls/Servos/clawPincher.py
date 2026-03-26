@@ -22,8 +22,8 @@ class Servo270Config:
     max_us: float = 2500.0
 
     # Named positions (degrees) for a 270° servo
-    center_closed_deg: float = 140.0   # center (closed)
-    open_deg: float = 125.0            # open
+    center_closed_deg: float = 105.0   # center (closed)
+    open_deg: float = 90.0            # open
     latched_deg: float = 40.0         # latched
 
 
