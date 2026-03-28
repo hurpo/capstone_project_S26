@@ -72,6 +72,7 @@ class ConveyorServo:
         self.set_speed(self.speed)
 
     def forward(self, speed: float = 1.0) -> None:
+        print()
         self.direction = 1
         self.speed = clamp(speed, 0.0, 1.0)
         self.set_pulse_us(self.stop_us + self.speed * self.range_us)
@@ -103,3 +104,11 @@ class ConveyorServo:
             self.hard_off()
         finally:
             self.pca.deinit()
+
+if __name__ == "__main__":
+    s = ConveyorServo()
+    print(s)
+
+    s.forward()
+    time.sleep(1)
+    

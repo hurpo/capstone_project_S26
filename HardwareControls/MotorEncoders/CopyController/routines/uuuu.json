@@ -1,0 +1,7508 @@
+{
+  "states": {
+    "LED_START": [
+      {
+        "t": 0.002545948000260978,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.050543293000373524,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.10123713400025736,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.15149422900049103,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.20086820100004843,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.25096808500074985,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.30119557000034547,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.3512953250001374,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.40146420300061436,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.45155410600000323,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.5020198340007482,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.5518125540002075,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.6018784220004818,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.6519173659999069,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.7019251080000686,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.7522527900000568,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.8022511810004289,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.8522210179999092,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.9023031990000163,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.9534971900002347,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -0.15378197997775306,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.01656619640896871,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.09226918798665183,
+          "2": -0.09226918798665183,
+          "1": 0.09226918798665183,
+          "3": -0.09226918798665183
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.0027192659999855,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.0526792370001203,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 4,
+          "1": 4,
+          "2": -4,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 189.89999389648438,
+          "1": 279.0,
+          "2": -189.89999389648438,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.04795454442501068,
+          "1": 0.07045454531908035,
+          "2": -0.04795454442501068,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.00041507529523009975,
+          "y_m": 0.00013649962393039975,
+          "theta_rad": -0.00045620172864527177
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.1031392690001667,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 27,
+          "1": 33,
+          "2": -28,
+          "3": -4
+        },
+        "encoder_tps": {
+          "0": 589.0789184570312,
+          "1": 788.7987670898438,
+          "2": -589.8978881835938,
+          "3": -189.89999389648438
+        },
+        "encoder_rps": {
+          "0": 0.14875730872154236,
+          "1": 0.199191614985466,
+          "2": -0.14896410703659058,
+          "3": -0.04795454442501068
+        },
+        "estimated_pose": {
+          "x_m": 0.0031824292845291048,
+          "y_m": 0.0010194114369001179,
+          "theta_rad": -0.0031742134125034823
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.152751268999964,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 62,
+          "1": 89,
+          "2": -51,
+          "3": -19
+        },
+        "encoder_tps": {
+          "0": 888.890869140625,
+          "1": 1288.89794921875,
+          "2": -499.0108947753906,
+          "3": -308.9089050292969
+        },
+        "encoder_rps": {
+          "0": 0.22446739673614502,
+          "1": 0.32547926902770996,
+          "2": -0.12601284682750702,
+          "3": -0.0780072957277298
+        },
+        "estimated_pose": {
+          "x_m": 0.007641604611578149,
+          "y_m": 0.0019811793912417413,
+          "theta_rad": -0.009190310630286922
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.2030288320002,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 124,
+          "1": 172,
+          "2": -91,
+          "3": -42
+        },
+        "encoder_tps": {
+          "0": 1487.888916015625,
+          "1": 1887.89794921875,
+          "2": -889.9879760742188,
+          "3": -499.8990783691406
+        },
+        "encoder_rps": {
+          "0": 0.3757295310497284,
+          "1": 0.4767419099807739,
+          "2": -0.22474443912506104,
+          "3": -0.12623713910579681
+        },
+        "estimated_pose": {
+          "x_m": 0.01483651788614148,
+          "y_m": 0.0032330353791126523,
+          "theta_rad": -0.01850698008867887
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.2531609800007573,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 210,
+          "1": 285,
+          "2": -149,
+          "3": -69
+        },
+        "encoder_tps": {
+          "0": 1798.9888916015625,
+          "1": 2479.7978515625,
+          "2": -1288.9979248046875,
+          "3": -590.9000244140625
+        },
+        "encoder_rps": {
+          "0": 0.45429012179374695,
+          "1": 0.6262115836143494,
+          "2": -0.32550451159477234,
+          "3": -0.1492171734571457
+        },
+        "estimated_pose": {
+          "x_m": 0.024658497320659913,
+          "y_m": 0.005157871432784454,
+          "theta_rad": -0.03147345886748449
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.3030564220007363,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 308,
+          "1": 418,
+          "2": -224,
+          "3": -102
+        },
+        "encoder_tps": {
+          "0": 2178.908935546875,
+          "1": 2789.889892578125,
+          "2": -1508.9888916015625,
+          "3": -788.9998779296875
+        },
+        "encoder_rps": {
+          "0": 0.550229549407959,
+          "1": 0.704517662525177,
+          "2": -0.3810577988624573,
+          "3": -0.19924239814281464
+        },
+        "estimated_pose": {
+          "x_m": 0.03638465590130268,
+          "y_m": 0.0077272115191474745,
+          "theta_rad": -0.04542775140738129
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.3530765780005822,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 428,
+          "1": 560,
+          "2": -310,
+          "3": -145
+        },
+        "encoder_tps": {
+          "0": 2498.898681640625,
+          "1": 2899.890869140625,
+          "2": -1888.8990478515625,
+          "3": -899.89990234375
+        },
+        "encoder_rps": {
+          "0": 0.6310350298881531,
+          "1": 0.7322956919670105,
+          "2": -0.47699472308158875,
+          "3": -0.2272474467754364
+        },
+        "estimated_pose": {
+          "x_m": 0.04992043991734918,
+          "y_m": 0.009867430682875843,
+          "theta_rad": -0.06050789442104229
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.4034910020000098,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 564,
+          "1": 700,
+          "2": -414,
+          "3": -190
+        },
+        "encoder_tps": {
+          "0": 2790.888916015625,
+          "1": 2701.10009765625,
+          "2": -2099.98876953125,
+          "3": -900.0
+        },
+        "encoder_rps": {
+          "0": 0.7047699093818665,
+          "1": 0.682096004486084,
+          "2": -0.5303001999855042,
+          "3": -0.22727273404598236
+        },
+        "estimated_pose": {
+          "x_m": 0.06464344428608376,
+          "y_m": 0.01193925148091548,
+          "theta_rad": -0.0748869344613022
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.4538600030000453,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 709,
+          "1": 832,
+          "2": -524,
+          "3": -234
+        },
+        "encoder_tps": {
+          "0": 2998.89990234375,
+          "1": 2600.10009765625,
+          "2": -2388.0,
+          "3": -891.0
+        },
+        "encoder_rps": {
+          "0": 0.757297933101654,
+          "1": 0.6565909385681152,
+          "2": -0.6030303239822388,
+          "3": -0.22499999403953552
+        },
+        "estimated_pose": {
+          "x_m": 0.07958105566387835,
+          "y_m": 0.013669542044179821,
+          "theta_rad": -0.08881994398279897
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.5034582070002216,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 861,
+          "1": 960,
+          "2": -645,
+          "3": -282
+        },
+        "encoder_tps": {
+          "0": 3009.89990234375,
+          "1": 2509.909912109375,
+          "2": -2490.0,
+          "3": -1088.9998779296875
+        },
+        "encoder_rps": {
+          "0": 0.7600757479667664,
+          "1": 0.6338156461715698,
+          "2": -0.6287878751754761,
+          "3": -0.2749999761581421
+        },
+        "estimated_pose": {
+          "x_m": 0.0951509278701253,
+          "y_m": 0.015261953944766007,
+          "theta_rad": -0.10135437272519555
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.5535398960000748,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 1003,
+          "1": 1089,
+          "2": -774,
+          "3": -344
+        },
+        "encoder_tps": {
+          "0": 2791.110107421875,
+          "1": 2509.9990234375,
+          "2": -2510.079833984375,
+          "3": -1397.9808349609375
+        },
+        "encoder_rps": {
+          "0": 0.704825758934021,
+          "1": 0.6338381171226501,
+          "2": -0.6338585615158081,
+          "3": -0.3530254662036896
+        },
+        "estimated_pose": {
+          "x_m": 0.11118019012141711,
+          "y_m": 0.017020982836400293,
+          "theta_rad": -0.11024441893841473
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.6038097370001196,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 1134,
+          "1": 1216,
+          "2": -888,
+          "3": -412
+        },
+        "encoder_tps": {
+          "0": 2600.010986328125,
+          "1": 2500.09912109375,
+          "2": -2299.10205078125,
+          "3": -1301.0
+        },
+        "encoder_rps": {
+          "0": 0.6565684080123901,
+          "1": 0.6313381791114807,
+          "2": -0.5805813074111938,
+          "3": -0.3285353481769562
+        },
+        "estimated_pose": {
+          "x_m": 0.12644724307451036,
+          "y_m": 0.01835993742637617,
+          "theta_rad": -0.11866470367467666
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.6539919000006194,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 1266,
+          "1": 1338,
+          "2": -994,
+          "3": -477
+        },
+        "encoder_tps": {
+          "0": 2600.908935546875,
+          "1": 2400.909912109375,
+          "2": -2100.010986328125,
+          "3": -1300.0
+        },
+        "encoder_rps": {
+          "0": 0.6567952036857605,
+          "1": 0.6062904000282288,
+          "2": -0.530305802822113,
+          "3": -0.32828283309936523
+        },
+        "estimated_pose": {
+          "x_m": 0.1411938009286638,
+          "y_m": 0.019320727049354305,
+          "theta_rad": -0.127920380367578
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.7038609179999185,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 1393,
+          "1": 1456,
+          "2": -1103,
+          "3": -539
+        },
+        "encoder_tps": {
+          "0": 2411.0,
+          "1": 2309.909912109375,
+          "2": -2101.0888671875,
+          "3": -1209.010009765625
+        },
+        "encoder_rps": {
+          "0": 0.6088383793830872,
+          "1": 0.583310604095459,
+          "2": -0.5305780172348022,
+          "3": -0.3053055703639984
+        },
+        "estimated_pose": {
+          "x_m": 0.15562853115694258,
+          "y_m": 0.020529882685349422,
+          "theta_rad": -0.1361405569998508
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.7541746639999474,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 1515,
+          "1": 1570,
+          "2": -1223,
+          "3": -592
+        },
+        "encoder_tps": {
+          "0": 2409.900146484375,
+          "1": 2201.009033203125,
+          "2": -2507.888916015625,
+          "3": -1090.9111328125
+        },
+        "encoder_rps": {
+          "0": 0.6085606217384338,
+          "1": 0.5558103322982788,
+          "2": -0.6333053112030029,
+          "3": -0.2754825949668884
+        },
+        "estimated_pose": {
+          "x_m": 0.16981838159889565,
+          "y_m": 0.022478300273444492,
+          "theta_rad": -0.1431009151277059
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.8042143000002397,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 1633,
+          "1": 1683,
+          "2": -1345,
+          "3": -652
+        },
+        "encoder_tps": {
+          "0": 2301.0,
+          "1": 2209.09912109375,
+          "2": -2579.920166015625,
+          "3": -1298.89990234375
+        },
+        "encoder_rps": {
+          "0": 0.5810605883598328,
+          "1": 0.5578533411026001,
+          "2": -0.6514949798583984,
+          "3": -0.32800501585006714
+        },
+        "estimated_pose": {
+          "x_m": 0.18415189610685878,
+          "y_m": 0.024354351482726272,
+          "theta_rad": -0.14841810691355758
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.855271160000484,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 1752,
+          "1": 1795,
+          "2": -1471,
+          "3": -718
+        },
+        "encoder_tps": {
+          "0": 2489.090087890625,
+          "1": 2290.090087890625,
+          "2": -2401.189697265625,
+          "3": -1309.0
+        },
+        "encoder_rps": {
+          "0": 0.6285580992698669,
+          "1": 0.5783056020736694,
+          "2": -0.6063610315322876,
+          "3": -0.3305555582046509
+        },
+        "estimated_pose": {
+          "x_m": 0.19883758593942874,
+          "y_m": 0.02608898599925598,
+          "theta_rad": -0.15256024537643031
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.9043428830000266,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 1878,
+          "1": 1912,
+          "2": -1595,
+          "3": -783
+        },
+        "encoder_tps": {
+          "0": 2500.89990234375,
+          "1": 2309.08984375,
+          "2": -2401.89892578125,
+          "3": -1291.090087890625
+        },
+        "encoder_rps": {
+          "0": 0.6315403580665588,
+          "1": 0.5831034779548645,
+          "2": -0.6065401434898376,
+          "3": -0.3260328471660614
+        },
+        "estimated_pose": {
+          "x_m": 0.21383237814741535,
+          "y_m": 0.02771587348301685,
+          "theta_rad": -0.1584421102144532
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.9544508290000522,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 1999,
+          "1": 2027,
+          "2": -1711,
+          "3": -842
+        },
+        "encoder_tps": {
+          "0": 2319.010009765625,
+          "1": 2291.009033203125,
+          "2": -2390.0009765625,
+          "3": -1100.199951171875
+        },
+        "encoder_rps": {
+          "0": 0.5856086015701294,
+          "1": 0.57853764295578,
+          "2": -0.6035355925559998,
+          "3": -0.27782827615737915
+        },
+        "estimated_pose": {
+          "x_m": 0.2280940013642956,
+          "y_m": 0.029381759664329963,
+          "theta_rad": -0.16515702208567923
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.00492439700065,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 2117,
+          "1": 2142,
+          "2": -1819,
+          "3": -893
+        },
+        "encoder_tps": {
+          "0": 2488.919189453125,
+          "1": 2308.990966796875,
+          "2": -2109.101806640625,
+          "3": -1000.010009765625
+        },
+        "encoder_rps": {
+          "0": 0.6285149455070496,
+          "1": 0.5830785036087036,
+          "2": -0.5326014757156372,
+          "3": -0.25252777338027954
+        },
+        "estimated_pose": {
+          "x_m": 0.24168960474876647,
+          "y_m": 0.031155821899420552,
+          "theta_rad": -0.17340347384276403
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.0557466290001685,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 2240,
+          "1": 2256,
+          "2": -1939,
+          "3": -947
+        },
+        "encoder_tps": {
+          "0": 2401.0,
+          "1": 2291.0,
+          "2": -2399.9970703125,
+          "3": -1099.989990234375
+        },
+        "encoder_rps": {
+          "0": 0.6063131093978882,
+          "1": 0.5785353779792786,
+          "2": -0.6060598492622375,
+          "3": -0.27777525782585144
+        },
+        "estimated_pose": {
+          "x_m": 0.2559496061579265,
+          "y_m": 0.03303408852030866,
+          "theta_rad": -0.18036213302814288
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.104848153000603,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 2364,
+          "1": 2376,
+          "2": -2064,
+          "3": -1007
+        },
+        "encoder_tps": {
+          "0": 2320.089111328125,
+          "1": 2400.889892578125,
+          "2": -2509.881103515625,
+          "3": -1199.9990234375
+        },
+        "encoder_rps": {
+          "0": 0.5858811140060425,
+          "1": 0.6062853336334229,
+          "2": -0.6338083744049072,
+          "3": -0.3030300438404083
+        },
+        "estimated_pose": {
+          "x_m": 0.2708352195289719,
+          "y_m": 0.03504437508572315,
+          "theta_rad": -0.18682828593342934
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.1546582940000008,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 2478,
+          "1": 2491,
+          "2": -2174,
+          "3": -1062
+        },
+        "encoder_tps": {
+          "0": 2299.91015625,
+          "1": 2291.010009765625,
+          "2": -2109.12109375,
+          "3": -1091.0909423828125
+        },
+        "encoder_rps": {
+          "0": 0.5807853937149048,
+          "1": 0.5785378813743591,
+          "2": -0.5326063632965088,
+          "3": -0.2755280137062073
+        },
+        "estimated_pose": {
+          "x_m": 0.28450258158329994,
+          "y_m": 0.03688613959561458,
+          "theta_rad": -0.19390089168228214
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.205271804000404,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 2588,
+          "1": 2606,
+          "2": -2281,
+          "3": -1115
+        },
+        "encoder_tps": {
+          "0": 2200.0009765625,
+          "1": 2299.18994140625,
+          "2": -2181.09912109375,
+          "3": -1099.0098876953125
+        },
+        "encoder_rps": {
+          "0": 0.5555558204650879,
+          "1": 0.5806035399436951,
+          "2": -0.5507826209068298,
+          "3": -0.27752774953842163
+        },
+        "estimated_pose": {
+          "x_m": 0.29785540207689565,
+          "y_m": 0.038833254249251395,
+          "theta_rad": -0.2010940063587028
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.2550682970004345,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 2701,
+          "1": 2726,
+          "2": -2390,
+          "3": -1173
+        },
+        "encoder_tps": {
+          "0": 2209.908935546875,
+          "1": 2400.889892578125,
+          "2": -2110.890869140625,
+          "3": -1199.9000244140625
+        },
+        "encoder_rps": {
+          "0": 0.5580577850341797,
+          "1": 0.6062853336334229,
+          "2": -0.5330532789230347,
+          "3": -0.30300506949424744
+        },
+        "estimated_pose": {
+          "x_m": 0.3117294721046831,
+          "y_m": 0.040739396600660116,
+          "theta_rad": -0.2083826094137087
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.3051657690002685,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 2819,
+          "1": 2842,
+          "2": -2497,
+          "3": -1231
+        },
+        "encoder_tps": {
+          "0": 2309.989013671875,
+          "1": 2300.010009765625,
+          "2": -2199.0,
+          "3": -1101.0
+        },
+        "encoder_rps": {
+          "0": 0.5833305716514587,
+          "1": 0.5808106064796448,
+          "2": -0.5553030371665955,
+          "3": -0.27803030610084534
+        },
+        "estimated_pose": {
+          "x_m": 0.3255715949397816,
+          "y_m": 0.04226537217025531,
+          "theta_rad": -0.21603145288409065
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.3549646150004264,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.5866096568985296,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.06319264970437129,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.35196579413911777,
+          "2": 0.35196579413911777,
+          "1": -0.35196579413911777,
+          "3": 0.35196579413911777
+        },
+        "encoder_counts": {
+          "0": 2931,
+          "1": 2959,
+          "2": -2608,
+          "3": -1291
+        },
+        "encoder_tps": {
+          "0": 2200.91015625,
+          "1": 2407.990966796875,
+          "2": -2290.0,
+          "3": -1208.9090576171875
+        },
+        "encoder_rps": {
+          "0": 0.5557854175567627,
+          "1": 0.6080785393714905,
+          "2": -0.5782828330993652,
+          "3": -0.30528005957603455
+        },
+        "estimated_pose": {
+          "x_m": 0.3394489866113829,
+          "y_m": 0.04410316405012478,
+          "theta_rad": -0.2223904016116643
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.405115472000034,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3027,
+          "1": 3067,
+          "2": -2711,
+          "3": -1358
+        },
+        "encoder_tps": {
+          "0": 1523.1190185546875,
+          "1": 1643.109130859375,
+          "2": -1525.2889404296875,
+          "3": -1300.9080810546875
+        },
+        "encoder_rps": {
+          "0": 0.38462600111961365,
+          "1": 0.41492655873298645,
+          "2": -0.3851739764213562,
+          "3": -0.32851213216781616
+        },
+        "estimated_pose": {
+          "x_m": 0.3524308734505552,
+          "y_m": 0.045665147666641065,
+          "theta_rad": -0.22596071850837796
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.455492628000684,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3090,
+          "1": 3111,
+          "2": -2773,
+          "3": -1410
+        },
+        "encoder_tps": {
+          "0": 1290.9122314453125,
+          "1": 701.1434326171875,
+          "2": -1299.0032958984375,
+          "3": -820.1199951171875
+        },
+        "encoder_rps": {
+          "0": 0.32598793506622314,
+          "1": 0.1770564168691635,
+          "2": -0.32803112268447876,
+          "3": -0.2071010023355484
+        },
+        "estimated_pose": {
+          "x_m": 0.36012300159969796,
+          "y_m": 0.04529549213018543,
+          "theta_rad": -0.22493750524692008
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.505578453000453,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3141,
+          "1": 3149,
+          "2": -2836,
+          "3": -1457
+        },
+        "encoder_tps": {
+          "0": 721.2098999023438,
+          "1": 700.1890258789062,
+          "2": -1200.1090087890625,
+          "3": -999.8092041015625
+        },
+        "encoder_rps": {
+          "0": 0.18212370574474335,
+          "1": 0.17681540548801422,
+          "2": -0.30305781960487366,
+          "3": -0.25247707962989807
+        },
+        "estimated_pose": {
+          "x_m": 0.36705099666419966,
+          "y_m": 0.045350720605932884,
+          "theta_rad": -0.22230406087799023
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.555664776999947,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3166,
+          "1": 3170,
+          "2": -2878,
+          "3": -1501
+        },
+        "encoder_tps": {
+          "0": 311.92022705078125,
+          "1": 221.0019989013672,
+          "2": -710.1119995117188,
+          "3": -801.010009765625
+        },
+        "encoder_rps": {
+          "0": 0.07876773178577423,
+          "1": 0.05580858513712883,
+          "2": -0.17932121455669403,
+          "3": -0.20227526128292084
+        },
+        "estimated_pose": {
+          "x_m": 0.3716560761242199,
+          "y_m": 0.04510574939041383,
+          "theta_rad": -0.21750408397159707
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.6055116560000897,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3168,
+          "1": 3177,
+          "2": -2903,
+          "3": -1531
+        },
+        "encoder_tps": {
+          "0": 0.02111920155584812,
+          "1": 11.00020980834961,
+          "2": -320.0201110839844,
+          "3": -510.0920104980469
+        },
+        "encoder_rps": {
+          "0": 5.333131866791518e-06,
+          "1": 0.002777830697596073,
+          "2": -0.08081316202878952,
+          "3": -0.12881112098693848
+        },
+        "estimated_pose": {
+          "x_m": 0.3738957925961061,
+          "y_m": 0.04508643752898014,
+          "theta_rad": -0.21206502940966593
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.6557336559999385,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1546
+        },
+        "encoder_tps": {
+          "0": -0.00899979006499052,
+          "1": -0.8998900651931763,
+          "2": -100.11019897460938,
+          "3": -111.11009979248047
+        },
+        "encoder_rps": {
+          "0": -2.2726742372469744e-06,
+          "1": -0.00022724496375303715,
+          "2": -0.02528035268187523,
+          "3": -0.02805810607969761
+        },
+        "estimated_pose": {
+          "x_m": 0.37463574602219657,
+          "y_m": 0.04483616462406042,
+          "theta_rad": -0.20912396524020216
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.7066669579999143,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1544
+        },
+        "encoder_tps": {
+          "0": -8.99979113455629e-08,
+          "1": -8.998900739243254e-06,
+          "2": -0.001001102034933865,
+          "3": 90.89888763427734
+        },
+        "encoder_rps": {
+          "0": -2.27267458324798e-11,
+          "1": -2.272449783902175e-09,
+          "2": -2.5280354520873516e-07,
+          "3": 0.022954264655709267
+        },
+        "estimated_pose": {
+          "x_m": 0.37456508800560756,
+          "y_m": 0.04490682264064943,
+          "theta_rad": -0.20936071517013685
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.7558656050005084,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": -8.999792556162178e-13,
+          "1": -8.99890092997957e-11,
+          "2": -1.001102045705693e-08,
+          "3": 0.09090899676084518
+        },
+        "encoder_rps": {
+          "0": -2.2726748948714013e-16,
+          "1": -2.2724498064535803e-14,
+          "2": -2.5280355066270577e-12,
+          "3": 2.2956817701924592e-05
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.80592117300057,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": -8.999793720567783e-18,
+          "1": -8.99890238382692e-16,
+          "2": -1.0011022094852731e-13,
+          "3": 9.09090090317477e-07
+        },
+        "encoder_rps": {
+          "0": -2.2726750979183923e-21,
+          "1": -2.272450224345226e-19,
+          "2": -2.528035840093341e-17,
+          "3": 2.2956819778485738e-10
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.8559823140003573,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": -8.99979473677209e-23,
+          "1": -8.998903538519357e-21,
+          "2": -1.0011022639799319e-18,
+          "3": 9.090901642583304e-12
+        },
+        "encoder_rps": {
+          "0": -2.2726754500954827e-26,
+          "1": -2.2724503104257277e-24,
+          "2": -2.5280359110176163e-22,
+          "3": 2.2956822684825186e-15
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.9060387520003133,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": -8.999795518853722e-28,
+          "1": -8.998905508107822e-26,
+          "2": -1.001102275162824e-23,
+          "3": 9.090902867392946e-17
+        },
+        "encoder_rps": {
+          "0": -2.272675622300703e-31,
+          "1": -2.2724509336085095e-29,
+          "2": -2.5280361192029395e-27,
+          "3": 2.2956825935128006e-20
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.9564176490002865,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": -8.999795604194612e-33,
+          "1": -8.998906724753879e-31,
+          "2": -1.0011023573229955e-28,
+          "3": 9.090903753704048e-22
+        },
+        "encoder_rps": {
+          "0": -2.272675623563441e-36,
+          "1": -2.2724512149190013e-34,
+          "2": -2.528036371040849e-32,
+          "3": 2.2956828557301655e-25
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.006485031000011,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": -8.999796227133436e-38,
+          "1": -8.998907893590156e-36,
+          "2": -1.0011025088736047e-33,
+          "3": 9.090903945988893e-27
+        },
+        "encoder_rps": {
+          "0": -2.2726258494419883e-41,
+          "1": -2.272452088432412e-39,
+          "2": -2.5280365968987726e-37,
+          "3": 2.295682726873415e-30
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.0562385500006712,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": -8.996336140965326e-43,
+          "1": -8.99885847820111e-41,
+          "2": -1.0011026168072176e-38,
+          "3": 9.090904791780589e-32
+        },
+        "encoder_rps": {
+          "0": -0.0,
+          "1": -2.2420775429197073e-44,
+          "2": -2.52794242964197e-42,
+          "3": 2.2956830699708288e-35
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.106318067000757,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": -1.401298464324817e-45,
+          "2": -9.949219096706201e-44,
+          "3": 9.090906074894662e-37
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": -0.0,
+          "2": -0.0,
+          "3": 2.2956772091801316e-40
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.156852830000389,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 9.091624436539413e-42
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 2.802596928649634e-45
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.2068154670005242,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.2567442730005496,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.3068069030005063,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.357755766000082,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.4073024140006964,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.4573335650002264,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.50716917400041,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.557509895000294,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.6076334469998983,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.657622341000206,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.7076420670000516,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.757993398000508,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.808564936000039,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.8578834150002876,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.908016188000147,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.9585231940000085,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 4.008641912000712,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 4.058319796000433,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 4.108212963999904,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 4.158833357000731,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 3167,
+          "1": 3176,
+          "2": -2911,
+          "3": -1543
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.3745297589973131,
+          "y_m": 0.044942151648943926,
+          "theta_rad": -0.20947909013510418
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      }
+    ],
+    "RP_SCAN": [
+      {
+        "t": 0.0023468549998142407,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.0504206890000205,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.10065844600012497,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.15147638500002358,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.20126124799935496,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.25130248200002825,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.3014788359996601,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.35161308199985797,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.40167483299956075,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.4517804509996495,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.5019929139998567,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.552084162999563,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.6022318529994664,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.6525463819998549,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.7023232269993969,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.7523207790000015,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.8025923859995601,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.8528519009996671,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.9031126569998378,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "theta_rad": -0.0
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 0.9533045469997887,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 5,
+          "1": 4,
+          "2": -4,
+          "3": 0
+        },
+        "encoder_tps": {
+          "0": 207.0,
+          "1": 189.89999389648438,
+          "2": -198.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.052272725850343704,
+          "1": 0.04795454442501068,
+          "2": -0.05000000074505806,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": 0.00044989725414256224,
+          "y_m": 0.00010167766501793723,
+          "theta_rad": -0.0005728777511363508
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.0033930439994947,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 24,
+          "1": 38,
+          "2": -26,
+          "3": -3
+        },
+        "encoder_tps": {
+          "0": 497.99908447265625,
+          "1": 888.8779296875,
+          "2": -498.99798583984375,
+          "3": -99.9000015258789
+        },
+        "encoder_rps": {
+          "0": 0.1257573515176773,
+          "1": 0.22446411848068237,
+          "2": -0.12600959837436676,
+          "3": -0.025227272883057594
+        },
+        "estimated_pose": {
+          "x_m": 0.0031433120708210995,
+          "y_m": 0.0012598839932558903,
+          "theta_rad": -0.0037471795627429094
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.0542543579995254,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": -1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": 0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": 0.6,
+          "2": -0.6,
+          "1": 0.6,
+          "3": -0.6
+        },
+        "encoder_counts": {
+          "0": 59,
+          "1": 93,
+          "2": -49,
+          "3": -17
+        },
+        "encoder_tps": {
+          "0": 888.8899536132812,
+          "1": 1198.89892578125,
+          "2": -589.8109741210938,
+          "3": -299.9079895019531
+        },
+        "encoder_rps": {
+          "0": 0.22446715831756592,
+          "1": 0.3027522563934326,
+          "2": -0.14894217252731323,
+          "3": -0.07573433965444565
+        },
+        "estimated_pose": {
+          "x_m": 0.007533076760845069,
+          "y_m": 0.0022228993271614416,
+          "theta_rad": -0.009767456306624286
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.1037591539998175,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.49278687384850695,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.053085570501283985,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.2956721243091041,
+          "2": 0.2956721243091041,
+          "1": -0.2956721243091041,
+          "3": 0.2956721243091041
+        },
+        "encoder_counts": {
+          "0": 116,
+          "1": 165,
+          "2": -89,
+          "3": -38
+        },
+        "encoder_tps": {
+          "0": 1289.798828125,
+          "1": 1588.989013671875,
+          "2": -898.9799194335938,
+          "3": -498.90899658203125
+        },
+        "encoder_rps": {
+          "0": 0.3257067799568176,
+          "1": 0.4012598395347595,
+          "2": -0.22701513767242432,
+          "3": -0.12598712742328644
+        },
+        "estimated_pose": {
+          "x_m": 0.014108324308220786,
+          "y_m": 0.0033446252101473712,
+          "theta_rad": -0.01748134575493211
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.1539165349995528,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.6,
+          "2": 0.6,
+          "1": -0.6,
+          "3": 0.6
+        },
+        "encoder_counts": {
+          "0": 182,
+          "1": 236,
+          "2": -126,
+          "3": -66
+        },
+        "encoder_tps": {
+          "0": 1112.0888671875,
+          "1": 1032.10888671875,
+          "2": -422.19000244140625,
+          "3": -680.8999633789062
+        },
+        "encoder_rps": {
+          "0": 0.2808305323123932,
+          "1": 0.26063355803489685,
+          "2": -0.1066136360168457,
+          "3": -0.17194443941116333
+        },
+        "estimated_pose": {
+          "x_m": 0.021105595206646136,
+          "y_m": 0.0037669730676355836,
+          "theta_rad": -0.025652962299616368
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.2039654609998252,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.6,
+          "2": 0.6,
+          "1": -0.6,
+          "3": 0.6
+        },
+        "encoder_counts": {
+          "0": 216,
+          "1": 254,
+          "2": -141,
+          "3": -93
+        },
+        "encoder_tps": {
+          "0": 322.21112060546875,
+          "1": 12.322321891784668,
+          "2": -201.1002197265625,
+          "3": -500.9107971191406
+        },
+        "encoder_rps": {
+          "0": 0.08136644214391708,
+          "1": 0.0031116975005716085,
+          "2": -0.050782885402441025,
+          "3": -0.12649261951446533
+        },
+        "estimated_pose": {
+          "x_m": 0.02437987289323905,
+          "y_m": 0.0027655911002779712,
+          "theta_rad": -0.026727025471856753
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.2540351809993808,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.6,
+          "2": 0.6,
+          "1": -0.6,
+          "3": 0.6
+        },
+        "encoder_counts": {
+          "0": 210,
+          "1": 247,
+          "2": -147,
+          "3": -93
+        },
+        "encoder_tps": {
+          "0": -199.87777709960938,
+          "1": -369.098876953125,
+          "2": -10.991011619567871,
+          "3": 378.5889892578125
+        },
+        "encoder_rps": {
+          "0": -0.05047418549656868,
+          "1": -0.09320678561925888,
+          "2": -0.002775507979094982,
+          "3": 0.09560327976942062
+        },
+        "estimated_pose": {
+          "x_m": 0.02414156115563721,
+          "y_m": 0.0029451428696256757,
+          "theta_rad": -0.024526675089629506
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.3041710629995578,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.6,
+          "2": 0.6,
+          "1": -0.6,
+          "3": 0.6
+        },
+        "encoder_counts": {
+          "0": 179,
+          "1": 214,
+          "2": -133,
+          "3": -78
+        },
+        "encoder_tps": {
+          "0": -878.8880004882812,
+          "1": -789.888671875,
+          "2": 398.8888854980469,
+          "3": 496.9117736816406
+        },
+        "encoder_rps": {
+          "0": -0.22194141149520874,
+          "1": -0.19946683943271637,
+          "2": 0.10072951763868332,
+          "3": 0.12548276782035828
+        },
+        "estimated_pose": {
+          "x_m": 0.020919338250521592,
+          "y_m": 0.0029417516659177817,
+          "theta_rad": -0.020552387793014153
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.354299242999332,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.6,
+          "2": 0.6,
+          "1": -0.6,
+          "3": 0.6
+        },
+        "encoder_counts": {
+          "0": 126,
+          "1": 156,
+          "2": -93,
+          "3": -35
+        },
+        "encoder_tps": {
+          "0": -1189.8897705078125,
+          "1": -1468.89794921875,
+          "2": 989.7789916992188,
+          "3": 1087.89794921875
+        },
+        "encoder_rps": {
+          "0": -0.30047720670700073,
+          "1": -0.3709338307380676,
+          "2": 0.24994419515132904,
+          "3": 0.2747217118740082
+        },
+        "estimated_pose": {
+          "x_m": 0.01418328315854471,
+          "y_m": 0.002935118931989054,
+          "theta_rad": -0.01750818780812365
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.404657627999768,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.6,
+          "2": 0.6,
+          "1": -0.6,
+          "3": 0.6
+        },
+        "encoder_counts": {
+          "0": 50,
+          "1": 57,
+          "2": -28,
+          "3": 33
+        },
+        "encoder_tps": {
+          "0": -1607.89794921875,
+          "1": -2377.688720703125,
+          "2": 1488.888916015625,
+          "3": 1588.7088623046875
+        },
+        "encoder_rps": {
+          "0": -0.40603482723236084,
+          "1": -0.600426435470581,
+          "2": 0.37598204612731934,
+          "3": 0.4011891186237335
+        },
+        "estimated_pose": {
+          "x_m": 0.00349412012215293,
+          "y_m": 0.0023436387783437795,
+          "theta_rad": -0.012978326166455355
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.4550878979998743,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.6,
+          "2": 0.6,
+          "1": -0.6,
+          "3": 0.6
+        },
+        "encoder_counts": {
+          "0": -43,
+          "1": -71,
+          "2": 56,
+          "3": 119
+        },
+        "encoder_tps": {
+          "0": -1997.989013671875,
+          "1": -2419.997802734375,
+          "2": 1798.970947265625,
+          "3": 1709.889892578125
+        },
+        "encoder_rps": {
+          "0": -0.5045427083969116,
+          "1": -0.6111105680465698,
+          "2": 0.454285591840744,
+          "3": 0.43179038166999817
+        },
+        "estimated_pose": {
+          "x_m": -0.010073745085363652,
+          "y_m": 0.001329247355199481,
+          "theta_rad": -0.007503653339422224
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.504815585999495,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.6,
+          "2": 0.6,
+          "1": -0.6,
+          "3": 0.6
+        },
+        "encoder_counts": {
+          "0": -154,
+          "1": -191,
+          "2": 153,
+          "3": 215
+        },
+        "encoder_tps": {
+          "0": -2200.89794921875,
+          "1": -2579.01025390625,
+          "2": 1990.89892578125,
+          "3": 1990.88916015625
+        },
+        "encoder_rps": {
+          "0": -0.5557823181152344,
+          "1": -0.6512652039527893,
+          "2": 0.5027522444725037,
+          "3": 0.5027498006820679
+        },
+        "estimated_pose": {
+          "x_m": -0.02480229067654336,
+          "y_m": 0.0011143462351307365,
+          "theta_rad": -0.0035447986477673415
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.5549185820000275,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.6,
+          "2": 0.6,
+          "1": -0.6,
+          "3": 0.6
+        },
+        "encoder_counts": {
+          "0": -267,
+          "1": -334,
+          "2": 258,
+          "3": 321
+        },
+        "encoder_tps": {
+          "0": -2299.89990234375,
+          "1": -2998.8798828125,
+          "2": 2189.989990234375,
+          "3": 2198.989990234375
+        },
+        "encoder_rps": {
+          "0": -0.5807828307151794,
+          "1": -0.7572929263114929,
+          "2": 0.5530277490615845,
+          "3": 0.5553004741668701
+        },
+        "estimated_pose": {
+          "x_m": -0.0410165696186121,
+          "y_m": 0.0002595797657128432,
+          "theta_rad": 0.0011555852995992636
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.6053905889993985,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.6,
+          "2": 0.6,
+          "1": -0.6,
+          "3": 0.6
+        },
+        "encoder_counts": {
+          "0": -393,
+          "1": -486,
+          "2": 373,
+          "3": 438
+        },
+        "encoder_tps": {
+          "0": -2688.89892578125,
+          "1": -3189.801025390625,
+          "2": 2398.89990234375,
+          "3": 2398.9990234375
+        },
+        "encoder_rps": {
+          "0": -0.6790148615837097,
+          "1": -0.8055053353309631,
+          "2": 0.6057828068733215,
+          "3": 0.6058078408241272
+        },
+        "estimated_pose": {
+          "x_m": -0.058727540138002424,
+          "y_m": -0.00040926916682357435,
+          "theta_rad": 0.005930181582542182
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.6553525389999777,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.6,
+          "2": 0.6,
+          "1": -0.6,
+          "3": 0.6
+        },
+        "encoder_counts": {
+          "0": -526,
+          "1": -644,
+          "2": 498,
+          "3": 566
+        },
+        "encoder_tps": {
+          "0": -2780.0908203125,
+          "1": -3190.990966796875,
+          "2": 2589.989990234375,
+          "3": 2599.97998046875
+        },
+        "encoder_rps": {
+          "0": -0.7020431160926819,
+          "1": -0.8058058023452759,
+          "2": 0.6540378928184509,
+          "3": 0.6565605998039246
+        },
+        "estimated_pose": {
+          "x_m": -0.07762402559504783,
+          "y_m": -0.0009988874297615705,
+          "theta_rad": 0.009736347749506736
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.7053110999995624,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 1.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.107725212091594,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.6,
+          "2": 0.6,
+          "1": -0.6,
+          "3": 0.6
+        },
+        "encoder_counts": {
+          "0": -665,
+          "1": -791,
+          "2": 628,
+          "3": 698
+        },
+        "encoder_tps": {
+          "0": -2799.99072265625,
+          "1": -2801.200927734375,
+          "2": 2510.08984375,
+          "3": 2609.009033203125
+        },
+        "encoder_rps": {
+          "0": -0.7070683836936951,
+          "1": -0.7073739767074585,
+          "2": 0.6338610649108887,
+          "3": 0.6588406562805176
+        },
+        "estimated_pose": {
+          "x_m": -0.09667018710353216,
+          "y_m": -0.0010376861708329375,
+          "theta_rad": 0.0119288152179892
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.755369987999984,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -801,
+          "1": -932,
+          "2": 748,
+          "3": 830
+        },
+        "encoder_tps": {
+          "0": -2619.010009765625,
+          "1": -2809.0,
+          "2": 2489.9111328125,
+          "3": 2600.9091796875
+        },
+        "encoder_rps": {
+          "0": -0.6613661646842957,
+          "1": -0.709343433380127,
+          "2": 0.6287654638290405,
+          "3": 0.6567952632904053
+        },
+        "estimated_pose": {
+          "x_m": -0.11505874060125079,
+          "y_m": -0.0006278086546133536,
+          "theta_rad": 0.014254292277773637
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.8055309060000582,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -919,
+          "1": -1052,
+          "2": 863,
+          "3": 950
+        },
+        "encoder_tps": {
+          "0": -2112.110107421875,
+          "1": -2023.111083984375,
+          "2": 2022.0098876953125,
+          "3": 2210.218994140625
+        },
+        "encoder_rps": {
+          "0": -0.5333611369132996,
+          "1": -0.5108866095542908,
+          "2": 0.5106085538864136,
+          "3": 0.5581361055374146
+        },
+        "estimated_pose": {
+          "x_m": -0.1315065103548466,
+          "y_m": -0.0003786341141876412,
+          "theta_rad": 0.014086101442065128
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.8555949040000996,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1001,
+          "1": -1131,
+          "2": 938,
+          "3": 1053
+        },
+        "encoder_tps": {
+          "0": -1509.22216796875,
+          "1": -1312.1212158203125,
+          "2": 1212.212158203125,
+          "3": 1911.0101318359375
+        },
+        "encoder_rps": {
+          "0": -0.38111671805381775,
+          "1": -0.33134374022483826,
+          "2": 0.30611416697502136,
+          "3": 0.482578307390213
+        },
+        "estimated_pose": {
+          "x_m": -0.14330814022205413,
+          "y_m": 0.0008083129889159754,
+          "theta_rad": 0.011720776375443517
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.9070293079994372,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1058,
+          "1": -1183,
+          "2": 985,
+          "3": 1140
+        },
+        "encoder_tps": {
+          "0": -821.3010864257812,
+          "1": -919.1021118164062,
+          "2": 721.0111083984375,
+          "3": 1610.920166015625
+        },
+        "encoder_rps": {
+          "0": -0.20739926397800446,
+          "1": -0.23209649324417114,
+          "2": 0.18207351863384247,
+          "3": 0.40679803490638733
+        },
+        "estimated_pose": {
+          "x_m": -0.15177752639540693,
+          "y_m": 0.0024558775748271602,
+          "theta_rad": 0.008520262154124965
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 1.9562330149992704,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1084,
+          "1": -1212,
+          "2": 995,
+          "3": 1209
+        },
+        "encoder_tps": {
+          "0": -491.1022033691406,
+          "1": -401.2201843261719,
+          "2": -7.6787896156311035,
+          "3": 1113.0101318359375
+        },
+        "encoder_rps": {
+          "0": -0.12401571124792099,
+          "1": -0.10131822526454926,
+          "2": -0.0019390883389860392,
+          "3": 0.28106316924095154
+        },
+        "estimated_pose": {
+          "x_m": -0.15645761849428308,
+          "y_m": 0.00446193048404029,
+          "theta_rad": 0.005529423591367803
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.006101070999648,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1094,
+          "1": -1229,
+          "2": 994,
+          "3": 1213
+        },
+        "encoder_tps": {
+          "0": -11.11091136932373,
+          "1": -211.00001525878906,
+          "2": 8.900923728942871,
+          "3": -99.744873046875
+        },
+        "encoder_rps": {
+          "0": -0.0028057857416570187,
+          "1": -0.053282830864191055,
+          "2": 0.0022477079182863235,
+          "3": -0.025188099592924118
+        },
+        "estimated_pose": {
+          "x_m": -0.15749167656884094,
+          "y_m": 0.004406943654087676,
+          "theta_rad": 0.008280827446388212
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.056121597999663,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 993,
+          "3": 1202
+        },
+        "encoder_tps": {
+          "0": 0.08988890051841736,
+          "1": 99.97888946533203,
+          "2": -8.999911308288574,
+          "3": -200.0889892578125
+        },
+        "encoder_rps": {
+          "0": 2.269921787956264e-05,
+          "1": 0.02524719387292862,
+          "2": -0.0022727048490196466,
+          "3": -0.05052752420306206
+        },
+        "estimated_pose": {
+          "x_m": -0.15693112539633275,
+          "y_m": 0.004120612726291904,
+          "theta_rad": 0.009240510751128824
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.106372516999727,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1225,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 8.988890272121353e-07,
+          "1": -98.89099884033203,
+          "2": -0.009089999832212925,
+          "3": -100.91000366210938
+        },
+        "encoder_rps": {
+          "0": 2.2699217505639524e-10,
+          "1": -0.024972474202513695,
+          "2": -2.2954545784159563e-06,
+          "3": -0.02548232488334179
+        },
+        "estimated_pose": {
+          "x_m": -0.15661487547337619,
+          "y_m": 0.0039422565331254655,
+          "theta_rad": 0.010071761096229929
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.156494498999564,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1227,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 8.988891228578488e-12,
+          "1": -0.0999889075756073,
+          "2": -9.090000929745656e-08,
+          "3": -0.001009100116789341
+        },
+        "encoder_rps": {
+          "0": 2.269922090732384e-15,
+          "1": -2.5249724785680883e-05,
+          "2": -2.2954547984621598e-11,
+          "3": -2.5482324872427853e-07
+        },
+        "estimated_pose": {
+          "x_m": -0.15668303873083733,
+          "y_m": 0.00387409327566432,
+          "theta_rad": 0.01030015197396873
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.206298522999532,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 8.988892969019437e-17,
+          "1": 0.008999000303447247,
+          "2": -9.09000142951949e-13,
+          "3": -1.0091002700107765e-08
+        },
+        "encoder_rps": {
+          "0": 2.2699225413390227e-20,
+          "1": 2.2724748305336107e-06,
+          "2": -2.2954547871966216e-16,
+          "3": -2.54823310889829e-12
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.25631897599942,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 8.98889356258615e-22,
+          "1": 8.999001011034125e-08,
+          "2": -9.090002729450366e-18,
+          "3": -1.0091002333864271e-13
+        },
+        "encoder_rps": {
+          "0": 2.2699226028701733e-25,
+          "1": 2.272474916575895e-11,
+          "2": -2.295455280403062e-21,
+          "3": -2.548232943673926e-17
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.307000548999895,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 8.988894370182501e-27,
+          "1": 8.999002172778436e-13,
+          "2": -9.090003190094648e-23,
+          "3": -1.0091003767202837e-18
+        },
+        "encoder_rps": {
+          "0": 2.2699228496299474e-30,
+          "1": 2.2724753127332045e-16,
+          "2": -2.295455349477695e-26,
+          "3": -2.548233274546171e-22
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.3571287539998593,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 8.988895392016231e-32,
+          "1": 8.999002935902182e-18,
+          "2": -9.090004151518876e-28,
+          "3": -1.0091004569947694e-23
+        },
+        "encoder_rps": {
+          "0": 2.2699230698055495e-35,
+          "1": 2.2724755729073565e-21,
+          "2": -2.295455527325288e-31,
+          "3": -2.548233539122723e-27
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.407240885999272,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 8.988896927677918e-37,
+          "1": 8.999003982600697e-23,
+          "2": -9.090005244728622e-33,
+          "3": -1.0091005638261034e-28
+        },
+        "encoder_rps": {
+          "0": 2.2699213434058414e-40,
+          "1": 2.2724757696788486e-26,
+          "2": -2.295455848864319e-36,
+          "3": -2.548233714976678e-32
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.4573849230000633,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 8.989329648643702e-42,
+          "1": 8.999004924611551e-28,
+          "2": -9.090005656553425e-38,
+          "3": -1.0091007377404926e-33
+        },
+        "encoder_rps": {
+          "0": 2.802596928649634e-45,
+          "1": 2.2724760233599334e-31,
+          "2": -2.2954670144104828e-41,
+          "3": -2.5482341282364105e-37
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.5075018689994977,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 8.999005818927653e-33,
+          "2": -9.094427033468063e-43,
+          "3": -1.0091006679221979e-38
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 2.272476168345223e-36,
+          "2": -0.0,
+          "3": -2.5475606081425174e-42
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.5583859289999964,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 8.999005894799557e-38,
+          "2": 0.0,
+          "3": -1.0089348943138683e-43
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 2.2724857195955558e-41,
+          "2": 0.0,
+          "3": -0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.6075896049997027,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 8.996336140965326e-43,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.65778430499995,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.7079302679994726,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.7579400169997825,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.8079854689995045,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.8581140989999767,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.908118626999567,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 2.958270571999492,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.008242386999882,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.0583223059993543,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.1085568799999237,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.158721033999427,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.2087610290000157,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      },
+      {
+        "t": 3.2589487369996277,
+        "joystick": {
+          "left_x": 0.0,
+          "left_y": 0.0,
+          "right_x": 0.0
+        },
+        "chassis_cmd": {
+          "v_forward_m_s": -0.0,
+          "v_left_m_s": 0.0,
+          "omega_rad_s": 0.0
+        },
+        "wheel_cmd_rev_s": {
+          "0": -0.0,
+          "2": -0.0,
+          "1": 0.0,
+          "3": -0.0
+        },
+        "encoder_counts": {
+          "0": -1093,
+          "1": -1226,
+          "2": 992,
+          "3": 1195
+        },
+        "encoder_tps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "encoder_rps": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "estimated_pose": {
+          "x_m": -0.15664895710210675,
+          "y_m": 0.003908174904394893,
+          "theta_rad": 0.010185956535099329
+        },
+        "servo_events": [],
+        "servo_state": {
+          "claw_base": "retracted",
+          "claw_pincher": "closed",
+          "rack_pinion": "lowered",
+          "bin_dump": "closed",
+          "false_floor": "closed"
+        }
+      }
+    ]
+  }
+}

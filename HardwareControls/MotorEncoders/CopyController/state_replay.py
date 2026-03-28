@@ -4,9 +4,7 @@ import argparse
 import json
 import math
 import time
-from typing import Dict, List
-
-
+from typing import Callable, Dict, List, Optional
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PARENT_DIR = SCRIPT_DIR.parent
@@ -34,9 +32,6 @@ from HardwareControls.Servos.rackpinion import Servo270 as RackPinionServo
 from HardwareControls.Servos.binDump import BinDumpServo
 from HardwareControls.Servos.falseFloor import Servo270 as FalseFloorServo
 
-# ---------------------------------------------------------------------------
-# Helpers — identical to replay_trace.py
-# ---------------------------------------------------------------------------
 
 class ReplayServoController:
     def __init__(self):
@@ -97,10 +92,10 @@ class ReplayServoController:
             self.false_floor_open = False
 
     def apply_events(self, events: List[dict]):
-        for e in events:
-            if "action" in e:
-                self.apply_action(e["action"])
-        
+        for event in events:
+            if "action" in event:
+                self.apply_action(event["action"])
+
     def snapshot(self) -> dict:
         return {
             "claw_base": "extended" if self.claw_base_extended else "retracted",
@@ -111,39 +106,49 @@ class ReplayServoController:
         }
 
     def deinit(self) -> None:
-        for servo in (self.claw_base, self.claw_pincher, self.rack_pinion, self.bin_dump, self.false_floor):
+        for servo in (
+            self.claw_base,
+            self.claw_pincher,
+            self.rack_pinion,
+            self.bin_dump,
+            self.false_floor,
+        ):
             try:
                 servo.deinit()
             except Exception:
                 pass
 
-def apply_pending_servo_events(servos, records, next_event_index, now):
+
+def apply_pending_servo_events(servos: ReplayServoController, records: List[dict], next_event_index: int, now: float) -> int:
     while next_event_index < len(records) and records[next_event_index]["t"] <= now:
         events = records[next_event_index].get("servo_events", [])
         if events:
             servos.apply_events(events)
-            print(f"Servo actions @ {records[next_event_index]['t']:.2f}s")
+            actions = [e.get("action") for e in events if e.get("action")]
+            print(f"Replay servo actions @ {records[next_event_index]['t']:.2f}s: {actions}")
         next_event_index += 1
     return next_event_index
 
+
 def normalize_motor_dict(d: dict, cast=float) -> Dict[int, float]:
     return {int(k): cast(v) for k, v in d.items()}
+
 
 def interpolate_records(records: List[dict], t: float) -> dict:
     if t <= records[0]["t"]:
         return {
             "t": records[0]["t"],
             "wheel_cmd_rev_s": normalize_motor_dict(records[0]["wheel_cmd_rev_s"], float),
-            "encoder_counts":  normalize_motor_dict(records[0]["encoder_counts"], int),
-            "estimated_pose":  records[0]["estimated_pose"],
+            "encoder_counts": normalize_motor_dict(records[0]["encoder_counts"], int),
+            "estimated_pose": records[0]["estimated_pose"],
         }
 
     if t >= records[-1]["t"]:
         return {
             "t": records[-1]["t"],
             "wheel_cmd_rev_s": normalize_motor_dict(records[-1]["wheel_cmd_rev_s"], float),
-            "encoder_counts":  normalize_motor_dict(records[-1]["encoder_counts"], int),
-            "estimated_pose":  records[-1]["estimated_pose"],
+            "encoder_counts": normalize_motor_dict(records[-1]["encoder_counts"], int),
+            "estimated_pose": records[-1]["estimated_pose"],
         }
 
     lo, hi = 0, len(records) - 1
@@ -168,101 +173,64 @@ def interpolate_records(records: List[dict], t: float) -> dict:
     out = {
         "t": t,
         "wheel_cmd_rev_s": {},
-        "encoder_counts":  {},
-        "estimated_pose":  {},
+        "encoder_counts": {},
+        "estimated_pose": {},
     }
     for motor_id in MOTOR_ORDER:
         out["wheel_cmd_rev_s"][motor_id] = lerp(a_cmd.get(motor_id, 0.0), b_cmd.get(motor_id, 0.0))
-        out["encoder_counts"][motor_id]  = int(round(lerp(a_cnt.get(motor_id, 0), b_cnt.get(motor_id, 0))))
+        out["encoder_counts"][motor_id] = int(round(lerp(a_cnt.get(motor_id, 0), b_cnt.get(motor_id, 0))))
     for key in ("x_m", "y_m", "theta_rad"):
         out["estimated_pose"][key] = lerp(float(a["estimated_pose"][key]), float(b["estimated_pose"][key]))
 
     return out
 
-def find_closest_record_by_encoder(actual_counts, records):
-    best_idx = 0
-    best_err = float("inf")
-
-    for i, r in enumerate(records):
-        ref_counts = normalize_motor_dict(r["encoder_counts"], int)
-
-        err = sum(
-            abs(actual_counts[m] - ref_counts.get(m, 0))
-            for m in MOTOR_ORDER
-        )
-
-        if err < best_err:
-            best_err = err
-            best_idx = i
-
-    return records[best_idx]
-
-# ---------------------------------------------------------------------------
-# Core execution — mirrors replay_encoder_tracking from replay_trace.py
-# ---------------------------------------------------------------------------
 
 def _execute_state_records(
-    controller,
-    servos_in,
-    records,
-    kp_counts,
-    max_correction_rev_s,
-    blend,
-    rate_hz,
-    mode="encoder"
+    controller: HiwonderMecanumController,
+    servos: ReplayServoController,
+    records: List[dict],
+    kp_counts: float,
+    max_correction_rev_s: float,
+    blend: float,
+    rate_hz: float,
 ):
     period = 1.0 / rate_hz
     t0 = time.monotonic()
     prev_t = 0.0
     next_event_index = 0
 
-    servos = servos_in
-
-    final_counts = normalize_motor_dict(records[-1]["encoder_counts"], int)
-
     while True:
         now = time.monotonic() - t0
         dt = max(now - prev_t, 1e-3)
         prev_t = now
 
+        next_event_index = apply_pending_servo_events(servos, records, next_event_index, now)
 
-        # ref = interpolate_records(records, now)
-
-        # --- Robust encoder read ---
         actual_states = None
         for _ in range(3):
             try:
                 actual_states = controller.read_all_motors()
                 break
             except Exception as exc:
-                print(f"Retry encoder read: {exc}")
+                print(f"Replay read retry due to: {exc}")
                 time.sleep(0.01)
 
         if actual_states is None:
-            print("Skipping sample (encoder read failed)")
+            print("Skipping this replay sample because encoder read failed")
             if now >= records[-1]["t"]:
+                controller.stop_all()
                 break
-            time.sleep(period)
+            time.sleep(max(0.0, period))
             continue
 
+        ref = interpolate_records(records, now)
         actual_counts = counts_dict_from_states(actual_states)
-
-        if mode == "time":
-            ref = interpolate_records(records, now)
-        else:
-            ref = find_closest_record_by_encoder(actual_counts, records)
-
-        # --- Servo replay ---
-        next_event_index = apply_pending_servo_events(
-            servos, records, next_event_index, now
-        )
 
         ref_counts = ref["encoder_counts"]
         err = wheel_counts_error(actual_counts, ref_counts)
 
         base_cmds = ref["wheel_cmd_rev_s"]
         corrected = {}
-
         for motor_id in MOTOR_ORDER:
             correction = wheel_speed_from_count_error(
                 controller=controller,
@@ -272,45 +240,28 @@ def _execute_state_records(
                 kp=kp_counts,
                 max_correction_rev_s=max_correction_rev_s,
             )
-
-            if abs(err[motor_id]) < 3:
-                correction = 0.0
-
             corrected[motor_id] = (
                 (1.0 - blend) * base_cmds[motor_id]
                 + blend * (base_cmds[motor_id] + correction)
             )
 
-        run_wheel_speeds(controller, corrected, label=f"Run state ({mode})")
-
+        run_wheel_speeds(controller, corrected, label="Run state")
         print(
-            f"mode={mode} "
-            f"t={now:6.2f}s "
-            f"err={[err[m] for m in MOTOR_ORDER]} "
+            f"  t={now:6.2f}s  "
+            f"err={[err[m] for m in MOTOR_ORDER]}  "
             f"pose=({ref['estimated_pose']['x_m']: .3f}, "
             f"{ref['estimated_pose']['y_m']: .3f}, "
             f"{ref['estimated_pose']['theta_rad']: .3f})",
             end="\r",
         )
 
-        if mode == "time":
-            done = now >= records[-1]["t"]
-        else:
-            done = all(
-                abs(actual_counts[m] - final_counts[m]) < 5
-                for m in MOTOR_ORDER
-            )
-
-        if done:
+        if now >= records[-1]["t"]:
             controller.stop_all()
             print()
             break
 
         time.sleep(max(0.0, period))
 
-# ---------------------------------------------------------------------------
-# Routine loading
-# ---------------------------------------------------------------------------
 
 def load_routine(routine_name: str) -> dict:
     routines_dir = SCRIPT_DIR / "routines"
@@ -320,39 +271,43 @@ def load_routine(routine_name: str) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-# ---------------------------------------------------------------------------
-# Public API — call from state machine
-# ---------------------------------------------------------------------------
-
 def run_routine(
     routine_name: str,
     state: State,
-    controller: HiwonderMecanumController = None,
+    controller: Optional[HiwonderMecanumController] = None,
     port: str = "/dev/ttyACM0",
     baud: int = 1000000,
-    calibration: str =SCRIPT_DIR.parent / "robot_calibration.json",
+    calibration: str = SCRIPT_DIR.parent / "robot_calibration.json",
     kp_counts: float = 0.15,
     max_correction_rev_s: float = 0.20,
     blend: float = 1.0,
     rate: float = 20.0,
-    mode: str = "encoder"
+    pre_run_callback: Optional[Callable[[], None]] = None,
+    post_run_callback: Optional[Callable[[], None]] = None,
 ):
     """
     Run the recorded data for a single state from a routine JSON.
 
-    If controller is provided (e.g. called from a state machine) it will be
-    reused and left open. Otherwise a new one is opened and closed automatically.
+    If controller is provided it will be reused and left open.
+    Optional pre_run_callback / post_run_callback allow a caller (e.g. game.py)
+    to tie other subsystems to the replay lifecycle.
     """
-    routine    = load_routine(routine_name)
+    routine = load_routine(routine_name)
     state_name = state.name
-    records    = routine.get("states", {}).get(state_name)
+    records = routine.get("states", {}).get(state_name)
 
     if not records:
         print(f"[run_routine] No data recorded for state {state_name}, skipping.")
+        if pre_run_callback is not None:
+            pre_run_callback()
+        if post_run_callback is not None:
+            post_run_callback()
         return
 
-    print(f"[run_routine] Running state {state_name} ({len(records)} records, "
-          f"duration={records[-1]['t']:.2f}s)")
+    print(
+        f"[run_routine] Running state {state_name} "
+        f"({len(records)} records, duration={records[-1]['t']:.2f}s)"
+    )
 
     owns_controller = controller is None
     if owns_controller:
@@ -366,22 +321,28 @@ def run_routine(
 
     servos = ReplayServoController()
     try:
+        if pre_run_callback is not None:
+            pre_run_callback()
+
         controller.reset_all_encoders()
         _execute_state_records(
             controller=controller,
+            servos=servos,
             records=records,
-            servos_in=servos,
             kp_counts=kp_counts,
             max_correction_rev_s=max_correction_rev_s,
             blend=blend,
             rate_hz=rate,
         )
+
+        if post_run_callback is not None:
+            post_run_callback()
     finally:
+        servos.deinit()
         if owns_controller:
             controller.stop_all()
             controller.close()
-        servos.deinit()
-        
+
 
 def main_from_name(
     routine_name: str = "main_routine",
@@ -393,7 +354,7 @@ def main_from_name(
     blend: float = 1.0,
     rate: float = 12.0,
 ):
-    routine         = load_routine(routine_name)
+    routine = load_routine(routine_name)
     recorded_states = list(routine.get("states", {}).keys())
 
     if not recorded_states:
@@ -415,12 +376,14 @@ def main_from_name(
             if not records:
                 print(f"\n=== State: {state_name} — no data, skipping. ===")
                 continue
-            print(f"\n=== State: {state_name} ({len(records)} records, "
-                  f"duration={records[-1]['t']:.2f}s) ===")
+            print(
+                f"\n=== State: {state_name} "
+                f"({len(records)} records, duration={records[-1]['t']:.2f}s) ==="
+            )
             controller.reset_all_encoders()
             _execute_state_records(
                 controller=controller,
-                servos_in=servos,
+                servos=servos,
                 records=records,
                 kp_counts=kp_counts,
                 max_correction_rev_s=max_correction_rev_s,
@@ -430,26 +393,22 @@ def main_from_name(
     finally:
         controller.stop_all()
         controller.close()
+        servos.deinit()
 
-# ---------------------------------------------------------------------------
-# Direct execution — run all states in order
-# ---------------------------------------------------------------------------
 
 def main():
     parser = argparse.ArgumentParser(description="Run a saved routine")
-    parser.add_argument("--mode", choices=["time", "encoder"])
-    parser.add_argument("--port",                  default="/dev/ttyACM0")
-    parser.add_argument("--baud",                  type=int,   default=1000000)
-    parser.add_argument("--calibration",           default=SCRIPT_DIR.parent / "robot_calibration.json")
-    parser.add_argument("--kp-counts",             type=float, default=0.15)
-    parser.add_argument("--max-correction-rev-s",  type=float, default=0.20)
-    parser.add_argument("--blend",                 type=float, default=1.0)
-    parser.add_argument("--rate",                  type=float, default=20.0)
+    parser.add_argument("--port", default="/dev/ttyACM0")
+    parser.add_argument("--baud", type=int, default=1000000)
+    parser.add_argument("--calibration", default=SCRIPT_DIR.parent / "robot_calibration.json")
+    parser.add_argument("--kp-counts", type=float, default=0.15)
+    parser.add_argument("--max-correction-rev-s", type=float, default=0.20)
+    parser.add_argument("--blend", type=float, default=1.0)
+    parser.add_argument("--rate", type=float, default=20.0)
     args = parser.parse_args()
 
-    # Pick routine interactively
     routines_dir = SCRIPT_DIR / "routines"
-    available    = sorted(routines_dir.glob("*.json")) if routines_dir.exists() else []
+    available = sorted(routines_dir.glob("*.json")) if routines_dir.exists() else []
 
     if available:
         print("Available routines:")
@@ -474,7 +433,7 @@ def main():
 
     print(f"Running routine: {routine_name}\n")
 
-    routine         = load_routine(routine_name)
+    routine = load_routine(routine_name)
     recorded_states = list(routine.get("states", {}).keys())
 
     if not recorded_states:
@@ -489,16 +448,20 @@ def main():
     controller.open()
     controller.stop_all()
 
+    servos = ReplayServoController()
     try:
         for state_name in recorded_states:
             records = routine["states"][state_name]
             if not records:
                 print(f"\n=== State: {state_name} — no data, skipping. ===")
                 continue
-            print(f"\n=== State: {state_name} ({len(records)} records, "
-                  f"duration={records[-1]['t']:.2f}s) ===")
+            print(
+                f"\n=== State: {state_name} "
+                f"({len(records)} records, duration={records[-1]['t']:.2f}s) ==="
+            )
             _execute_state_records(
                 controller=controller,
+                servos=servos,
                 records=records,
                 kp_counts=args.kp_counts,
                 max_correction_rev_s=args.max_correction_rev_s,
@@ -508,6 +471,7 @@ def main():
     finally:
         controller.stop_all()
         controller.close()
+        servos.deinit()
 
 
 if __name__ == "__main__":

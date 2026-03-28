@@ -13,7 +13,7 @@ import math
 import threading
 import os
 
-from .MotorEncoders.testing.linkVerify import play_hw_error
+# from .MotorEncoders.testing.linkVerify import play_hw_error
 
 class Camera():
     _BASE_DIR = Path(__file__).parent
@@ -471,9 +471,14 @@ class Magnetometer():
         self.i2c = board.I2C()
 
         try:
+            print("why?")
             self.SENSOR = adafruit_mlx90393.MLX90393(self.i2c, gain=adafruit_mlx90393.GAIN_1X, address=address)
-        except ValueError:
-            print(f"Magnetometer ValueError: {ValueError}")
+            print("Yo...")
+        except Exception as e:
+            print("Bro!")
+            print(f"{e}")
+            raise
+            # print(f"Magnetometer ValueError: {ValueError}")
             self.SENSOR = adafruit_mlx90393.MLX90393(self.i2c, gain=adafruit_mlx90393.GAIN_1X, address=address)
     
     def returnAxisValues(self):
@@ -501,3 +506,13 @@ class LightSensor():
     
     def returnFullSpec(self):
         return self.SENSOR.full_spectrum
+
+
+if __name__ == "__main__":
+    print("Bro")
+    mag = Magnetometer(0x18)
+    print("Yo")
+
+    while True:
+        MX, MY, MZ = mag.returnAxisValues()
+        print(abs(MZ))

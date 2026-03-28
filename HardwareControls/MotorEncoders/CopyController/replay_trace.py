@@ -4,15 +4,15 @@ import argparse
 import json
 import math
 import time
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-MOTOR_ENCODERS_DIR = SCRIPT_DIR.parent
-HARDWARE_CONTROLS_DIR = MOTOR_ENCODERS_DIR.parent
-if str(MOTOR_ENCODERS_DIR) not in sys.path:
-    sys.path.insert(0, str(MOTOR_ENCODERS_DIR))
-if str(HARDWARE_CONTROLS_DIR) not in sys.path:
-    sys.path.insert(0, str(HARDWARE_CONTROLS_DIR))
+PARENT_DIR = SCRIPT_DIR.parent
+PROJECT_DIR = PARENT_DIR.parent.parent
+
+for p in (SCRIPT_DIR, PARENT_DIR, PROJECT_DIR):
+    if str(p) not in sys.path:
+        sys.path.insert(0, str(p))
 
 from MotorController import HiwonderMecanumController, MOTOR_ORDER
 from motion_bridge import (
@@ -21,13 +21,14 @@ from motion_bridge import (
     wheel_counts_error,
     wheel_speed_from_count_error,
 )
-from Servos.clawBase import ClawBaseServo
-from Servos.clawPincher import Servo270Positions
-from Servos.rackpinion import Servo270 as RackPinionServo
-from Servos.binDump import BinDumpServo
-from Servos.falseFloor import Servo270 as FalseFloorServo
+from StateControllers import State
+from HardwareControls.Servos.clawBase import ClawBaseServo
+from HardwareControls.Servos.clawPincher import Servo270Positions
+from HardwareControls.Servos.rackpinion import Servo270 as RackPinionServo
+from HardwareControls.Servos.binDump import BinDumpServo
+from HardwareControls.Servos.falseFloor import Servo270 as FalseFloorServo
 
-DEFAULT_CALIBRATION = MOTOR_ENCODERS_DIR / "robot_calibration.json"
+DEFAULT_CALIBRATION = SCRIPT_DIR.parent / "robot_calibration.json"
 
 
 class ReplayServoController:
@@ -50,16 +51,7 @@ class ReplayServoController:
         self.false_floor_open = False
         self.claw_base_extended = False
 
-    def snapshot(self) -> dict:
-        return {
-            "claw_base": "extended" if self.claw_base_extended else "retracted",
-            "claw_pincher": self.claw_pincher_state,
-            "rack_pinion": "raised" if self.rack_pinion_up else "lowered",
-            "bin_dump": "open" if self.bin_dump_open else "closed",
-            "false_floor": "open" if self.false_floor_open else "closed",
-        }
-
-    def apply_action(self, action: str) -> None:
+    def apply_action(self, action: str):
         if action == "claw_base_extend":
             self.claw_base.extend()
             self.claw_base_extended = True
@@ -97,20 +89,22 @@ class ReplayServoController:
             self.false_floor.close()
             self.false_floor_open = False
 
-    def apply_events(self, events: List[dict]) -> None:
-        for event in events:
-            action = event.get("action")
-            if action:
-                self.apply_action(action)
+    def apply_events(self, events: List[dict]):
+        for e in events:
+            if "action" in e:
+                self.apply_action(e["action"])
+
+    def snapshot(self) -> dict:
+        return {
+            "claw_base": "extended" if self.claw_base_extended else "retracted",
+            "claw_pincher": self.claw_pincher_state,
+            "rack_pinion": "raised" if self.rack_pinion_up else "lowered",
+            "bin_dump": "open" if self.bin_dump_open else "closed",
+            "false_floor": "open" if self.false_floor_open else "closed",
+        }
 
     def deinit(self) -> None:
-        for servo in (
-            self.claw_base,
-            self.claw_pincher,
-            self.rack_pinion,
-            self.bin_dump,
-            self.false_floor,
-        ):
+        for servo in (self.claw_base, self.claw_pincher, self.rack_pinion, self.bin_dump, self.false_floor):
             try:
                 servo.deinit()
             except Exception:
@@ -126,23 +120,17 @@ def load_serial_settings(calibration_path: str) -> Tuple[str, int]:
     return port, baud
 
 
-def load_trace(path: str) -> List[dict]:
-    with open(path, "r", encoding="utf-8") as f:
-        return [json.loads(line) for line in f if line.strip()]
-
-
 def normalize_motor_dict(d: dict, cast=float) -> Dict[int, float]:
     return {int(k): cast(v) for k, v in d.items()}
 
 
-def interpolate_trace(records: List[dict], t: float) -> dict:
+def interpolate_records(records: List[dict], t: float) -> dict:
     if t <= records[0]["t"]:
         return {
             "t": records[0]["t"],
             "wheel_cmd_rev_s": normalize_motor_dict(records[0]["wheel_cmd_rev_s"], float),
             "encoder_counts": normalize_motor_dict(records[0]["encoder_counts"], int),
             "estimated_pose": records[0]["estimated_pose"],
-            "marker": records[0].get("marker", False),
             "servo_state": records[0].get("servo_state", {}),
         }
 
@@ -152,12 +140,10 @@ def interpolate_trace(records: List[dict], t: float) -> dict:
             "wheel_cmd_rev_s": normalize_motor_dict(records[-1]["wheel_cmd_rev_s"], float),
             "encoder_counts": normalize_motor_dict(records[-1]["encoder_counts"], int),
             "estimated_pose": records[-1]["estimated_pose"],
-            "marker": records[-1].get("marker", False),
             "servo_state": records[-1].get("servo_state", {}),
         }
 
-    lo = 0
-    hi = len(records) - 1
+    lo, hi = 0, len(records) - 1
     while lo + 1 < hi:
         mid = (lo + hi) // 2
         if records[mid]["t"] < t:
@@ -165,8 +151,7 @@ def interpolate_trace(records: List[dict], t: float) -> dict:
         else:
             hi = mid
 
-    a = records[lo]
-    b = records[hi]
+    a, b = records[lo], records[hi]
     alpha = (t - a["t"]) / max(b["t"] - a["t"], 1e-9)
 
     def lerp(x, y):
@@ -182,7 +167,6 @@ def interpolate_trace(records: List[dict], t: float) -> dict:
         "wheel_cmd_rev_s": {},
         "encoder_counts": {},
         "estimated_pose": {},
-        "marker": a.get("marker", False) or b.get("marker", False),
         "servo_state": a.get("servo_state", {}) or b.get("servo_state", {}),
     }
     for motor_id in MOTOR_ORDER:
@@ -191,41 +175,6 @@ def interpolate_trace(records: List[dict], t: float) -> dict:
     for key in ("x_m", "y_m", "theta_rad"):
         out["estimated_pose"][key] = lerp(float(a["estimated_pose"][key]), float(b["estimated_pose"][key]))
     return out
-
-
-def export_steps(records: List[dict], out_path: str, pos_thresh_m: float, theta_thresh_rad: float) -> None:
-    steps = []
-    first = records[0]
-    steps.append({
-        "t": first["t"],
-        "target_pose": first["estimated_pose"],
-        "target_counts": normalize_motor_dict(first["encoder_counts"], int),
-        "wheel_cmd_rev_s": normalize_motor_dict(first["wheel_cmd_rev_s"], float),
-        "servo_state": first.get("servo_state", {}),
-        "servo_events": first.get("servo_events", []),
-    })
-    last_pose = first["estimated_pose"]
-
-    for rec in records[1:]:
-        pose = rec["estimated_pose"]
-        dx = pose["x_m"] - last_pose["x_m"]
-        dy = pose["y_m"] - last_pose["y_m"]
-        dtheta = pose["theta_rad"] - last_pose["theta_rad"]
-        if math.hypot(dx, dy) >= pos_thresh_m or abs(dtheta) >= theta_thresh_rad or rec.get("marker", False) or rec.get("servo_events"):
-            steps.append({
-                "t": rec["t"],
-                "target_pose": pose,
-                "target_counts": normalize_motor_dict(rec["encoder_counts"], int),
-                "wheel_cmd_rev_s": normalize_motor_dict(rec["wheel_cmd_rev_s"], float),
-                "servo_state": rec.get("servo_state", {}),
-                "servo_events": rec.get("servo_events", []),
-            })
-            last_pose = pose
-
-    Path(out_path).write_text(
-        json.dumps({"steps": steps, "source": "teleop trace export"}, indent=2),
-        encoding="utf-8",
-    )
 
 
 def apply_pending_servo_events(servos: ReplayServoController, records: List[dict], next_event_index: int, now: float) -> int:
@@ -239,125 +188,81 @@ def apply_pending_servo_events(servos: ReplayServoController, records: List[dict
     return next_event_index
 
 
-def replay_speed(controller: HiwonderMecanumController, servos: ReplayServoController, records: List[dict], rate_hz: float, log_path: str) -> None:
-    period = 1.0 / rate_hz
-    origin_counts = {motor_id: 0 for motor_id in MOTOR_ORDER}
-    t0 = time.monotonic()
-    next_event_index = 0
-
-    with open(log_path, "w", encoding="utf-8") as f:
-        while True:
-            now = time.monotonic() - t0
-            next_event_index = apply_pending_servo_events(servos, records, next_event_index, now)
-            ref = interpolate_trace(records, now)
-            run_wheel_speeds(controller, ref["wheel_cmd_rev_s"], label="Replay speed mode")
-
-            actual_states = None
-            for _ in range(3):
-                try:
-                    actual_states = controller.read_all_motors()
-                    break
-                except Exception as exc:
-                    print(f"Replay read retry due to: {exc}")
-                    time.sleep(0.01)
-
-            if actual_states is None:
-                print("Skipping this replay sample because encoder read failed")
-                if now >= records[-1]["t"]:
-                    break
-                time.sleep(max(0.0, period))
-                continue
-
-            actual_counts = counts_dict_from_states(actual_states)
-            err = wheel_counts_error(actual_counts, ref["encoder_counts"])
-            dx, dy, dtheta = controller.estimate_robot_displacement(origin_counts, actual_counts)
-
-            f.write(json.dumps({
-                "t": now,
-                "mode": "speed",
-                "reference_counts": {str(k): int(v) for k, v in ref["encoder_counts"].items()},
-                "actual_counts": {str(k): int(v) for k, v in actual_counts.items()},
-                "count_error": {str(k): int(v) for k, v in err.items()},
-                "reference_pose": ref["estimated_pose"],
-                "actual_pose": {"x_m": dx, "y_m": dy, "theta_rad": dtheta},
-                "servo_state": servos.snapshot(),
-            }) + "\n")
-
-            if now >= records[-1]["t"]:
-                break
-            time.sleep(max(0.0, period))
-
-    controller.stop_all()
-
-
-def replay_encoder_tracking(
+def _execute_state_records(
     controller: HiwonderMecanumController,
     servos: ReplayServoController,
     records: List[dict],
-    rate_hz: float,
-    log_path: str,
     kp_counts: float,
     max_correction_rev_s: float,
     blend: float,
-) -> None:
+    rate_hz: float,
+    log_fh=None,
+    state_name: Optional[str] = None,
+):
     period = 1.0 / rate_hz
     origin_counts = {motor_id: 0 for motor_id in MOTOR_ORDER}
     t0 = time.monotonic()
     prev_t = 0.0
     next_event_index = 0
 
-    with open(log_path, "w", encoding="utf-8") as f:
-        while True:
-            now = time.monotonic() - t0
-            dt = max(now - prev_t, 1e-3)
-            prev_t = now
-            next_event_index = apply_pending_servo_events(servos, records, next_event_index, now)
-            ref = interpolate_trace(records, now)
+    while True:
+        now = time.monotonic() - t0
+        dt = max(now - prev_t, 1e-3)
+        prev_t = now
 
-            actual_states = None
-            for _ in range(3):
-                try:
-                    actual_states = controller.read_all_motors()
-                    break
-                except Exception as exc:
-                    print(f"Replay read retry due to: {exc}")
-                    time.sleep(0.01)
+        next_event_index = apply_pending_servo_events(servos, records, next_event_index, now)
+        ref = interpolate_records(records, now)
 
-            if actual_states is None:
-                print("Skipping this replay sample because encoder read failed")
-                if now >= records[-1]["t"]:
-                    break
-                time.sleep(max(0.0, period))
-                continue
+        actual_states = None
+        for _ in range(3):
+            try:
+                actual_states = controller.read_all_motors()
+                break
+            except Exception as exc:
+                print(f"Retry encoder read: {exc}")
+                time.sleep(0.01)
 
-            actual_counts = counts_dict_from_states(actual_states)
-            ref_counts = ref["encoder_counts"]
-            err = wheel_counts_error(actual_counts, ref_counts)
-            corrected = {}
-            base_cmds = ref["wheel_cmd_rev_s"]
+        if actual_states is None:
+            print("Skipping sample (encoder read failed)")
+            if now >= records[-1]["t"]:
+                break
+            time.sleep(period)
+            continue
 
-            for motor_id in MOTOR_ORDER:
-                correction = wheel_speed_from_count_error(
-                    controller=controller,
-                    error_counts=err[motor_id],
-                    motor_id=motor_id,
-                    dt_s=dt,
-                    kp=kp_counts,
-                    max_correction_rev_s=max_correction_rev_s,
-                )
-                corrected[motor_id] = (1.0 - blend) * base_cmds[motor_id] + blend * (base_cmds[motor_id] + correction)
+        actual_counts = counts_dict_from_states(actual_states)
+        ref_counts = ref["encoder_counts"]
+        err = wheel_counts_error(actual_counts, ref_counts)
 
-            run_wheel_speeds(controller, corrected, label="Replay encoder-tracking mode")
-            dx, dy, dtheta = controller.estimate_robot_displacement(origin_counts, actual_counts)
-            print(
-                f"t={now:6.2f}s "
-                f"err={[err[m] for m in MOTOR_ORDER]} "
-                f"pose=({dx: .3f}, {dy: .3f}, {dtheta: .3f})"
+        base_cmds = ref["wheel_cmd_rev_s"]
+        corrected = {}
+
+        for motor_id in MOTOR_ORDER:
+            correction = wheel_speed_from_count_error(
+                controller=controller,
+                error_counts=err[motor_id],
+                motor_id=motor_id,
+                dt_s=dt,
+                kp=kp_counts,
+                max_correction_rev_s=max_correction_rev_s,
+            )
+            corrected[motor_id] = (
+                (1.0 - blend) * base_cmds[motor_id]
+                + blend * (base_cmds[motor_id] + correction)
             )
 
-            f.write(json.dumps({
+        run_wheel_speeds(controller, corrected, label=f"Run state {state_name or ''}")
+
+        dx, dy, dtheta = controller.estimate_robot_displacement(origin_counts, actual_counts)
+        print(
+            f"{state_name or 'STATE'} t={now:6.2f}s "
+            f"err={[err[m] for m in MOTOR_ORDER]} "
+            f"pose=({dx: .3f}, {dy: .3f}, {dtheta: .3f})"
+        )
+
+        if log_fh is not None:
+            log_fh.write(json.dumps({
+                "state": state_name,
                 "t": now,
-                "mode": "encoder_tracking",
                 "reference_counts": {str(k): int(v) for k, v in ref_counts.items()},
                 "actual_counts": {str(k): int(v) for k, v in actual_counts.items()},
                 "count_error": {str(k): int(v) for k, v in err.items()},
@@ -368,83 +273,145 @@ def replay_encoder_tracking(
                 "servo_state": servos.snapshot(),
             }) + "\n")
 
-            if now >= records[-1]["t"]:
-                break
-            time.sleep(max(0.0, period))
+        if now >= records[-1]["t"]:
+            controller.stop_all()
+            break
 
-    controller.stop_all()
+        time.sleep(max(0.0, period))
+
+
+def load_routine(routine_name: str) -> dict:
+    routines_dir = SCRIPT_DIR / "routines"
+    path = routines_dir / f"{routine_name}.json"
+    if not path.exists():
+        raise FileNotFoundError(f"Routine '{routine_name}' not found at {path}")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def run_routine(
+    routine_name: str,
+    state: State,
+    controller: HiwonderMecanumController = None,
+    port: Optional[str] = None,
+    baud: Optional[int] = None,
+    calibration: str = str(DEFAULT_CALIBRATION),
+    kp_counts: float = 0.15,
+    max_correction_rev_s: float = 0.20,
+    blend: float = 1.0,
+    rate: float = 20.0,
+    log_path: Optional[str] = None,
+):
+    routine = load_routine(routine_name)
+    state_name = state.name
+    records = routine.get("states", {}).get(state_name)
+
+    if not records:
+        print(f"[run_routine] No data recorded for state {state_name}, skipping.")
+        return
+
+    json_port, json_baud = load_serial_settings(calibration)
+    port = port if port is not None else json_port
+    baud = baud if baud is not None else json_baud
+
+    owns_controller = controller is None
+    if owns_controller:
+        controller = HiwonderMecanumController(
+            port=port,
+            baud=baud,
+            calibration_file=calibration,
+        )
+        controller.open()
+        controller.stop_all()
+        controller.reset_all_encoders()
+
+    servos = ReplayServoController()
+    log_fh = open(log_path, "a", encoding="utf-8") if log_path else None
+    try:
+        _execute_state_records(
+            controller=controller,
+            servos=servos,
+            records=records,
+            kp_counts=kp_counts,
+            max_correction_rev_s=max_correction_rev_s,
+            blend=blend,
+            rate_hz=rate,
+            log_fh=log_fh,
+            state_name=state_name,
+        )
+    finally:
+        if log_fh:
+            log_fh.close()
+        servos.deinit()
+        if owns_controller:
+            controller.stop_all()
+            controller.close()
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Replay trace using MotorController.py with servo replay")
-    parser.add_argument("--trace", required=True)
-    parser.add_argument("--mode", choices=["speed", "encoder"], default="encoder")
+    parser = argparse.ArgumentParser(description="Replay state-structured routine with encoder correction")
+    parser.add_argument("--routine", required=True, help="Routine name without .json")
+    parser.add_argument("--state", default="", help="Optional single state name; if omitted, replay all recorded states in order")
     parser.add_argument("--port", default=None, help="Override serial port from calibration JSON")
-    parser.add_argument("--baud", type=int, default=None, help="Override baud rate from calibration JSON")
+    parser.add_argument("--baud", type=int, default=None, help="Override baud from calibration JSON")
     parser.add_argument("--calibration", default=str(DEFAULT_CALIBRATION))
-    parser.add_argument("--rate", type=float, default=20.0)
     parser.add_argument("--kp-counts", type=float, default=0.15)
     parser.add_argument("--max-correction-rev-s", type=float, default=0.20)
     parser.add_argument("--blend", type=float, default=1.0)
-    parser.add_argument("--log", default="replay_log.jsonl")
-    parser.add_argument("--export-steps", default="")
-    parser.add_argument("--step-pos-thresh-in", type=float, default=1.0)
-    parser.add_argument("--step-theta-thresh-deg", type=float, default=10.0)
+    parser.add_argument("--rate", type=float, default=20.0)
+    parser.add_argument("--log", default="state_replay_log.jsonl")
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
+    routine = load_routine(args.routine)
+
     json_port, json_baud = load_serial_settings(args.calibration)
     port = args.port if args.port is not None else json_port
     baud = args.baud if args.baud is not None else json_baud
-
-    records = load_trace(args.trace)
-    if not records:
-        raise RuntimeError("Trace file is empty")
-
-    if args.export_steps:
-        export_steps(
-            records,
-            args.export_steps,
-            pos_thresh_m=args.step_pos_thresh_in * 0.0254,
-            theta_thresh_rad=math.radians(args.step_theta_thresh_deg),
-        )
-        print(f"Exported routine steps to {args.export_steps}")
 
     controller = HiwonderMecanumController(
         port=port,
         baud=baud,
         calibration_file=args.calibration,
     )
-    servos = ReplayServoController()
     controller.open()
     controller.stop_all()
     controller.reset_all_encoders()
-    print(f"Using calibration: {args.calibration}")
-    print(f"Using serial port: {port}")
-    print(f"Using baud rate : {baud}")
 
     try:
-        if args.mode == "speed":
-            replay_speed(controller, servos, records, args.rate, args.log)
-        else:
-            replay_encoder_tracking(
-                controller,
-                servos,
-                records,
-                args.rate,
-                args.log,
-                args.kp_counts,
-                args.max_correction_rev_s,
-                args.blend,
+        if args.state:
+            run_routine(
+                routine_name=args.routine,
+                state=State[args.state],
+                controller=controller,
+                calibration=args.calibration,
+                kp_counts=args.kp_counts,
+                max_correction_rev_s=args.max_correction_rev_s,
+                blend=args.blend,
+                rate=args.rate,
+                log_path=args.log,
             )
+        else:
+            for state in State:
+                if state in (State.IDLE, State.INIT, State.END):
+                    continue
+                if state.name in routine.get("states", {}):
+                    print(f"\n=== Replaying state {state.name} ===")
+                    run_routine(
+                        routine_name=args.routine,
+                        state=state,
+                        controller=controller,
+                        calibration=args.calibration,
+                        kp_counts=args.kp_counts,
+                        max_correction_rev_s=args.max_correction_rev_s,
+                        blend=args.blend,
+                        rate=args.rate,
+                        log_path=args.log,
+                    )
     finally:
         controller.stop_all()
         controller.close()
-        servos.deinit()
-
-    print(f"Saved replay log to {args.log}")
 
 
 if __name__ == "__main__":

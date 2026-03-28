@@ -53,10 +53,10 @@ DEFAULT_CALIBRATION = {
         "3": "rear_right",
     },
     "motor_direction_signs": {
-        "0": +1,
-        "1": +1,
-        "2": -1,
-        "3": -1,
+        "0": -1,
+        "1": -1,
+        "2": +1,
+        "3": +1,
     },
     "counts_per_revolution": {
         "0": 1289.0,

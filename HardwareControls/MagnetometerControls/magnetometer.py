@@ -35,7 +35,7 @@ print("Now Scanning I2C bus")
 while not i2c.try_lock():
     print("NOT WORKING!!!")
     pass
-addresses = i2c.scan()
+addresses = [18, 19]# i2c.scan()
 i2c.unlock()
 
 print(f"Devices found: {[hex(addr) for addr in addresses]}")

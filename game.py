@@ -14,7 +14,13 @@ from HardwareControls.MotorEncoders.testing.linkVerify import play_beep
 time.sleep(2)
 from enum import Enum
 
-ROUTINE_NAME = "routine_000"
+ROUTINE_NAME = "routine_006"
+
+ROUTINE_KP_COUNTS = 0.05
+ROUTINE_MAX_CORRECTION_REV_S = 0.08
+ROUTINE_BLEND = 1.0
+ROUTINE_RATE_HZ = 12.0
+
 
 class StateMachine:
     def __init__(self, controller: StateController, socket=None, send_lock = None, passedCam=None, passedCamLock=None):
@@ -32,6 +38,9 @@ class StateMachine:
         self.passedCameraLock = passedCamLock
 
         self.rendezvous_pad_location = None
+        self.led_started = False
+        self.button_started = False
+        self.combine_running = False
 
         #* Testing Booleans
         self.testing = False
@@ -43,7 +52,23 @@ class StateMachine:
         else:
             self.robot.camera.start_cam()
 
-    
+    def combine_should_run(self) -> bool:
+        return self.led_started or self.button_started
+
+    def ensure_combine_running(self, reverse: bool = False, speed: float = 1.0):
+        if self.combine_should_run() and not self.combine_running:
+            print("Starting combine...")
+            self.robot.StartIntakeCombine(reverse=reverse, speed=speed)
+            self.combine_running = True
+
+    def stop_combine(self):
+        if self.combine_running:
+            print("Stopping combine...")
+            try:
+                self.robot.StopIntakeCombine()
+            finally:
+                self.combine_running = False
+
     def run(self):
         print(f"State Machine starting in {'AUTONOMOUS' if isinstance(self.controller, AutoController) else 'CLIENT-CONTROLLED'} {'[TESTING]' if self.testing else ''} mode")
 
@@ -59,7 +84,7 @@ class StateMachine:
             while not self.controller.should_start():
                 time.sleep(0.1)
             self.controller._started = False
-        
+
             print("State Machine Started!")
             self.current_state = State.INIT
 
@@ -67,6 +92,7 @@ class StateMachine:
                 print(f'self.controller.should_stop(): {self.controller.should_stop()}')
                 if self.controller.should_stop():
                     print("STOP command received - ending state machine")
+                    self.stop_combine()
                     break
 
                 while self.controller.should_pause():
@@ -74,23 +100,25 @@ class StateMachine:
                     time.sleep(0.1)
                     if self.controller.should_stop():
                         print("STOP command received while paused")
+                        self.stop_combine()
                         return
-                
+
                 should_override, new_state = self.controller.get_state_override()
                 if should_override:
                     print(f"Overriding state: {self.current_state.name} -> {new_state.name}")
                     self.current_state = new_state
-                
+
                 if self.controller.is_manual_mode():
                     self.handle_manual_mode()
                     continue
-                
+
                 self.execute_state()
 
                 time.sleep(0.1)
             self.robot.updateRobotData({"State": "END"})
             print("State Machine COMPLETE")
             self.robot.camera.stop_pnp_localization()
+            self.stop_combine()
             self.robot.stop_all_motors()
             self.robot.close_motors()
             print("GOODBYE!")
@@ -103,6 +131,12 @@ class StateMachine:
                     routine_name=imported_route,
                     state=state,
                     controller=self.robot.drive_train,
+                    kp_counts=ROUTINE_KP_COUNTS,
+                    max_correction_rev_s=ROUTINE_MAX_CORRECTION_REV_S,
+                    blend=ROUTINE_BLEND,
+                    rate=ROUTINE_RATE_HZ,
+                    pre_run_callback=lambda: self.ensure_combine_running(reverse=True, speed=1.0),
+                    post_run_callback=self.stop_combine,
                 )
             else:
                 print(f"[run_routine] Drive train disconnected, skipping {state.name}")
@@ -128,40 +162,43 @@ class StateMachine:
                 self.robot.open_motors()
                 self.robot.stop_all_motors()
 
-                self.transition_to(State.END)
                 self.side_button.when_pressed = self.ButtonStartAlt
                 self.ButtonStartTrigger = True
 
                 while self.robot.LightSensor.returnVisible() <= 6000 and self.ButtonStartTrigger:
-                    pass# print("Side Button: ", self.side_button)
+                    pass
                 print("Yurp")
-
+                # self.transition_to(State.END)
                 self.transition_to(State.LED_START) #LED_START
 
             case State.LED_START:
                 self.robot.updateRobotData({"State": "LED_START"})
                 self.robot.updateRobotData({"LED_Started?": True})
+                self.led_started = True
+                self.ensure_combine_running(reverse=True, speed=1.0)
                 play(State.LED_START)
-                
+
                 self.transition_to(State.RP_SCAN)
 
-            case State.RP_SCAN:
+            case State.RP_SCAN: #add failsafe, check if read april tag has it
                 self.robot.updateRobotData({"State": "RP_SCAN"})
-                print("Scanning for Rendezvous Pad....")
-                
-                rp = self.robot.camera.read_april_tags()
-                self.rendezvous_pad_location = rp
-                self.robot.updateRobotData({"RP": rp})
-                print(f"Rendezvous Pad Located at {self.rendezvous_pad_location}.")
+                # print("Scanning for Rendezvous Pad....")
+
+                # # rp = self.robot.camera.read_april_tags()
+                # # self.rendezvous_pad_location = rp
+                # self.robot.updateRobotData({"RP": rp})
+                # print(f"Rendezvous Pad Located at {self.rendezvous_pad_location}.")
                 self.transition_to(State.PLACE_BEACON)
 
             case State.PLACE_BEACON:
                 self.robot.updateRobotData({"State": "PLACE_BEACON"})
-                play(State.PLACE_BEACON)
+                self.ensure_combine_running(reverse=False, speed=1.0)
+                play(State.PLACE_BEACON) #State.___ is a routine
                 self.transition_to(State.ENTER_CAVE)
 
             case State.ENTER_CAVE:
                 self.robot.updateRobotData({"State": "ENTER_CAVE"})
+                self.ensure_combine_running(reverse=False, speed=1.0)
                 play(State.ENTER_CAVE)
                 self.transition_to(State.END)
 
@@ -169,7 +206,7 @@ class StateMachine:
                 self.robot.updateRobotData({"State": "CAVE_SWEEP"})
                 if self.testing:
                     time.sleep(0.1)
-                
+
                 # self.robot.updatePosition(dx=60.0)
 
                 if self.testing:
@@ -181,7 +218,7 @@ class StateMachine:
                 self.robot.updateRobotData({"State": "OUTSIDE_SWEEP"})
                 if self.testing:
                     time.sleep(0.1)
-                
+
                 # self.robot.updatePosition(dx=40.0)
 
                 if self.testing:
@@ -193,7 +230,7 @@ class StateMachine:
                 self.robot.updateRobotData({"State": "MOVE_TO_GEO_CSC"})
                 if self.testing:
                     time.sleep(0.1)
-                
+
                 # self.robot.updatePosition(dx=55.0, dy=6.0)
 
                 if self.testing:
@@ -205,7 +242,7 @@ class StateMachine:
                 self.robot.updateRobotData({"State": "GRAB_GEO_CSC"})
                 if self.testing:
                     time.sleep(0.1)
-                
+
                 if self.testing:
                     time.sleep(5)
 
@@ -215,7 +252,7 @@ class StateMachine:
                 self.robot.updateRobotData({"State": "MOVE_GEO_TO_RP"})
                 if self.testing:
                     time.sleep(0.1)
-                
+
                 # self.robot.updatePosition(dx=6.0, dy=24.0)
 
                 if self.testing:
@@ -227,7 +264,7 @@ class StateMachine:
                 self.robot.updateRobotData({"State": "DISPENSE_GEO"})
                 if self.testing:
                     time.sleep(0.1)
-                
+
                 if self.testing:
                     time.sleep(5)
 
@@ -237,7 +274,7 @@ class StateMachine:
                 self.robot.updateRobotData({"State": "MOVE_TO_NEB_CSC"})
                 if self.testing:
                     time.sleep(0.1)
-                
+
                 # self.robot.updatePosition(dx=40.0, dy= 42.0)
 
                 if self.testing:
@@ -249,7 +286,7 @@ class StateMachine:
                 self.robot.updateRobotData({"State": "MOVE_NEB_TO_RP"})
                 if self.testing:
                     time.sleep(0.1)
-                
+
                 # self.robot.updatePosition(dx=6.0, dy=24.0)
 
                 if self.testing:
@@ -261,7 +298,7 @@ class StateMachine:
                 self.robot.updateRobotData({"State": "DISPENSE_NEB"})
                 if self.testing:
                     time.sleep(0.1)
-                
+
                 if self.testing:
                     time.sleep(5)
 
@@ -272,6 +309,8 @@ class StateMachine:
 
     def ButtonStartAlt(self):
         print("Button pressed!!!!")
+        self.button_started = True
+        self.ensure_combine_running(reverse=False, speed=1.0)
         time.sleep(5)
         self.ButtonStartTrigger = False
         return False
@@ -306,7 +345,7 @@ class StateMachine:
 
 
         print("Manual mode ended...")
-    
+
     #! Depricated
     def ScanRendezvousPadLocation(self):
 
@@ -335,11 +374,10 @@ class StateMachine:
             return None
         print(april_id)
         return april_id
-    
+
 if __name__ == "__main__":
     # main()
     print("Fart")
     controller = AutoController()
     sm = StateMachine(controller)
     sm.run()
-

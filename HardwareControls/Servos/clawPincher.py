@@ -14,7 +14,7 @@ from adafruit_pca9685 import PCA9685
 @dataclass
 class Servo270Config:
     i2c_address: int = 0x40
-    channel: int = 0
+    channel: int = 8
     frequency_hz: int = 50
 
     # Calibrate these for your specific servo to match its endpoints cleanly
@@ -22,7 +22,7 @@ class Servo270Config:
     max_us: float = 2500.0
 
     # Named positions (degrees) for a 270° servo
-    center_closed_deg: float = 105.0   # center (closed)
+    center_closed_deg: float = 106.0   # center (closed)
     open_deg: float = 90.0            # open
     latched_deg: float = 40.0         # latched
 

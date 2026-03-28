@@ -44,8 +44,8 @@ MAX_US_DEFAULT = 2500
 MAX_ANGLE_DEG = 270.0
 
 # Requested positions
-CLOSE_ANGLE_DEG = 135.0
-OPEN_ANGLE_DEG = 270.0
+CLOSE_ANGLE_DEG = 210.0
+OPEN_ANGLE_DEG = 135.0
 
 
 def clamp(x: float, lo: float, hi: float) -> float:

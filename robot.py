@@ -1,8 +1,9 @@
 import json
 import time
 import struct
-from pathlib import Path
 import datetime
+import threading
+from pathlib import Path
 from HardwareControls.hardware_classes import Magnetometer, LightSensor, Camera
 from HardwareControls.Servos.combine import DualContinuousServos
 from HardwareControls.Servos.chute import SG90Servo
@@ -25,19 +26,17 @@ class Robot():
     print(f"_BASE_DIR: {_BASE_DIR}")
 
     def __init__(self, controller=None, testing=False, sensors_connected=True, cameras_active=True, socket=None, send_lock=None):
-
         self.socket = socket
         self.send_lock = send_lock
 
         self.localization = {
             "x": 32.0,
             "y": 6.0,
-            "degrees": 90
+            "degrees": 90,
         }
 
         self.robot_data = {}
 
-        #* Testing Booleans
         self.testing = testing
         self.controller = controller
 
@@ -46,32 +45,43 @@ class Robot():
         self.cameras_active = cameras_active
         self.servos_connected = True
 
+        self.claw_base_extended = False
+        self.intake_running = False
+
+        self._mag_chute_threshold = 1000.0
+        self._mag_chute_axis = "z"
+        self._mag_chute_absolute = True
+        self._mag_chute_poll_s = 0.05
+        self._mag_chute_monitor_enabled = False
+        self._mag_chute_monitor_thread = None
+        self._mag_chute_stop_event = threading.Event()
+        self._mag_chute_lock = threading.Lock()
+        self._chute_opened_from_magnetometer = False
+
         print(f"self.sensors_connected {self.sensors_connected}")
 
         self.camera = None
         self.setupHardware()
 
     def setupHardware(self):
-        print(f"Setting up Hardware...")
+        print("Setting up Hardware...")
         try:
             self.camera = Camera(robot=self)
         except Exception as e:
             print(f"🤬😿Failed to Load Camera: {e}")
             play_hw_error()
+
         if self.drive_train_connected:
-            # if isinstance(self.controller, ClientController):
-            #     port = "/dev/ttyACM0"
-            # else:
-            port = None
             self.drive_train = HiwonderMecanumController(
                 port=None,
                 baud=1000000,
                 calibration_file=f"{self._BASE_DIR}/HardwareControls/MotorEncoders/robot_calibration.json",
             )
+
         if self.servos_connected:
             try:
-                self.Combine = DualContinuousServos()   # Servo A:3 ServoB:4
-                self.Chute = SG90Servo()                # 2   
+                self.Combine = DualContinuousServos()   # A-3 B-4
+                self.Chute = SG90Servo()                # 2
                 self.Claw = Servo270Positions()         # 0
                 self.Conveyor = ConveyorServo()         # 8
                 self.ClawBase = ClawBaseServo()         # 1
@@ -82,22 +92,22 @@ class Robot():
             except Exception as e:
                 print(f"🤬😿Failed to Load Servo: {e}")
                 play_hw_error()
+
         if self.sensors_connected:
             try:
                 self.LightSensor = LightSensor()
-                self.Mag1 = Magnetometer(0x18)
-                self.Mag2 = Magnetometer(0x19)
+                # self.Mag1 = Magnetometer(0x18)
             except Exception as e:
                 print(f"🤬😿Failed to Load Sensor: {e}")
                 play_hw_error()
         else:
             print("Skipped for testing!")
 
-    #* Localization and Data Methods
-
     def updatePosition(self, dx=None, dy=None, degrees=None):
-
-        print(f'Updating POS:\n\tFROM: x={self.localization["x"]} y={self.localization["y"]} degrees={self.localization["degrees"]}\n\tTO: x={dx} y={dy} degrees={degrees}')
+        print(
+            f'Updating POS:\n\tFROM: x={self.localization["x"]} y={self.localization["y"]} '
+            f'degrees={self.localization["degrees"]}\n\tTO: x={dx} y={dy} degrees={degrees}'
+        )
 
         if dx is not None:
             self.localization["x"] = dx
@@ -111,7 +121,7 @@ class Robot():
     def updateRobotData(self, datain=None):
         print(f"datain: {datain} {datetime.datetime.now()}")
         if datain is None:
-            print(f"Couldn't Update Robot Data, no key or value.")
+            print("Couldn't Update Robot Data, no key or value.")
             return
 
         for key, value in datain.items():
@@ -124,7 +134,6 @@ class Robot():
 
         self.send_robot_data(datain)
 
-    #* Movement Controls
     def open_motors(self):
         if self.drive_train_connected:
             self.drive_train.open()
@@ -173,7 +182,6 @@ class Robot():
         else:
             print("drive_diagonal - Drive Train Disconnected")
 
-    # continuous motor driving
     def move_forward(self, speed_rev_s: float = 0.5):
         if self.drive_train_connected:
             self.drive_train.move_forward(speed_rev_s)
@@ -234,12 +242,8 @@ class Robot():
         else:
             print("diagonal_reverse_right - Drive Train Disconnected")
 
-    #* Game State Methods
-
     def LEDStart(self, dprint=False):
-
         print("LED Start ready!")
-
         if self.sensors_connected:
             while self.LightSensor.returnVisible() <= 6000:
                 if dprint:
@@ -250,22 +254,174 @@ class Robot():
             print("Testing without sensors attached!")
         return True
 
-    #* Combine + Conveyor Controls
-    def StartIntakeCombine(self, reverse=False, speed=1.0):
-        if self.servos_connected:
-            if reverse:
-                self.Combine.a_forward_b_backward = False
-            else:
-                self.Combine.a_forward_b_backward = True
-            self.Combine.run_opposite_full()
-            self.Conveyor.run_match_combine(reverse=reverse, speed=speed)
+    def ReadMagnetometerValues(self, magnetometer_index: int = 1):
+        if not self.sensors_connected:
+            print("ReadMagnetometerValues - Sensors Disconnected")
+            return None
+
+        magnetometer = None
+        if magnetometer_index == 1 and hasattr(self, "Mag1"):
+            magnetometer = self.Mag1
+
+        if magnetometer is None:
+            print(f"ReadMagnetometerValues - Magnetometer {magnetometer_index} not available")
+            return None
+
+        try:
+            return magnetometer.returnAxisValues()
+        except Exception as e:
+            print(f"ReadMagnetometerValues failed: {e}")
+            return None
+
+    def GetMagnetometerAxisValue(self, axis: str = "z", magnetometer_index: int = 1, absolute: bool = True):
+        values = self.ReadMagnetometerValues(magnetometer_index=magnetometer_index)
+        if values is None:
+            return None
+
+        mx, my, mz = values
+        axis_lower = axis.lower()
+        if axis_lower == "x":
+            value = mx
+        elif axis_lower == "y":
+            value = my
         else:
+            value = mz
+        return abs(value) if absolute else value
+
+    def OpenChuteOnMagnetometerThreshold(self, threshold: float = 1000.0, axis: str = "z", magnetometer_index: int = 1, absolute: bool = True, update_robot_data: bool = True) -> bool:
+        value = self.GetMagnetometerAxisValue(axis=axis, magnetometer_index=magnetometer_index, absolute=absolute)
+        if value is None:
+            print("OpenChuteOnMagnetometerThreshold - No magnetometer value available")
+            return False
+
+        print(f"Magnetometer {axis.upper()} reading: {value} (threshold={threshold})")
+        if update_robot_data:
+            self.updateRobotData({
+                "magnetometer_axis": axis.lower(),
+                "magnetometer_value": value,
+                "magnetometer_threshold": threshold,
+            })
+
+        if value > threshold:
+            print("Magnetometer threshold exceeded, opening chute.")
+            self.OpenChute()
+            self._chute_opened_from_magnetometer = True
+            if update_robot_data:
+                self.updateRobotData({"chute_opened_from_magnetometer": True})
+            return True
+        return False
+
+    def _magnetometer_chute_monitor_loop(self):
+        print("Starting magnetometer chute monitor thread.")
+        while not self._mag_chute_stop_event.is_set():
+            try:
+                if self._mag_chute_monitor_enabled:
+                    with self._mag_chute_lock:
+                        threshold = self._mag_chute_threshold
+                        axis = self._mag_chute_axis
+                        absolute = self._mag_chute_absolute
+                    opened = self.OpenChuteOnMagnetometerThreshold(threshold=threshold, axis=axis, absolute=absolute, update_robot_data=True)
+                    if opened:
+                        self._mag_chute_monitor_enabled = False
+            except Exception as e:
+                print(f"Magnetometer chute monitor error: {e}")
+            time.sleep(self._mag_chute_poll_s)
+        print("Stopping magnetometer chute monitor thread.")
+
+    def EnsureMagnetometerChuteMonitorThread(self):
+        if self._mag_chute_monitor_thread is None or not self._mag_chute_monitor_thread.is_alive():
+            self._mag_chute_stop_event.clear()
+            self._mag_chute_monitor_thread = threading.Thread(target=self._magnetometer_chute_monitor_loop, daemon=True)
+            self._mag_chute_monitor_thread.start()
+
+    def StartMagnetometerChuteMonitor(self, threshold: float = 1000.0, axis: str = "z", absolute: bool = True, poll_s: float = 0.05, reset_chute_latch: bool = True):
+        with self._mag_chute_lock:
+            self._mag_chute_threshold = threshold
+            self._mag_chute_axis = axis
+            self._mag_chute_absolute = absolute
+            self._mag_chute_poll_s = poll_s
+
+        if reset_chute_latch:
+            self._chute_opened_from_magnetometer = False
+
+        self.EnsureMagnetometerChuteMonitorThread()
+        self._mag_chute_monitor_enabled = True
+        self.updateRobotData({
+            "magnetometer_monitor_enabled": True,
+            "magnetometer_threshold": threshold,
+            "magnetometer_axis": axis.lower(),
+        })
+
+    def StopMagnetometerChuteMonitor(self):
+        self._mag_chute_monitor_enabled = False
+        self.updateRobotData({"magnetometer_monitor_enabled": False})
+
+    def ShutdownMagnetometerChuteMonitor(self, join_timeout: float = 1.0):
+        self._mag_chute_monitor_enabled = False
+        self._mag_chute_stop_event.set()
+        if self._mag_chute_monitor_thread is not None and self._mag_chute_monitor_thread.is_alive():
+            self._mag_chute_monitor_thread.join(timeout=join_timeout)
+        self._mag_chute_monitor_thread = None
+
+    def _start_intake_hardware(self, reverse=False, speed=1.0):
+        if reverse:
+            self.Combine.a_forward_b_backward = False
+        else:
+            self.Combine.a_forward_b_backward = True
+        self.Combine.run_opposite_full()
+        self.Conveyor.run_match_combine(reverse=reverse, speed=speed)
+        self.intake_running = True
+        self.updateRobotData({"intake_running": True})
+
+    def _start_intake_after_claw_base_extension(self, reverse=False, speed=1.0, monitor_magnetometer=True, magnetometer_threshold=1000.0, extension_delay_s=0.75):
+        try:
+            self.ExtendClawBase()
+            time.sleep(extension_delay_s)
+            self._start_intake_hardware(reverse=reverse, speed=speed)
+            if monitor_magnetometer:
+                self.StartMagnetometerChuteMonitor(threshold=magnetometer_threshold, axis="z", absolute=True, poll_s=0.05, reset_chute_latch=True)
+        except Exception as e:
+            print(f"_start_intake_after_claw_base_extension failed: {e}")
+
+    def StartIntakeCombine(self, reverse=False, speed=1.0, monitor_magnetometer=True, magnetometer_threshold=1000.0, wait_for_claw_base=True, claw_base_extension_delay_s=0.75):
+        if not self.servos_connected:
             print("Intaking with Combine - No servos attached")
+            return
+
+        self._chute_opened_from_magnetometer = False
+
+        if self.claw_base_extended:
+            self._start_intake_hardware(reverse=reverse, speed=speed)
+            if monitor_magnetometer:
+                self.StartMagnetometerChuteMonitor(threshold=magnetometer_threshold, axis="z", absolute=True, poll_s=0.05, reset_chute_latch=True)
+            return
+
+        self.ExtendClawBase()
+        if wait_for_claw_base:
+            time.sleep(claw_base_extension_delay_s)
+            self._start_intake_hardware(reverse=reverse, speed=speed)
+            if monitor_magnetometer:
+                self.StartMagnetometerChuteMonitor(threshold=magnetometer_threshold, axis="z", absolute=True, poll_s=0.05, reset_chute_latch=True)
+        else:
+            threading.Thread(
+                target=self._start_intake_after_claw_base_extension,
+                kwargs={
+                    "reverse": reverse,
+                    "speed": speed,
+                    "monitor_magnetometer": monitor_magnetometer,
+                    "magnetometer_threshold": magnetometer_threshold,
+                    "extension_delay_s": claw_base_extension_delay_s,
+                },
+                daemon=True,
+            ).start()
 
     def StopIntakeCombine(self):
         if self.servos_connected:
             self.Combine.stop_all()
             self.Conveyor.stop()
+            self.intake_running = False
+            self.StopMagnetometerChuteMonitor()
+            self.updateRobotData({"intake_running": False})
         else:
             print("Stopping Combine - No servos attached")
 
@@ -290,10 +446,12 @@ class Robot():
     def StopConveyor(self):
         if self.servos_connected:
             self.Conveyor.stop()
+            self.intake_running = False
+            self.StopMagnetometerChuteMonitor()
+            self.updateRobotData({"intake_running": False})
         else:
             print("StopConveyor - No servos attached")
 
-    #* Chute Controls
     def OpenChute(self):
         if self.servos_connected:
             self.Chute.open()
@@ -306,7 +464,6 @@ class Robot():
         else:
             print("Close Chute - No Servos connected")
 
-    #* Claw Controls
     def OpenClaw(self):
         if self.servos_connected:
             print("ClawOpen!")
@@ -331,16 +488,19 @@ class Robot():
     def ExtendClawBase(self):
         if self.servos_connected:
             self.ClawBase.extend()
+            self.claw_base_extended = True
+            self.updateRobotData({"claw_base": "extended"})
         else:
             print("ExtendClawBase - No Servos connected")
 
     def RetractClawBase(self):
         if self.servos_connected:
             self.ClawBase.retract()
+            self.claw_base_extended = False
+            self.updateRobotData({"claw_base": "retracted"})
         else:
             print("RetractClawBase - No Servos connected")
 
-    #* False Floor Controls
     def OpenFalseFloor(self):
         if self.servos_connected:
             self.FalseFloor.open()
@@ -353,14 +513,12 @@ class Robot():
         else:
             print("CloseFalseFloor - No Servos connected")
 
-    # Backward-compatible aliases in case other code still calls floor methods.
     def OpenFloor(self):
         self.OpenFalseFloor()
 
     def CloseFloor(self):
         self.CloseFalseFloor()
 
-    #* Bin Dump Controls
     def DumpBin(self):
         if self.servos_connected:
             self.BinDump.open()
@@ -373,7 +531,6 @@ class Robot():
         else:
             print("UndumpBin - No Servos connected")
 
-    #* Rack and Pinion Controls
     def bottomRackPinion(self):
         if self.servos_connected:
             self.RackPinion.set_angle(90)
@@ -386,53 +543,41 @@ class Robot():
         else:
             print("topRackPinion - No Servos connected")
 
-    #* Camera Servo Controls
     def defaultCameraAngle(self):
         if self.servos_connected:
             self.CameraServo.look_forward()
         else:
             print("defaultCameraAngle - No Servos connected")
 
-    # Good angles: 90 (default, straight on), 120 (slightly angled down)
     def setCameraAngle(self, angle=0):
         if self.servos_connected:
             self.CameraServo.set_angle(angle_deg=angle)
         else:
             print("setCameraAngle - No Servos connected")
 
-    #* Send to Client Over Socket Methods
-
     def send_position(self):
         if self.socket is None:
             print("No socket, returning")
             return
-
         print("Sending position data...")
         try:
             payload = json.dumps(self.localization).encode("utf-8")
             header = TYPE_POSITION + struct.pack("!I", len(payload))
-
             if self.send_lock:
                 with self.send_lock:
                     self.socket.sendall(header + payload)
             else:
                 self.socket.sendall(header + payload)
-
         except Exception as e:
             print(f"Error sending POS: {e}")
 
     def send_robot_data(self, datain=None):
-        if self.socket is None:
+        if self.socket is None or datain is None:
             return
-
-        if datain is None:
-            return
-
         print("Sending robot data...")
         try:
             payload = json.dumps(datain).encode("utf-8")
             header = TYPE_ROBOT_DATA + struct.pack("!I", len(payload))
-
             if self.send_lock:
                 with self.send_lock:
                     self.socket.sendall(header + payload)
@@ -440,3 +585,17 @@ class Robot():
                 self.socket.sendall(header + payload)
         except Exception as e:
             print(f"Error sending POS: {e}")
+
+    def shutdown(self):
+        try:
+            self.StopIntakeCombine()
+        except Exception:
+            pass
+        try:
+            self.ShutdownMagnetometerChuteMonitor()
+        except Exception:
+            pass
+        try:
+            self.stop_all_motors()
+        except Exception:
+            pass
