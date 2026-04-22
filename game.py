@@ -14,7 +14,7 @@ from HardwareControls.MotorEncoders.testing.linkVerify import play_beep
 time.sleep(2)
 from enum import Enum
 
-ROUTINE_NAME = "routine_006"
+ROUTINE_NAME = "routine_000"
 
 ROUTINE_KP_COUNTS = 0.05
 ROUTINE_MAX_CORRECTION_REV_S = 0.08
@@ -44,7 +44,7 @@ class StateMachine:
 
         #* Testing Booleans
         self.testing = False
-        self.sensors_connected = True
+        self.sensors_connected = False
 
         self.robot = Robot(testing=self.testing, controller=self.controller, sensors_connected = self.sensors_connected, socket=self.socket, send_lock=self.send_lock)
         if self.passedCamera:
@@ -124,7 +124,7 @@ class StateMachine:
             print("GOODBYE!")
 
     def execute_state(self):
-
+        combine_speed = 1.0
         def play(state, imported_route=ROUTINE_NAME):
             if self.robot.drive_train_connected:
                 run_routine(
@@ -161,11 +161,13 @@ class StateMachine:
 
                 self.robot.open_motors()
                 self.robot.stop_all_motors()
+                self.robot.Conveyor.hard_off()
+                self.stop_combine()
 
                 self.side_button.when_pressed = self.ButtonStartAlt
                 self.ButtonStartTrigger = True
 
-                while self.robot.LightSensor.returnVisible() <= 6000 and self.ButtonStartTrigger:
+                while self.ButtonStartTrigger: # self.robot.LightSensor.returnVisible() <= 6000 and self.ButtonStartTrigger
                     pass
                 print("Yurp")
                 # self.transition_to(State.END)
@@ -175,7 +177,7 @@ class StateMachine:
                 self.robot.updateRobotData({"State": "LED_START"})
                 self.robot.updateRobotData({"LED_Started?": True})
                 self.led_started = True
-                self.ensure_combine_running(reverse=True, speed=1.0)
+                # self.ensure_combine_running(reverse=True, speed=combine_speed)
                 play(State.LED_START)
 
                 self.transition_to(State.RP_SCAN)
@@ -183,124 +185,118 @@ class StateMachine:
             case State.RP_SCAN: #add failsafe, check if read april tag has it
                 self.robot.updateRobotData({"State": "RP_SCAN"})
                 # print("Scanning for Rendezvous Pad....")
-
+                self.stop_combine()
                 # # rp = self.robot.camera.read_april_tags()
                 # # self.rendezvous_pad_location = rp
                 # self.robot.updateRobotData({"RP": rp})
                 # print(f"Rendezvous Pad Located at {self.rendezvous_pad_location}.")
+
+                try:
+                    play(State.RP_SCAN)
+                except:
+                    pass
+
                 self.transition_to(State.PLACE_BEACON)
 
             case State.PLACE_BEACON:
                 self.robot.updateRobotData({"State": "PLACE_BEACON"})
-                self.ensure_combine_running(reverse=False, speed=1.0)
-                play(State.PLACE_BEACON) #State.___ is a routine
+                # self.ensure_combine_running(reverse=False, speed=1.0)
+                try:
+                    play(State.PLACE_BEACON)
+                except:
+                    pass
                 self.transition_to(State.ENTER_CAVE)
 
             case State.ENTER_CAVE:
                 self.robot.updateRobotData({"State": "ENTER_CAVE"})
-                self.ensure_combine_running(reverse=False, speed=1.0)
+                # self.ensure_combine_running(reverse=False, speed=1.0)
+                # self.ensure_combine_running(reverse=True, speed=combine_speed)
                 play(State.ENTER_CAVE)
-                self.transition_to(State.END)
+
+                self.transition_to(State.CAVE_SWEEP)
 
             case State.CAVE_SWEEP:
                 self.robot.updateRobotData({"State": "CAVE_SWEEP"})
-                if self.testing:
-                    time.sleep(0.1)
-
-                # self.robot.updatePosition(dx=60.0)
-
-                if self.testing:
-                    time.sleep(5)
+                
+                play(State.CAVE_SWEEP)
 
                 self.transition_to(State.OUTSIDE_SWEEP)
 
             case State.OUTSIDE_SWEEP:
                 self.robot.updateRobotData({"State": "OUTSIDE_SWEEP"})
-                if self.testing:
-                    time.sleep(0.1)
-
-                # self.robot.updatePosition(dx=40.0)
-
-                if self.testing:
-                    time.sleep(5)
+                
+                self.stop_combine()
+                play(State.OUTSIDE_SWEEP)
 
                 self.transition_to(State.MOVE_TO_GEO_CSC)
 
             case State.MOVE_TO_GEO_CSC:
                 self.robot.updateRobotData({"State": "MOVE_TO_GEO_CSC"})
-                if self.testing:
-                    time.sleep(0.1)
-
-                # self.robot.updatePosition(dx=55.0, dy=6.0)
-
-                if self.testing:
-                    time.sleep(5)
+            
+                try:
+                    play(State.MOVE_TO_GEO_CSC)
+                except:
+                    pass
 
                 self.transition_to(State.GRAB_GEO_CSC)
 
             case State.GRAB_GEO_CSC:
                 self.robot.updateRobotData({"State": "GRAB_GEO_CSC"})
-                if self.testing:
-                    time.sleep(0.1)
 
-                if self.testing:
-                    time.sleep(5)
+                try:
+                    play(State.GRAB_GEO_CSC)
+                except:
+                    pass
 
                 self.transition_to(State.MOVE_GEO_TO_RP)
 
             case State.MOVE_GEO_TO_RP:
                 self.robot.updateRobotData({"State": "MOVE_GEO_TO_RP"})
-                if self.testing:
-                    time.sleep(0.1)
-
-                # self.robot.updatePosition(dx=6.0, dy=24.0)
-
-                if self.testing:
-                    time.sleep(5)
+                
+                try:
+                    play(State.MOVE_GEO_TO_RP)
+                except:
+                    pass
 
                 self.transition_to(State.DISPENSE_GEO)
 
             case State.DISPENSE_GEO:
                 self.robot.updateRobotData({"State": "DISPENSE_GEO"})
-                if self.testing:
-                    time.sleep(0.1)
-
-                if self.testing:
-                    time.sleep(5)
+                
+                try:
+                    play(State.DISPENSE_GEO)
+                except:
+                    pass
 
                 self.transition_to(State.MOVE_TO_NEB_CSC)
 
             case State.MOVE_TO_NEB_CSC:
                 self.robot.updateRobotData({"State": "MOVE_TO_NEB_CSC"})
-                if self.testing:
-                    time.sleep(0.1)
-
-                # self.robot.updatePosition(dx=40.0, dy= 42.0)
-
-                if self.testing:
-                    time.sleep(5)
+                
+                try:
+                    play(State.MOVE_TO_NEB_CSC)
+                except:
+                    pass
 
                 self.transition_to(State.MOVE_NEB_TO_RP)
 
             case State.MOVE_NEB_TO_RP:
                 self.robot.updateRobotData({"State": "MOVE_NEB_TO_RP"})
-                if self.testing:
-                    time.sleep(0.1)
-
-                # self.robot.updatePosition(dx=6.0, dy=24.0)
-
-                if self.testing:
-                    time.sleep(5)
+                
+                try:
+                    play(State.MOVE_NEB_TO_RP)
+                except:
+                    pass
 
                 self.transition_to(State.DISPENSE_NEB)
 
             case State.DISPENSE_NEB:
                 self.robot.updateRobotData({"State": "DISPENSE_NEB"})
-                if self.testing:
-                    time.sleep(0.1)
-
-                if self.testing:
-                    time.sleep(5)
+                
+                try:
+                    play(State.DISPENSE_NEB)
+                except:
+                    pass
 
                 self.transition_to(State.END)
 
@@ -310,7 +306,7 @@ class StateMachine:
     def ButtonStartAlt(self):
         print("Button pressed!!!!")
         self.button_started = True
-        self.ensure_combine_running(reverse=False, speed=1.0)
+        # self.ensure_combine_running(reverse=False, speed=1.0)
         time.sleep(5)
         self.ButtonStartTrigger = False
         return False

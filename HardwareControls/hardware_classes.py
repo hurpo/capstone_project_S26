@@ -67,7 +67,7 @@ class Camera():
                 self.tvecs = [np.array(t, dtype=np.float32) for t in camera_calibration['tvecs']]
             else:
                 print("Calibration is outdated, recalibrating...")
-                self.calibrate()
+                # self.calibrate()
 
         except (FileNotFoundError, KeyError):
             print("No calibration file found, recalibrating...")
@@ -509,10 +509,24 @@ class LightSensor():
 
 
 if __name__ == "__main__":
-    print("Bro")
-    mag = Magnetometer(0x18)
-    print("Yo")
 
-    while True:
-        MX, MY, MZ = mag.returnAxisValues()
-        print(abs(MZ))
+    testing = "light"
+
+    match testing:
+        case "light":
+            print("Light:")
+            light = LightSensor()
+
+
+            while True:
+                val = light.returnVisible()
+                print(val)
+        
+        case "mag":
+            print("Magnetometer:")
+            mag = Magnetometer(0x18)
+
+
+            while True:
+                MX, MY, MZ = mag.returnAxisValues()
+                print(abs(MZ))

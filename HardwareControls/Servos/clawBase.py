@@ -1,72 +1,105 @@
+#!/usr/bin/env python3
 from __future__ import annotations
 
-import board
-import busio
-from adafruit_pca9685 import PCA9685
+from servo_common import CONFIG_PATH, PositionalServoBase, clamp
 
 
-I2C_ADDRESS = 0x40
-CHANNEL = 1
-FREQ_HZ = 50
-MIN_US = 500.0
-MAX_US = 2500.0
-MAX_ANGLE_DEG = 270.0
-INIT_DEG = 200.0
-EXTENDED_DEG = 0.0
-RETRACTED_DEG = 200.0
+class ClawBaseServo(PositionalServoBase):
+    def __init__(self):
+        super().__init__("clawBase")
 
-
-def clamp(x: float, lo: float, hi: float) -> float:
-    return max(lo, min(hi, x))
-
-
-def us_to_duty_16bit(pulse_us: float, freq_hz: float) -> int:
-    period_us = 1_000_000.0 / freq_hz
-    duty_fraction = clamp(pulse_us / period_us, 0.0, 1.0)
-    return int(duty_fraction * 65535.0)
-
-
-def angle_to_us(angle_deg: float, min_us: float, max_us: float, max_angle_deg: float) -> float:
-    angle_deg = clamp(angle_deg, 0.0, max_angle_deg)
-    return min_us + (angle_deg / max_angle_deg) * (max_us - min_us)
-
-
-class ClawBaseServo:
-    """270 degree positional servo for the claw base."""
-
-    def __init__(self, address: int = I2C_ADDRESS, channel: int = CHANNEL, freq_hz: int = FREQ_HZ):
-        i2c = busio.I2C(board.SCL, board.SDA)
-        self.pca = PCA9685(i2c, address=address)
-        self.pca.frequency = freq_hz
-
-        self.freq_hz = freq_hz
-        self.ch = self.pca.channels[channel]
-        self.min_us = float(MIN_US)
-        self.max_us = float(MAX_US)
-        self.max_angle_deg = float(MAX_ANGLE_DEG)
-        self.last_commanded_deg = INIT_DEG
-
-        # Always initialize to 200 degrees on startup.
-        self.set_angle(INIT_DEG)
-
-    def set_pulse_us(self, pulse_us: float) -> None:
-        self.ch.duty_cycle = us_to_duty_16bit(pulse_us, self.freq_hz)
-
-    def set_angle(self, angle_deg: float) -> float:
-        angle_deg = clamp(angle_deg, 0.0, self.max_angle_deg)
-        pulse = angle_to_us(angle_deg, self.min_us, self.max_us, self.max_angle_deg)
-        self.set_pulse_us(pulse)
-        self.last_commanded_deg = angle_deg
-        return pulse
+    def initialize(self) -> float:
+        return self.move_to_named("initialize")
 
     def extend(self) -> float:
-        return self.set_angle(EXTENDED_DEG)
+        return self.move_to_named("extend")
 
     def retract(self) -> float:
-        return self.set_angle(RETRACTED_DEG)
+        return self.move_to_named("retract")
 
-    def initialize_position(self) -> float:
-        return self.set_angle(INIT_DEG)
 
-    def deinit(self) -> None:
-        self.pca.deinit()
+def print_help(servo: ClawBaseServo) -> None:
+    print(f"""
+Config file: {CONFIG_PATH}
+Servo key: clawBase
+
+Commands:
+  positions                -> list named positions from JSON
+  initialize
+  extend
+  retract
+  angle <deg>              -> move to an absolute angle
+  pulse <us>               -> set a direct pulse width
+  range <min_us> <max_us>  -> set pulse endpoint calibration
+  setpos <name> <deg>      -> change a named position in memory
+  sweep <start> <end> [step] [delay]
+  release                  -> set duty_cycle=0
+  status
+  save
+  help
+  quit / exit
+""")
+
+
+def main() -> None:
+    servo = ClawBaseServo()
+    servo._install_cleanup()
+    print(servo.status_string())
+    print("Type 'help' for commands.")
+
+    while True:
+        try:
+            line = input("> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print()
+            break
+        if not line:
+            continue
+        parts = line.split()
+        cmd = parts[0].lower()
+        try:
+            if cmd in ("quit", "exit"):
+                break
+            elif cmd == "help":
+                print_help(servo)
+            elif cmd == "status":
+                print(servo.status_string())
+            elif cmd == "positions":
+                for name, angle in servo.positions.items():
+                    print(f"{name} = {angle} deg")
+            elif cmd in servo.positions:
+                pulse = servo.move_to_named(cmd)
+                print(f"Moved to '{cmd}' -> {pulse:.0f} us")
+            elif cmd == "angle":
+                pulse = servo.set_angle(float(parts[1]))
+                print(f"Moved to {servo.current_angle_deg:.1f} deg -> {pulse:.0f} us")
+            elif cmd == "pulse":
+                servo.set_pulse_us(float(parts[1]))
+                print(f"Pulse set to {float(parts[1]):.0f} us")
+            elif cmd == "range":
+                servo.set_range(float(parts[1]), float(parts[2]))
+                print(f"Pulse range set to {servo.min_us}..{servo.max_us} us")
+            elif cmd == "setpos":
+                servo.set_named_position(parts[1], float(parts[2]))
+                print(f"Updated named position '{parts[1]}' to {servo.positions[parts[1]]} deg")
+            elif cmd == "sweep":
+                step = float(parts[3]) if len(parts) >= 4 else 2.0
+                delay = float(parts[4]) if len(parts) >= 5 else 0.02
+                servo.sweep(float(parts[1]), float(parts[2]), step, delay)
+                print("Sweep complete.")
+            elif cmd == "release":
+                servo.release()
+                print("PWM released.")
+            elif cmd == "save":
+                servo.save()
+                print(f"Saved configuration to {CONFIG_PATH}")
+            else:
+                print("Unknown command. Type 'help'.")
+        except Exception as exc:
+            print(f"Error: {exc}")
+
+    servo.deinit()
+
+
+if __name__ == "__main__":
+    main()

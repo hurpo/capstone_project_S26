@@ -15,7 +15,7 @@ except ImportError:
     sys.exit(1)
 
 I2C_ADDRESS = 0x40
-CHANNEL = 0
+CHANNEL = 1
 PWM_FREQUENCY_HZ = 50
 
 MIN_US_DEFAULT = 500

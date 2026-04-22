@@ -81,14 +81,14 @@ class Robot():
         if self.servos_connected:
             try:
                 self.Combine = DualContinuousServos()   # A-3 B-4
-                self.Chute = SG90Servo()                # 2
+                self.Chute = SG90Servo(channel=2)                # 2
                 self.Claw = Servo270Positions()         # 0
-                self.Conveyor = ConveyorServo()         # 8
-                self.ClawBase = ClawBaseServo()         # 1
-                self.CameraServo = CameraServo()        # 15
-                self.RackPinion = Servo270Positions()   # 5
-                self.BinDump = BinDumpServo()           # 7
-                self.FalseFloor = Servo270()            # 6
+                self.Conveyor = ConveyorServo(channel=8)         # 8
+                self.ClawBase = ClawBaseServo(channel=1)         # 1
+                self.CameraServo = CameraServo(channel=15)        # 15
+                self.RackPinion = Servo270Positions(channel=5)   # 5
+                self.BinDump = BinDumpServo(channel=7)           # 7
+                self.FalseFloor = Servo270(channel=6)            # 6
             except Exception as e:
                 print(f"🤬😿Failed to Load Servo: {e}")
                 play_hw_error()
@@ -369,7 +369,7 @@ class Robot():
         else:
             self.Combine.a_forward_b_backward = True
         self.Combine.run_opposite_full()
-        self.Conveyor.run_match_combine(reverse=reverse, speed=speed)
+        # self.Conveyor.run_match_combine(reverse=reverse, speed=speed)
         self.intake_running = True
         self.updateRobotData({"intake_running": True})
 
@@ -418,7 +418,7 @@ class Robot():
     def StopIntakeCombine(self):
         if self.servos_connected:
             self.Combine.stop_all()
-            self.Conveyor.stop()
+            self.Conveyor.hard_off()
             self.intake_running = False
             self.StopMagnetometerChuteMonitor()
             self.updateRobotData({"intake_running": False})
@@ -445,7 +445,7 @@ class Robot():
 
     def StopConveyor(self):
         if self.servos_connected:
-            self.Conveyor.stop()
+            self.Conveyor.hard_off()
             self.intake_running = False
             self.StopMagnetometerChuteMonitor()
             self.updateRobotData({"intake_running": False})

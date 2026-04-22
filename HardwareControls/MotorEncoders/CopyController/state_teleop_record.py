@@ -406,6 +406,10 @@ def _run(args):
     controller.stop_all()
     controller.reset_all_encoders()
 
+    time.sleep(0.3)
+    if controller.ser:
+        controller.ser.reset_input_buffer()
+
     servos = TeleopServoController()
 
     print("\n=== Teleop Recorder ===")
@@ -586,13 +590,22 @@ def _run(args):
             )
             run_wheel_speeds(controller, wheel_cmds, label="Teleop")
 
+            if recording:
+                try:
+                    states = controller.read_all_motors()
+                    counts = counts_dict_from_states(states)
+                    tps = tps_dict_from_states(states)
+                    rps = rps_dict_from_states(states)
+                    dx, dy, dtheta = controller.estimate_robot_displacement(origin_counts, counts)
+                    elapsed = time.monotonic() - trace_start
+                except TimeoutError:
+                    print("[WARNING] Encoder read timeout, skipping frame")
+                    continue
+            else:
+                dx, dy, dtheta = 0.0, 0.0, 0.0
+                elapsed = time.monotonic() - trace_start
             # --- Read encoders ---
-            states = controller.read_all_motors()
-            counts = counts_dict_from_states(states)
-            tps = tps_dict_from_states(states)
-            rps = rps_dict_from_states(states)
-            dx, dy, dtheta = controller.estimate_robot_displacement(origin_counts, counts)
-            elapsed = time.monotonic() - trace_start
+            
 
             # --- Record if active ---
             if recording:

@@ -316,40 +316,30 @@ class HiwonderMecanumController:
             raise ValueError(f"Bad CRC: rx=0x{rx_crc:02X}, calc=0x{calc_crc:02X}")
         return function_code, payload
 
-    def transact(
-        self,
-        packet: bytes,
-        timeout_s: float = DEFAULT_TIMEOUT_S,
-        label: str = "",
-        expected_func: Optional[int] = None,
-    ) -> Tuple[int, bytes]:
-        """
-        Send one packet and wait for a valid response.
-        If expected_func is provided, ignore other valid packets until timeout.
-        """
-        ser = self.ensure_open()
-        ser.reset_input_buffer()
-        self.send_packet(packet, label)
-
-        deadline = time.time() + timeout_s
-        while time.time() < deadline:
-            rx = self.read_exact_packet(timeout_s=max(0.01, deadline - time.time()))
-            if rx is None:
-                break
-
+    def transact(self, packet, timeout_s=DEFAULT_TIMEOUT_S, label="", expected_func=None, retries=2):
+        last_err = None
+        for attempt in range(retries + 1):
             try:
-                func, payload = self.validate_packet(rx)
-            except Exception:
-                continue
-
-            # If caller wants a specific function, ignore other packets
-            if expected_func is not None and func != expected_func:
-                print(f"Ignoring unexpected packet function 0x{func:02X}")
-                continue
-
-            return func, payload
-
-        raise TimeoutError("Timed out waiting for expected response packet")
+                ser = self.ensure_open()
+                ser.reset_input_buffer()
+                self.send_packet(packet, label)
+                deadline = time.time() + timeout_s
+                while time.time() < deadline:
+                    rx = self.read_exact_packet(timeout_s=max(0.01, deadline - time.time()))
+                    if rx is None:
+                        break
+                    try:
+                        func, payload = self.validate_packet(rx)
+                    except Exception:
+                        continue
+                    if expected_func is not None and func != expected_func:
+                        continue
+                    return func, payload
+            except Exception as e:
+                last_err = e
+            if attempt < retries:
+                time.sleep(0.02)  # brief pause before retry
+        raise TimeoutError(f"Timed out after {retries+1} attempts") from last_err
 
     # -------------------------
     # Packet builders

@@ -1,0 +1,116 @@
+{
+  "board": {
+    "i2c_address": 64,
+    "pwm_frequency_hz": 50,
+    "continuous_min_us": 1000,
+    "continuous_max_us": 2000,
+    "continuous_range_us": 400,
+    "positional_min_us": 500,
+    "positional_max_us": 2500,
+    "startup_stop_delay_s": 0.5,
+    "shutdown_stop_delay_s": 0.5
+  },
+  "combine": {
+    "type": "continuous_pair",
+    "servo_a": {"channel": 3, "stop_us": 1700},
+    "servo_b": {"channel": 4, "stop_us": 1700},
+    "invert_pair": false,
+    "startup_behavior": "stop"
+  },
+  "conveyor": {
+    "type": "continuous",
+    "channel": 8,
+    "stop_us": 1525,
+    "range_us": 400,
+    "startup_behavior": "stop"
+  },
+  "camera": {
+    "type": "positional",
+    "channel": 15,
+    "servo_degrees": 180,
+    "min_us": 500,
+    "max_us": 2500,
+    "startup_position": "forward",
+    "positions": {
+      "forward": 90.0,
+      "down": 120.0,
+      "up": 60.0
+    }
+  },
+  "chute": {
+    "type": "positional",
+    "channel": 2,
+    "servo_degrees": 180,
+    "min_us": 500,
+    "max_us": 2500,
+    "startup_position": "close",
+    "positions": {
+      "close": 80.0,
+      "open": 15.0
+    }
+  },
+  "rackpinion": {
+    "type": "positional",
+    "channel": 5,
+    "servo_degrees": 270,
+    "min_us": 500,
+    "max_us": 2500,
+    "startup_position": "lower",
+    "positions": {
+      "lower": 0.0,
+      "raise": 270.0,
+      "center": 135.0
+    }
+  },
+  "falseFloor": {
+    "type": "positional",
+    "channel": 6,
+    "servo_degrees": 270,
+    "min_us": 500,
+    "max_us": 2500,
+    "startup_position": "close",
+    "positions": {
+      "close": 210.0,
+      "open": 135.0,
+      "center": 210.0
+    }
+  },
+  "clawPincher": {
+    "type": "positional",
+    "channel": 8,
+    "servo_degrees": 270,
+    "min_us": 500,
+    "max_us": 2500,
+    "startup_position": "close",
+    "positions": {
+      "close": 108.0,
+      "open": 80.0,
+      "latched": 20.0
+    }
+  },
+  "clawBase": {
+    "type": "positional",
+    "channel": 1,
+    "servo_degrees": 270,
+    "min_us": 500,
+    "max_us": 2500,
+    "startup_position": "initialize",
+    "positions": {
+      "initialize": 200.0,
+      "extend": 90.0,
+      "retract": 270.0
+    }
+  },
+  "binDump": {
+    "type": "positional",
+    "channel": 7,
+    "servo_degrees": 270,
+    "min_us": 500,
+    "max_us": 2500,
+    "startup_position": "close",
+    "positions": {
+      "close": 220.0,
+      "open": 60.0
+    }
+  }
+}

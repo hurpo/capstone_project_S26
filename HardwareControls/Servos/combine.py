@@ -1,116 +1,78 @@
 #!/usr/bin/env python3
-"""
-Two continuous-rotation servos (TD-8135MG) via PCA9685 on Raspberry Pi (I2C).
-- Uses channels 3 and 4.
-- Default "run" command spins them at full speed in opposite directions:
-    ch3 forward full, ch4 backward full
+from __future__ import annotations
 
-Terminal commands:
-  run                  -> both servos full speed opposite directions
-  stop                 -> both servos to STOP_US
-  center <us>           -> set stop/neutral pulse width (applies to both)
-  swap                 -> swap which channel goes which direction
-  pulse3 <us> / pulse4 <us> -> direct pulse debug per channel
-  off                  -> duty_cycle=0 on both channels (no pulses)
-  help
-  quit / exit
-"""
-
-import sys
 import time
 
-try:
-    from adafruit_pca9685 import PCA9685
-    import board
-    import busio
-except ImportError:
-    print("Missing libraries. Install with:")
-    print("  sudo pip3 install adafruit-circuitpython-pca9685")
-    sys.exit(1)
+from servo_common import CONFIG_PATH, ServoAppBase, clamp, us_to_duty_16bit
 
 
-# ---------------------------
-# Configuration
-# ---------------------------
-I2C_ADDRESS = 0x40
-PWM_FREQUENCY_HZ = 50
+class _ContinuousChannel:
+    def __init__(self, parent: "DualContinuousServos", name: str, channel: int, stop_us: int):
+        self.parent = parent
+        self.name = name
+        self.channel = int(channel)
+        self.out = parent._pca.channels[self.channel]
+        self.stop_us = int(stop_us)
+        self.range_us = int(parent.range_us)
 
-SERVO_CH_A = 3  # TD-8135MG #1
-SERVO_CH_B = 4  # TD-8135MG #2
+    def set_pulse_us(self, pulse_us: float) -> None:
+        pulse_us = clamp(pulse_us, self.parent.min_us, self.parent.max_us)
+        self.out.duty_cycle = us_to_duty_16bit(pulse_us, self.parent.freq_hz)
 
-# Your measured neutral
-STOP_US = 1525
+    def stop(self) -> None:
+        self.set_pulse_us(self.stop_us)
 
-# Full-speed offset from neutral (tune if needed)
-RANGE_US = 400
-
-# Safety clamp
-MIN_US = 1000
-MAX_US = 2000
-
-
-# ---------------------------
-# Helper functions
-# ---------------------------
-def clamp(x: float, lo: float, hi: float) -> float:
-    return max(lo, min(hi, x))
-
-
-def us_to_duty_16bit(microseconds: float, freq_hz: float) -> int:
-    period_us = 1_000_000.0 / freq_hz
-    duty_fraction = clamp(microseconds / period_us, 0.0, 1.0)
-    return int(duty_fraction * 65535.0)
-
-
-# ---------------------------
-# Servo control (single channel wrapper)
-# ---------------------------
-class ContinuousServoChannel:
-    def __init__(self, pca: PCA9685, channel: int, freq_hz: int):
-        self.pca = pca
-        self.freq_hz = freq_hz
-        self.channel = channel
-        self.out = pca.channels[channel]
-
-        # Stop on init
-        self.set_pulse_us(STOP_US)
-
-    def set_pulse_us(self, pulse_us: float):
-        pulse_us = clamp(pulse_us, MIN_US, MAX_US)
-        self.out.duty_cycle = us_to_duty_16bit(pulse_us, self.freq_hz)
-
-    def hard_off(self):
-        # No pulses (output low). Some servos may drift if they lose signal.
+    def off(self) -> None:
         self.out.duty_cycle = 0
 
-    def stop(self):
-        self.set_pulse_us(STOP_US)
+    def set_center(self, stop_us: float) -> None:
+        self.stop_us = int(clamp(stop_us, self.parent.min_us, self.parent.max_us))
+        self.parent.servo_cfg[self.name]["stop_us"] = self.stop_us
+        self.stop()
 
-    def forward(self, speed: float = 1.0):
+    def set_range(self, range_us: float) -> None:
+        self.range_us = int(max(0, range_us))
+
+    def forward(self, speed: float = 1.0) -> None:
         speed = clamp(speed, 0.0, 1.0)
-        self.set_pulse_us(STOP_US + speed * RANGE_US)
+        self.set_pulse_us(self.stop_us + speed * self.range_us)
 
-    def backward(self, speed: float = 1.0):
+    def backward(self, speed: float = 1.0) -> None:
         speed = clamp(speed, 0.0, 1.0)
-        self.set_pulse_us(STOP_US - speed * RANGE_US)
+        self.set_pulse_us(self.stop_us - speed * self.range_us)
 
 
-# ---------------------------
-# Dual-servo controller
-# ---------------------------
-class DualContinuousServos:
-    def __init__(self, address=I2C_ADDRESS, ch_a=SERVO_CH_A, ch_b=SERVO_CH_B, freq_hz=PWM_FREQUENCY_HZ):
-        i2c = busio.I2C(board.SCL, board.SDA)
-        self.pca = PCA9685(i2c, address=address)
-        self.pca.frequency = freq_hz
+class DualContinuousServos(ServoAppBase):
+    def __init__(self):
+        super().__init__("combine")
+        self.min_us = int(self.board_cfg.get("continuous_min_us", 1000))
+        self.max_us = int(self.board_cfg.get("continuous_max_us", 2000))
+        self.range_us = int(self.servo_cfg.get("range_us", self.board_cfg.get("continuous_range_us", 400)))
+        self.servo_ch_a = int(self.servo_cfg["servo_a"]["channel"])
+        self.servo_ch_b = int(self.servo_cfg["servo_b"]["channel"])
+        self.a = _ContinuousChannel(self, "servo_a", self.servo_ch_a, int(self.servo_cfg["servo_a"]["stop_us"]))
+        self.b = _ContinuousChannel(self, "servo_b", self.servo_ch_b, int(self.servo_cfg["servo_b"]["stop_us"]))
+        self.a_forward_b_backward = not bool(self.servo_cfg.get("invert_pair", False))
+        startup_behavior = self.servo_cfg.get("startup_behavior", "stop")
+        if startup_behavior == "off":
+            self.off_all()
+        else:
+            self.stop_all()
+        time.sleep(self.startup_stop_delay_s)
 
-        self.a = ContinuousServoChannel(self.pca, ch_a, freq_hz)
-        self.b = ContinuousServoChannel(self.pca, ch_b, freq_hz)
+    def stop_all(self) -> None:
+        self.a.stop()
+        self.b.stop()
 
-        # Direction mapping: if True => A forward, B backward. If False => swapped.
-        self.a_forward_b_backward = True
+    def off_all(self) -> None:
+        self.a.off()
+        self.b.off()
 
-    def run_opposite_full(self):
+    def swap(self) -> None:
+        self.a_forward_b_backward = not self.a_forward_b_backward
+        self.servo_cfg["invert_pair"] = not self.a_forward_b_backward
+
+    def run_opposite_full(self) -> None:
         if self.a_forward_b_backward:
             self.a.forward(1.0)
             self.b.backward(1.0)
@@ -118,123 +80,152 @@ class DualContinuousServos:
             self.a.backward(1.0)
             self.b.forward(1.0)
 
-    def stop_all(self):
-        self.a.stop()
-        self.b.stop()
+    def set_range(self, range_us: float) -> None:
+        self.range_us = int(max(0, range_us))
+        self.servo_cfg["range_us"] = self.range_us
+        self.a.set_range(self.range_us)
+        self.b.set_range(self.range_us)
 
-    def hard_off_all(self):
-        self.a.hard_off()
-        self.b.hard_off()
+    def pulse_a(self, pulse_us: float) -> None:
+        self.a.set_pulse_us(pulse_us)
 
-    def swap(self):
-        self.a_forward_b_backward = not self.a_forward_b_backward
+    def pulse_b(self, pulse_us: float) -> None:
+        self.b.set_pulse_us(pulse_us)
 
-    def center(self, stop_us: float):
-        global STOP_US
-        STOP_US = int(stop_us)
-        self.stop_all()
+    def status_string(self) -> str:
+        mapping = "A forward, B backward" if self.a_forward_b_backward else "A backward, B forward"
+        return (
+            f"Config file: {CONFIG_PATH}\n"
+            f"Servo key: combine\n"
+            f"I2C address: 0x{self.i2c_address:02X}\n"
+            f"PWM frequency: {self.freq_hz} Hz\n"
+            f"Min pulse: {self.min_us} us\n"
+            f"Max pulse: {self.max_us} us\n"
+            f"Range: ±{self.range_us} us\n"
+            f"Servo A: channel={self.servo_ch_a}, stop_us={self.a.stop_us}\n"
+            f"Servo B: channel={self.servo_ch_b}, stop_us={self.b.stop_us}\n"
+            f"Direction mapping: {mapping}"
+        )
 
-    def deinit(self):
+    def deinit(self) -> None:
+        if self._closed:
+            return
         try:
             self.stop_all()
-            time.sleep(0.2)
+            time.sleep(self.shutdown_stop_delay_s)
         finally:
-            self.pca.deinit()
+            super().deinit()
 
 
-# ---------------------------
-# Terminal CLI
-# ---------------------------
-def print_help():
+def parse_speed(parts, default: float = 1.0) -> float:
+    if len(parts) < 2:
+        return default
+    return clamp(float(parts[1]), 0.0, 1.0)
+
+
+def print_help(servos: DualContinuousServos) -> None:
     print(f"""
-Channels: A={SERVO_CH_A}, B={SERVO_CH_B}
-Neutral STOP_US={STOP_US}  RANGE_US={RANGE_US}
+Servo A channel={servos.servo_ch_a}, Servo B channel={servos.servo_ch_b}
+Config file: {CONFIG_PATH}
 
 Commands:
-  run                 -> both servos full speed opposite directions
-  stop                -> both servos to neutral (STOP_US)
-  center <us>         -> set new neutral for both (e.g., center 1525)
-  swap                -> swap which channel goes which direction
-  pulse3 <us>         -> set channel 3 pulse (debug)
-  pulse4 <us>         -> set channel 4 pulse (debug)
-  off                 -> duty_cycle=0 on both channels (no pulses)
+  run
+  stop
+  off
+  centera <us>
+  centerb <us>
+  centerboth <us_a> <us_b>
+  range <us>
+  swap
+  pulsea <us>
+  pulseb <us>
+  forwarda [speed]
+  backwarda [speed]
+  forwardb [speed]
+  backwardb [speed]
+  status
+  save
   help
-  quit / exit         -> stop + off + exit
+  quit / exit
 """)
 
 
-def main():
+def main() -> None:
     servos = DualContinuousServos()
-    print("Dual TD-8135MG control on PCA9685 channels 3 & 4. Type 'help'.")
+    servos._install_cleanup()
+    print("Dual continuous servo control using PCA9685.")
+    print(servos.status_string())
+    print("Type 'help' for commands.")
 
-    try:
-        while True:
+    while True:
+        try:
             line = input("> ").strip()
-            if not line:
-                continue
-
-            parts = line.split()
-            cmd = parts[0].lower()
-
+        except (EOFError, KeyboardInterrupt):
+            print()
+            break
+        if not line:
+            continue
+        parts = line.split()
+        cmd = parts[0].lower()
+        try:
             if cmd in ("quit", "exit"):
-                servos.stop_all()
-                time.sleep(0.2)
-                servos.hard_off_all()
                 break
-
             elif cmd == "help":
-                print_help()
-
+                print_help(servos)
+            elif cmd == "status":
+                print(servos.status_string())
             elif cmd == "run":
                 servos.run_opposite_full()
-                mapping = "A forward, B backward" if servos.a_forward_b_backward else "A backward, B forward"
-                print(f"Running opposite full speed ({mapping}).")
-
+                print("Running both combine servos.")
             elif cmd == "stop":
                 servos.stop_all()
-                print("Stopped (neutral pulses).")
-
+                print("Stopped using calibrated neutral pulses.")
             elif cmd == "off":
-                servos.hard_off_all()
-                print("Outputs off (duty_cycle=0).")
-
+                servos.off_all()
+                print("Both outputs set to duty_cycle=0.")
             elif cmd == "swap":
                 servos.swap()
-                mapping = "A forward, B backward" if servos.a_forward_b_backward else "A backward, B forward"
-                print(f"Swapped direction mapping: {mapping}")
-
-            elif cmd == "center":
-                if len(parts) < 2:
-                    print("Usage: center <microseconds>  (e.g., center 1525)")
-                    continue
-                us = float(parts[1])
-                servos.center(us)
-                print(f"Set neutral/stop to {int(us)} us (applies to both).")
-
-            elif cmd == "pulse3":
-                if len(parts) < 2:
-                    print("Usage: pulse3 <microseconds>")
-                    continue
-                us = float(parts[1])
-                servos.a.set_pulse_us(us) if SERVO_CH_A == 3 else servos.b.set_pulse_us(us)
-                print(f"Set channel 3 pulse to {int(us)} us")
-
-            elif cmd == "pulse4":
-                if len(parts) < 2:
-                    print("Usage: pulse4 <microseconds>")
-                    continue
-                us = float(parts[1])
-                servos.a.set_pulse_us(us) if SERVO_CH_A == 4 else servos.b.set_pulse_us(us)
-                print(f"Set channel 4 pulse to {int(us)} us")
-
+                print("Swapped direction mapping.")
+            elif cmd == "centera":
+                servos.a.set_center(float(parts[1]))
+                print(f"Servo A neutral set to {servos.a.stop_us} us")
+            elif cmd == "centerb":
+                servos.b.set_center(float(parts[1]))
+                print(f"Servo B neutral set to {servos.b.stop_us} us")
+            elif cmd == "centerboth":
+                servos.a.set_center(float(parts[1]))
+                servos.b.set_center(float(parts[2]))
+                print("Updated both neutral values.")
+            elif cmd == "range":
+                servos.set_range(float(parts[1]))
+                print(f"Range set to ±{servos.range_us} us")
+            elif cmd == "pulsea":
+                servos.pulse_a(float(parts[1]))
+                print(f"Set servo A pulse on channel {servos.servo_ch_a} to {parts[1]} us")
+            elif cmd == "pulseb":
+                servos.pulse_b(float(parts[1]))
+                print(f"Set servo B pulse on channel {servos.servo_ch_b} to {parts[1]} us")
+            elif cmd == "forwarda":
+                servos.a.forward(parse_speed(parts))
+                print("Servo A forward command sent.")
+            elif cmd == "backwarda":
+                servos.a.backward(parse_speed(parts))
+                print("Servo A backward command sent.")
+            elif cmd == "forwardb":
+                servos.b.forward(parse_speed(parts))
+                print("Servo B forward command sent.")
+            elif cmd == "backwardb":
+                servos.b.backward(parse_speed(parts))
+                print("Servo B backward command sent.")
+            elif cmd == "save":
+                servos.save()
+                print(f"Saved configuration to {CONFIG_PATH}")
             else:
                 print("Unknown command. Type 'help'.")
+        except Exception as exc:
+            print(f"Error: {exc}")
 
-    except KeyboardInterrupt:
-        servos.stop_all()
-        print("\nStopped (Ctrl+C).")
-    finally:
-        servos.deinit()
+    servos.deinit()
 
 
 if __name__ == "__main__":
