@@ -2,17 +2,23 @@ from __future__ import annotations
 
 import atexit
 import json
+import os
 import signal
+import sys
 import time
 from pathlib import Path
 from typing import Any
+
+SERVOS_DIR = os.path.abspath(os.path.expanduser("~/Documents/CAPSTONE_PROJECT_S26/HardwareControls/Servos"))
+if SERVOS_DIR not in sys.path:
+    sys.path.insert(0, SERVOS_DIR)
 
 import board
 import busio
 from adafruit_pca9685 import PCA9685
 
 
-CONFIG_PATH = Path(__file__).resolve().parent / "servo_config.json"
+CONFIG_PATH = Path(os.path.join(SERVOS_DIR, "servo_config.json"))
 
 
 DEFAULT_CONFIG: dict[str, Any] = {

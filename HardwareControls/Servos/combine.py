@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import os
+import sys
+
+SERVOS_DIR = os.path.abspath(os.path.expanduser("~/Documents/CAPSTONE_PROJECT_S26/HardwareControls/Servos"))
+if SERVOS_DIR not in sys.path:
+    sys.path.insert(0, SERVOS_DIR)
+
 import time
 
 from servo_common import CONFIG_PATH, ServoAppBase, clamp, us_to_duty_16bit
